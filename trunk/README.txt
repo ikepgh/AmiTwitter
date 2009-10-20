@@ -41,7 +41,12 @@ People who have donated:
 ---
 
 Known Bugs:  Many at this time...
-To do:  Error checking (does not do much of it that the user can see...)
+To do:  
+
+- Error checking (does not do much of it that the user can see...)
+- Charcters left countdown
+- Periodic refresh option
+- Busy .mcc
 
 Feature Requests:
 
