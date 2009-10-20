@@ -30,6 +30,8 @@ the same directory as the binary file or the program will not run.
 
 Requires: MUI, URLtext, HTMLtext & BetterString .mcc's, OpenURL (optional)
 
+Morphos requires: libiconv.ixlibrary from Aminet
+
 Usage:  Enter your Twitter account username/password in the 'Settings' window, be connected to the internet..
 
 ---
@@ -38,13 +40,13 @@ People who have donated:
 
 ---
 
-Known Bugs:  No "major" ones at this time...
+Known Bugs:  Many at this time...
 To do:  Error checking (does not do much of it that the user can see...)
 
 Feature Requests:
 
 - Command line version
-- iconv/character conversion
+- iconv/character conversion/catalog translations
 
 ---
 
