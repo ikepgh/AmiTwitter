@@ -1,0 +1,53 @@
+; project configuration (do not delete)
+
+(compiler
+
+    (alias "gcc/classic/stable")
+
+    (makefile "makefiles/gcc-classic-stable/makefile")
+
+    (make "make -f %makefile %target")
+
+    (executable "DH0:Aminet/AmiTwitter/trunk/bin/gcc-classic-stable/AmiTwitter")
+
+    (stack "65536")
+
+    (target "")
+
+    (arguments "")
+
+    (options
+
+        "-lauto"
+
+        "-lcurl"
+
+        "-lxml2"
+
+        "-lz"
+
+        "-ldl"
+
+        "-lglib-2.0"
+
+        "-liconv"
+
+        "-lintl"
+
+        "-lc"
+
+        "-lssl"
+
+        "-lcrypto"
+
+        "-lpthread"
+
+        "-lm"
+
+        "-lcurl"
+
+        "-s"
+    )
+)
+
+; project configuration (do not delete)
