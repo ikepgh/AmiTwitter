@@ -36,17 +36,21 @@
 #include <exec/libraries.h>
 #include <dos/dos.h>
 #include <dos/dosextens.h>
+#if defined(__AMIGA__) && !defined(__PPC__)
 #include <pragmas/dos_pragmas.h>
 #include <pragmas/exec_pragmas.h>
+#endif
 #include <workbench/workbench.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 #include <libraries/mui.h>
+#if defined(__AMIGA__) && !defined(__PPC__)
 #include <clib/gadtools_protos.h>
-#include <MUI/Urltext_mcc.h>
-#include <MUI/HTMLtext_mcc.h>
-#include <MUI/BetterString_mcc.h>
+#endif
+#include <mui/Urltext_mcc.h>
+#include <mui/HTMLtext_mcc.h>
+#include <mui/BetterString_mcc.h>
 
 // Amitwitter
 #include <sys/types.h>
@@ -78,7 +82,6 @@
 ///
 
 /// Variables
-
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
 *STR_following, *STR_statuses, *STR_favourites, *STR_user_id, *STR_directmessage;
 
@@ -90,12 +93,23 @@ scroll_main, donate, win_donate;
 const char *screen_name, *text;
 
 // Base Structures
+/* Both setup by startup-code */
+extern struct ExecBase *SysBase;
+extern struct Library *DOSBase;
+
 struct GfxBase *GfxBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
 
-extern struct ExecBase *SysBase;
-extern struct Library *DOSBase;
+
+#ifdef __amigaos4__
+extern struct ExecIFace *IExec;    /* No need to open them! */
+extern struct DOSIFace  *IDOS;
+
+struct GraphicsIFace    *IGraphics      = NULL;
+struct IntuitionIFace   *IIntuition     = NULL;
+struct MUIMasterIFace   *IMUIMaster     = NULL;
+#endif
 
 ///
 
@@ -137,43 +151,105 @@ BOOL running = TRUE;
 
 BOOL Open_Libs(void ) {
 
-    if ( !(IntuitionBase=(struct IntuitionBase *) OpenLibrary("intuition.library",39)) ) {
+    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary("intuition.library",39)) ) {
 
-       return(0);
+        #ifdef __amigaos4__
+        if (!(IIntuition = (struct IntuitionIFace *) GetInterface((struct Library *)IntuitionBase,
+                                                               "main",
+                                                               1,
+                                                               NULL)))
+        {
+            CloseLibrary((struct Library *)IntuitionBase);
+            return 0;
+        }
+        #endif
+    }
+    else
+        return(0);
+
+
+    if ((GfxBase=(struct GfxBase *) OpenLibrary("graphics.library",0)) ) {
+
+        #ifdef __amigaos4__
+        if (!(IGraphics = (struct GraphicsIFace *) GetInterface((struct Library *)GfxBase,
+                                                               "main",
+                                                               1,
+                                                               NULL)))
+        {
+            CloseLibrary((struct Library *)GfxBase);
+
+            DropInterface((struct Interface *)IIntuition);
+            CloseLibrary((struct Library *)IntuitionBase);
+            return 0;
+        }
+        #endif
+
+    
+    }
+    else
+    {
+        #ifdef __amigaos4__
+        DropInterface((struct Interface *)IIntuition);
+        #endif
+        CloseLibrary((struct Library *)IntuitionBase);
+        return(0);
     }
 
-    if ( !(GfxBase=(struct GfxBase *) OpenLibrary("graphics.library",0)) ) {
+    if ((MUIMasterBase=OpenLibrary(MUIMASTER_NAME,19)) ) {
 
-       CloseLibrary((struct Library *)IntuitionBase);
-       return(0);
+        #ifdef __amigaos4__
+        if (!(IMUIMaster = (struct MUIMasterIFace *) GetInterface((struct Library *)MUIMasterBase,
+                                                               "main",
+                                                               1,
+                                                               NULL)))
+        {
+            CloseLibrary((struct Library *)MUIMasterBase);
+
+            DropInterface((struct Interface *)IGraphics);
+            CloseLibrary((struct Library *)GfxBase);
+
+            DropInterface((struct Interface *)IIntuition);
+            CloseLibrary((struct Library *)IntuitionBase);
+            return 0;
+        }
+        #endif
+     
+    }
+    else
+    {
+        #ifdef __amigaos4__
+        DropInterface((struct Interface *)IIntuition);
+        DropInterface((struct Interface *)IGraphics);
+        #endif
+
+        CloseLibrary((struct Library *)GfxBase);
+        CloseLibrary((struct Library *)IntuitionBase);
+
+        return(0);
     }
 
-    if ( !(MUIMasterBase=OpenLibrary(MUIMASTER_NAME,19)) ) {
-
-       CloseLibrary((struct Library *)GfxBase);
-       CloseLibrary((struct Library *)IntuitionBase);
-       return(0);
-    }
     return(1);
 }
 
 // Close libraries function
 void Close_Libs(void ) {
 
-  if ( IntuitionBase )
-    CloseLibrary((struct Library *)IntuitionBase);
 
-  if ( GfxBase )
-    CloseLibrary((struct Library *)GfxBase);
+    #ifdef __amigaos4__
+    DropInterface((struct Interface *)IMUIMaster);
+    DropInterface((struct Interface *)IIntuition);
+    DropInterface((struct Interface *)IGraphics);
+    #endif
 
-  if ( MUIMasterBase )
-    CloseLibrary(MUIMasterBase);
+    if ( IntuitionBase )
+        CloseLibrary((struct Library *)IntuitionBase);
 
-  if ( DOSBase )
-    CloseLibrary(DOSBase);
+    if ( GfxBase )
+        CloseLibrary((struct Library *)GfxBase);
 
-  if ( SysBase )
-    CloseLibrary((struct Library *)SysBase);
+    if ( MUIMasterBase )
+        CloseLibrary(MUIMasterBase);
+
 }
 
 /// 
@@ -1315,17 +1391,17 @@ recent_gad, mentions_gad, public_gad;
 
       // The Preferences Window
       SubWindow, win_preferences = WindowObject,
-	      MUIA_Window_Title, "Settings",
-	      MUIA_Window_ID, MAKE_ID('P','R','E','F'),
+          MUIA_Window_Title, "Settings",
+          MUIA_Window_ID, MAKE_ID('P','R','E','F'),
 
           WindowContents, VGroup,
 
               Child, VGroup,
 
                   Child, ColGroup(2), GroupFrameT("Account Information"),
-					   Child, Label2("User Name:"),
+                       Child, Label2("User Name:"),
                        Child, str_user_pref = StringObject, StringFrame, MUIA_ObjectID, 1, End,
-					   Child, Label2("Password:"),
+                       Child, Label2("Password:"),
                        Child, str_pass_pref = StringObject, StringFrame,  MUIA_ObjectID, 2, MUIA_String_Secret, TRUE, End,
                   End,
 
@@ -1341,8 +1417,8 @@ recent_gad, mentions_gad, public_gad;
 
       // The Donate Window
       SubWindow, win_donate = WindowObject,
-	      MUIA_Window_Title, "Donate",
-	      MUIA_Window_ID, MAKE_ID('D','N','A','T'),
+          MUIA_Window_Title, "Donate",
+          MUIA_Window_ID, MAKE_ID('D','N','A','T'),
 
           WindowContents, VGroup,
 
@@ -1485,7 +1561,7 @@ recent_gad, mentions_gad, public_gad;
                   End,
               End,
           End,
-	  End,
+      End,
   End;
 
   if (!app) {
