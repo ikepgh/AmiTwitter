@@ -19,7 +19,7 @@ OBJ		  = amitwitter.o
 #
 ## Default, AmigaOS4 gcc part
 #
-BIN	   = NoWinED_OS4
+BIN	   = AmiTwitter_OS4
 
 ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include -mcrt=newlib -fomit-frame-pointer -funroll-loops -mcpu=powerpc -mstring -mmultiple \
@@ -56,6 +56,41 @@ endif
 
 
 #
+## Default, AmigaOS3 gcc part
+#
+BIN	   = AmiTwitter_OS3
+
+ifeq ($(debug),)
+  CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
+			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
+
+  LDFLAGS   =
+else
+  CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
+			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall
+  LDFLAGS   = -gstabs
+endif
+
+LIBS	=
+
+RM		= rm -f
+
+LINK	= gcc
+
+CC		= gcc
+
+STRIP	= strip
+
+ifeq ($(comp),)
+ comp = gcc
+endif
+
+ifeq ($(os),)
+  os = os3
+endif
+
+
+#
 ## Default-strip invocation: OS3, MorphOS, OS4.
 ## AROS needs an other call to avoid that the executable is corrupted.
 #
@@ -75,7 +110,7 @@ ifeq ($(comp), vbcc)
   #
   ## Default, OS4 (vbcc setup)
   #
-  BIN  = NoWinED_OS4
+  BIN  = AmiTwitter_OS4
   CC   = vc +aosppc
   LINK = vc +aosppc
   ifeq ($(debug),)
@@ -88,7 +123,7 @@ ifeq ($(comp), vbcc)
 
   ifeq ($(os), morphos)
     # vbcc & MorphOS
-    BIN  = NoWinED_MOS
+    BIN  = AmiTwitter_MOS
     CC   = vc +morphos
     LINK = vc +morphos
     ifeq ($(debug),)
@@ -105,7 +140,7 @@ ifeq ($(comp), vbcc)
       # vbcc & AmigaOS3
       # [NOTE: Disable optimisations when using the initial 0.9 version of vbcc (only 68k version)
       # Ask Frank Wille for the updated vbcc 0.9 version where several bugs were fixed (compiler AND assembler)
-      BIN  = NoWinED_OS3
+      BIN  = AmiTwitter_OS3
       CC   = vc +aos68k
       LINK = vc +aos68k
       ifeq ($(debug),)
@@ -124,7 +159,7 @@ else # <~vbcc>
   # Since the OS4 gcc setup is already complete, do it for other targets
   ifeq ($(os), morphos)
     # gcc & MorphOS
-    BIN   = NoWinED_MOS
+    BIN   = AmiTwitter_MOS
     CC    = ppc-morphos-gcc
     LINK  = ppc-morphos-gcc
     STRIP = ppc-morphos-strip
@@ -139,23 +174,23 @@ else # <~vbcc>
   else
     ifeq ($(os), os3)
       # gcc & AmigaOS3
-      BIN   = NoWinED_OS3
-      CC    = m68k-amigaos-gcc
-      LINK  = m68k-amigaos-gcc
+      BIN   = AmiTwitter_OS3
+      CC    = gcc
+      LINK  = gcc
       STRIP = strip
       ifeq ($(debug),)
-        CFLAGS = -noixemul -I./include -I../include -O1 -s -m68020-60 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
-        LDFLAGS = -noixemul
-        LIBS   = -lm -lmui
+        CFLAGS = -I./include -I../include -s -m68020-60 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
+        LDFLAGS = 
+        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
       else
-        CFLAGS =  -noixemul -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
-        LDFLAGS = -g -noixemul
-        LIBS   = -lm -lmui -ldebug
+        CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
+        LDFLAGS = -g 
+        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
       endif  # <~debug>
     else
       ifeq ($(os), aros)
         # gcc & AROS
-        BIN   = NoWinED_AROS
+        BIN   = AmiTwitter_AROS
         CC    = i686-pc-aros-gcc
         LINK  = i686-pc-aros-gcc
         STRIP = i686-pc-aros-gcc
