@@ -4,7 +4,7 @@ Author:  AmiTwitter Open Source Team
 Type:  comm/misc
 Version: x.x.x
 Architecture:  m68k-amigaos, others coming soon.....
-Requires:  MUI, .mcc's, ixemul.library
+Requires:  MUI, .mcc's, libiconv.ixlibary
 Distribution: GPL
 
 
@@ -33,11 +33,12 @@ the same directory as the binary file or the program will not run.
 REQUIREMENTS
 -----------
 
-All OS's: MUI, URLtext, BetterString, HTMLtext .mcc's, OpenURL (optional)
+OS 3: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
+libiconv.ixlibary (libs directory), OpenURL (optional)
 
-OS 4: ixemul.library
+OS 4: 
 
-Morphos libiconv.ixlibrary 
+MorphOS:
 
 USAGE
 -----
