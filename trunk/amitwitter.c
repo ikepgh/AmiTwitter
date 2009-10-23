@@ -1031,8 +1031,10 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     return 0;
 }
 
+// The following two functions were part of xTwitter, but are not currently used for AmiTwitter...
+
 // XML unescape only &lt; and &gt;  notice: destructive conversion.
-static void xmlunescape(const char *str) {
+/*static void xmlunescape(const char *str) {
 
     char *p;
     while((p = strstr(str, "&lt;")) != NULL) {
@@ -1045,10 +1047,10 @@ static void xmlunescape(const char *str) {
         while(*p = *(p + 3)) p++;
         *p = '\0';
     }
-}
+}   */
 
 // XML escape only &, > and <;
-static void xmlescape(char *dest, const char *src, size_t n) {
+/*static void xmlescape(char *dest, const char *src, size_t n) {
 
     int i = 0;
     int j = 0;
@@ -1078,7 +1080,7 @@ static void xmlescape(char *dest, const char *src, size_t n) {
             j++;
         }
     }while(src[i++]);
-}
+} */
 
 // UFT8
 int utf8pos(const char *str, int width) {
@@ -1280,7 +1282,7 @@ void amitwitter_update(const char *text) {
 
     get(STR_message, MUIA_String_Contents, &text);
 
-    printf("Message was %u characters long.\n", strlen(text));
+//    printf("Message was %u characters long.\n", strlen(text));
 
     get(str_user_pref, MUIA_String_Contents, &username);
     get(str_pass_pref, MUIA_String_Contents, &password);
@@ -1305,7 +1307,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     get(STR_user_id, MUIA_String_Contents, &screen_name);
     get(STR_directmessage, MUIA_String_Contents, &text);
 
-    printf("Message was %u characters long.\n", strlen(text));
+//    printf("Message was %u characters long.\n", strlen(text));
 
     get(str_user_pref, MUIA_String_Contents, &username);
     get(str_pass_pref, MUIA_String_Contents, &password);
@@ -1320,14 +1322,14 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
 }
 
 // Update stdin
-void amitwitter_update_stdin() {
+/*void amitwitter_update_stdin() {
 
     twitter_t *twitter = NULL;
     int i;
     char text[1024];
     fgets(text, 1024, stdin);
     amitwitter_update(text);
-}
+} */
 
 
 ///
@@ -1552,9 +1554,10 @@ recent_gad, mentions_gad, public_gad;
                   Child, HGroup,
                   Child, HSpace(0),
                   Child, ColGroup(4),
-                  Child, urltxtlink =  urlTextObject(MUIMasterBase,"http://twitter.com/ikepgh","Follow ikepgh on Twitter",MUIV_Font_Normal),
+                  Child, urltxtlink =  urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
                   Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge Project Page",MUIV_Font_Normal),
-                  Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Email ikepgh",MUIV_Font_Normal),
+                  Child, mailtxtlink =
+                  urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Feedback/Suggestions",MUIV_Font_Normal),
                   Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Click to Donate!",MUIV_Font_Normal),
                   End,
                   Child, HSpace(0),
