@@ -1,7 +1,7 @@
 ################################################################
-# $Id: makefile,v 2.3 2009/06/18 20:58:06 ShInKurO Exp $
+# $Id: makefile,v 2.3 2009/10/24 15:58:06 ShInKurO Exp $
 #
-# :ts=4
+#
 #
 # Makefile for AmiTwitter using either gcc or vbcc and for targets:
 #   gcc: AmigaOS4, MorphOS, AmigaOS3, AROS
@@ -25,7 +25,7 @@ ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include -mcrt=newlib -fomit-frame-pointer -funroll-loops -mcpu=powerpc -mstring -mmultiple \
 			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
 			  -Wno-pointer-sign -mregnames
-  LDFLAGS   =
+  LDFLAGS   = -liconv
 else
   CFLAGS	= -I./include -I../include -mcpu=powerpc  -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
 			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall -ggdb
@@ -64,11 +64,11 @@ ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
 			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
 
-  LDFLAGS   =
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
 else
   CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
 			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall
-  LDFLAGS   = -gstabs
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
 endif
 
 LIBS	=
