@@ -11,12 +11,12 @@ Distribution: GPL
 INTRODUCTION
 ------------
 
-This is a  program to send and view Tweets received on the Twitter network.  It has the
+AmiTwitter is a  program to send and view Tweets received on the Twitter network.  It has the
 capability to send Direct Messages.  It can display the 'Following', 'Followers', 'Tweets'
 and 'Favourites' count statistics for the user who sent the most recently received Tweet!  It can 
 download your most recent Tweets and display all @Replies to your account.  It also has a 
 "Random" function that downloads the most Recent Tweets to open public accounts in
-which you are not subscribed...just for fun...and very entertaining.  ;-)
+which you are 'not' subscribed...just for fun...and very entertaining.  ;-)
 
 Thanks! 
 
@@ -34,11 +34,11 @@ REQUIREMENTS
 -----------
 
 OS 3: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
-libiconv.ixlibary (libs directory), OpenURL (optional)
+libiconv.ixlibary (Libs directory), OpenURL (optional)
 
-OS 4: 
+OS 4: ...
 
-MorphOS:
+MorphOS: ...
 
 USAGE
 -----
@@ -46,30 +46,6 @@ USAGE
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
 window, be connected to the internet.
 
----
-
-BUGS
-----
-
-Many at this time...
-
-TO DO
------
-
-- Move code base from HTMLtext to HTMLview
-- Error checking (does not do much of it...user/password missing dialog, etc.)
-- Make code portable for all versions of the Amiga-like OS's
-- Charcters left countdown
-- Periodic refresh option?
-- Busy notification (.mcc)
-
-FEATURE REQUESTS
-----------------
-
-- Command line version
-- character conversion (iconv)/catalog translations
-
----
 
 VERSION HISTORY
 ---------------
