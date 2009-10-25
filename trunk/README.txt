@@ -36,7 +36,7 @@ REQUIREMENTS
 OS 3: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
 libiconv.ixlibary (Libs directory), OpenURL (optional)
 
-OS 4: ...
+OS 4: ixemul.library
 
 MorphOS: ...
 
