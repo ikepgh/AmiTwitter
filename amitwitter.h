@@ -129,7 +129,9 @@ typedef struct {
 
 typedef struct {
     const char *id;
+    const char *name; //added
     const char *screen_name;
+    const char *location; //added
     const char *profile_image_url;
     const char *followers_count;   //added
     const char *friends_count;     //added

@@ -792,6 +792,9 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
             }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
                 ret = xmlTextReaderRead(reader);
                 status->text = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"source")) {
+                ret = xmlTextReaderRead(reader);
+                status->source = (const char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"user")) {
                 status->user = twitter_parse_user_node(reader);
             }
@@ -826,9 +829,15 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
             if(!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
                 user->id = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
+                ret = xmlTextReaderRead(reader);
+                user->name = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
                 ret = xmlTextReaderRead(reader);
                 user->screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
+                ret = xmlTextReaderRead(reader);
+                user->location = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
                 ret = xmlTextReaderRead(reader);
                 user->profile_image_url =
@@ -862,13 +871,13 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
 
 // Display in HTMLtext .mcc
 void twitter_status_print(twitter_status_t *status) {
-
-FILE *outfile;
+                                                                                                                                  
+FILE *outfile;                                             
         
 outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
-printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s</small>", status->user->id, status->user->screen_name, status->text, status->created_at);
-              
+printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small> ",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
+//printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s aka %s</b> hailing from %s %s <p><small>%s</small> from %s", status->user->id, status->user->screen_name, status->user->name, status->user->location, status->text, status->created_at, status->source);
 printf("<p>");
 
 // printf("[%s]%s: %s\n", status->id, status->user->screen_name, status->text);
