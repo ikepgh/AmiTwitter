@@ -1,7 +1,7 @@
 /*
  * AmiTwitter 0.1.1 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
  *
- * Compiled with Cubic IDE/gcc 2.95.3-4
+ * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  */
 
 
-/// Includes
+/// Includes ******************************************************************/
 
 #include <time.h>
 #include <stdio.h>
@@ -62,35 +62,25 @@
 #include <libxml/xmlreader.h>
 #include "amitwitter.h"
 
+/*****************************************************************************/
+
 ///
 
-/// Definitions
+/// Definitions ***************************************************************/
 
+// Defines
 #define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
 
 #define SENDUPDATE    44
 #define CLEAR         45
-#define ID_HOME       46
+#define HOME          46
 #define ID_CANCEL     54
 #define ID_SAVE       55
 #define DIRECTMESSAGE 56
 #define CLEARDM       57
-#define RECENT        58
-#define MENTIONS      59
+#define PROFILE       58
+#define REPLIES       59
 #define RANDOM        60
-
-///
-
-/// Variables
-Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
-*STR_following, *STR_statuses, *STR_favourites, *STR_user_id, *STR_directmessage;
-
-APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
-username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink, txt_source, scroll_source,
-scroll_main, donate, win_donate;
-
-// Direct Messages
-const char *screen_name, *text;
 
 // Base Structures
 /* Both setup by startup-code */
@@ -101,7 +91,6 @@ struct GfxBase *GfxBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
 
-
 #ifdef __amigaos4__
 extern struct ExecIFace *IExec;    /* No need to open them! */
 extern struct DOSIFace  *IDOS;
@@ -111,14 +100,32 @@ struct IntuitionIFace   *IIntuition     = NULL;
 struct MUIMasterIFace   *IMUIMaster     = NULL;
 #endif
 
+/*****************************************************************************/
+
 ///
 
-/// Menu
+/// Variables *****************************************************************/
+
+Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
+*STR_following, *STR_statuses, *STR_favourites, *STR_user_id, *STR_directmessage;
+
+APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
+username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink, txt_source,
+scroll_source, scroll_main, donate, win_donate;
+
+// Direct Messages
+const char *screen_name, *text;
+
+/*****************************************************************************/
+
+///
+
+/// Menu **********************************************************************/
 
 enum {
     ADD_METHOD=1,
 
-    MEN_FILE, MEN_DONATE, MEN_QUIT,
+    MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RANDOM, MEN_DONATE, MEN_QUIT,
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
     MEN_HELP, MEN_HELP2, MEN_ABOUTMUI, MEN_ABOUT,
 };
@@ -127,24 +134,30 @@ enum {
 static struct NewMenu MenuData1[]=
 {
     {NM_TITLE, "File",                         0 , 0, 0,  (APTR)MEN_FILE    },
-    {NM_ITEM,  "Donate",                       0 , 0, 0,  (APTR)MEN_DONATE  },
+    {NM_ITEM,  "Home",                        "H", 0, 0,  (APTR)MEN_HOME    },
+    {NM_ITEM,  "Profile",                     "P", 0, 0,  (APTR)MEN_PROFILE },
+    {NM_ITEM,  "@Replies",                    "R", 0, 0,  (APTR)MEN_REPLIES },
+    {NM_ITEM,  "Random",                      "A", 0, 0,  (APTR)MEN_RANDOM  },
+    {NM_ITEM,  "Donate",                      "D", 0, 0,  (APTR)MEN_DONATE  },
     {NM_ITEM,  "Quit",                        "Q", 0, 0,  (APTR)MEN_QUIT    },
     {NM_TITLE, "Tools",                        0 , 0, 0,  (APTR)MEN_TOOLS   },
-    {NM_ITEM,  "Settings",                     0 , 0, 0,  (APTR)MEN_PREFS   },
+    {NM_ITEM,  "Settings",                    "I", 0, 0,  (APTR)MEN_PREFS   },
     {NM_ITEM,  NM_BARLABEL,                    0 , 0, 0,  (APTR)0           },
     {NM_ITEM,  "MUI Settings",                 0 , 0, 0,  (APTR)MEN_MUIPREFS},
     {NM_TITLE, "Help",                         0 , 0, 0,  (APTR)MEN_HELP    },
-    {NM_ITEM,  "FAQs",                         0 , 0, 0,  (APTR)MEN_HELP2   },
-    {NM_ITEM,  "About AmiTwitter",             0 , 0, 0,  (APTR)MEN_ABOUT   },
+    {NM_ITEM,  "FAQs",                        "?", 0, 0,  (APTR)MEN_HELP2   },
+    {NM_ITEM,  "About AmiTwitter",            "T", 0, 0,  (APTR)MEN_ABOUT   },
     {NM_ITEM,  NM_BARLABEL,                    0 , 0, 0,  (APTR)0           },
     {NM_ITEM,  "About MUI",                    0 , 0, 0,  (APTR)MEN_ABOUTMUI},
     {NM_END,   NULL,                           0 , 0, 0,  (APTR)0           },
 
 };
 
+/*****************************************************************************/
+
 ///
 
-/// Libraries
+/// Libraries *****************************************************************/
 
 // Set to running
 BOOL running = TRUE;
@@ -252,9 +265,11 @@ void Close_Libs(void ) {
 
 }
 
+/*****************************************************************************/
+
 /// 
 
-/// Amitwitter
+/// Amitwitter ****************************************************************/
 
 // New Twitter instance
 twitter_t* twitter_new() {
@@ -283,8 +298,11 @@ twitter_t* twitter_new() {
 //  snprintf(twitter->res_dir, PATH_MAX, "%s.amitwitter", home);
 //  snprintf(twitter->images_dir, PATH_MAX, "%s.amitwitter/images", home);
     snprintf(twitter->images_dir, PATH_MAX, "%sPROGDIR:data/temp", home);
+
     return twitter;
 }
+
+/*****************************************************************************/
 
 // Cleanup
 void twitter_free(twitter_t *twitter) {
@@ -298,6 +316,8 @@ void twitter_free(twitter_t *twitter) {
     free(twitter);
     return;
 }
+
+/*****************************************************************************/
 
 // Twitter Config
 int twitter_config(twitter_t *twitter) {
@@ -379,13 +399,18 @@ int twitter_config(twitter_t *twitter) {
     return 0;
 }
 
+/*****************************************************************************/
+
 // Curl write
 static size_t twitter_curl_write_cb(void *ptr, size_t size, size_t nmemb, void *data) {
 
     size_t realsize = size * nmemb;
     g_byte_array_append((GByteArray *)data, (guint8*)ptr, realsize);
+
     return realsize;
 }
+
+/*****************************************************************************/
 
 // Get latest Tweets with cURL
 int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
@@ -422,12 +447,12 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
         fprintf(stderr, "error respose code: %ld\n", res);
         return res;
     }
-
     curl_easy_cleanup(curl);
 
     return 0;
 }
 
+/*****************************************************************************/
 
 // Send a new Tweet with cURL
 int twitter_update(twitter_t *twitter, const char *status) {
@@ -499,6 +524,7 @@ int twitter_update(twitter_t *twitter, const char *status) {
     return 0;
 }
 
+/*****************************************************************************/
 
 // Send a Direct Message with cURL
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text) {
@@ -567,7 +593,9 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     return 0;
 }
 
-// statuses/triends_timeline API
+/*****************************************************************************/
+
+// statuses/friends_timeline API
 GList* twitter_friends_timeline(twitter_t *twitter) {
 
     int ret;
@@ -606,54 +634,10 @@ GList* twitter_friends_timeline(twitter_t *twitter) {
 
         twitter->last_friends_timeline = atol(status->id);
     }
-
     return timeline;
-
 }
 
-// statuses/mentions API
-GList* twitter_mentions(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_MENTIONS,
-             twitter->mentions);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->mentions = atol(status->id);
-    }
-
-    return timeline;
-
-}
+/*****************************************************************************/
 
 // statuses/user_timeline API
 GList* twitter_user_timeline(twitter_t *twitter) {
@@ -694,10 +678,54 @@ GList* twitter_user_timeline(twitter_t *twitter) {
 
         twitter->last_user_timeline = atol(status->id);
     }
-
     return timeline;
-
 }
+
+/*****************************************************************************/
+
+// statuses/mentions API
+GList* twitter_mentions(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_MENTIONS,
+             twitter->mentions);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->mentions = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
 
 // statuses/public_timeline API
 GList* twitter_public_timeline(twitter_t *twitter) {
@@ -738,10 +766,10 @@ GList* twitter_public_timeline(twitter_t *twitter) {
 
         twitter->last_friends_timeline = atol(status->id);
     }
-
     return timeline;
-
 }
+
+/*****************************************************************************/
 
 // XML parse statuses node
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
@@ -768,6 +796,8 @@ GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
     }while(ret == 1);
     return statuses;
 }
+
+/*****************************************************************************/
 
 // XML parse statuses node
 twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
@@ -808,9 +838,10 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
             xmlFree(name);
         }
     }while(ret == 1);
-
     return status;
 }
+
+/*****************************************************************************/
 
 // XML parse user node
 twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
@@ -842,19 +873,18 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
                 ret = xmlTextReaderRead(reader);
                 user->profile_image_url =
                     (const char *)xmlTextReaderValue(reader);
-            // added the next four...
             }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->followers_count = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->friends_count = (const char *)xmlTextReaderValue(reader);
-            }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
-                ret = xmlTextReaderRead(reader);
-                user->statuses_count = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->favourites_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
+                ret = xmlTextReaderRead(reader);
+                user->statuses_count = (const char *)xmlTextReaderValue(reader);
             }
             xmlFree(name);
         }else if(type == XML_READER_TYPE_END_ELEMENT) {
@@ -869,27 +899,30 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
     return user;
 }
 
+/*****************************************************************************/
+
 // Display in HTMLtext .mcc
 void twitter_status_print(twitter_status_t *status) {
                                                                                                                                   
-FILE *outfile;                                             
+    FILE *outfile;
         
-outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
-printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small> ",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
-//printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s aka %s</b> hailing from %s %s <p><small>%s</small> from %s", status->user->id, status->user->screen_name, status->user->name, status->user->location, status->text, status->created_at, status->source);
-printf("<p>");
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small> ",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
+  //printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s aka %s</b> hailing from %s %s <p><small>%s</small> from %s", status->user->id, status->user->screen_name, status->user->name, status->user->location, status->text, status->created_at, status->source);
+    printf("<p>");
 
-// printf("[%s]%s: %s\n", status->id, status->user->screen_name, status->text);
+  //printf("[%s]%s: %s\n", status->id, status->user->screen_name, status->text);
 
-set (STR_following, MUIA_String_Contents, (int)status->user->friends_count);
-set (STR_friends, MUIA_String_Contents, (int)status->user->followers_count);
-set (STR_statuses, MUIA_String_Contents, (int)status->user->statuses_count);
-set (STR_favourites, MUIA_String_Contents, (int)status->user->favourites_count);
+    set (STR_following, MUIA_String_Contents, (int)status->user->friends_count);
+    set (STR_friends, MUIA_String_Contents, (int)status->user->followers_count);
+    set (STR_statuses, MUIA_String_Contents, (int)status->user->statuses_count);
+    set (STR_favourites, MUIA_String_Contents, (int)status->user->favourites_count);
 
-fclose(stdout);
-
+  fclose(stdout);
 }
+
+/*****************************************************************************/
 
 // Free statuses
 void twitter_statuses_free(GList *statuses) {
@@ -909,15 +942,22 @@ void twitter_statuses_free(GList *statuses) {
         free((void*)(status->source));
         if(status->user){
             free((void*)(status->user->id));
+            free((void*)(status->user->name));
             free((void*)(status->user->screen_name));
+            free((void*)(status->user->location));
             free((void*)(status->user->profile_image_url));
+            free((void*)(status->user->followers_count));
+            free((void*)(status->user->friends_count));
+            free((void*)(status->user->favourites_count));
+            free((void*)(status->user->statuses_count));
             free((void*)(status->user));
         }
         free(status);
     }while((l = g_list_next(l)));
     g_list_free(statuses);
-
 }
+
+/*****************************************************************************/
 
 // Image name
 int twitter_image_name(twitter_status_t *status, char *name) {
@@ -941,6 +981,8 @@ int twitter_image_name(twitter_status_t *status, char *name) {
          
     return 0;
 }
+
+/*****************************************************************************/
 
 // Fetch images
 int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
@@ -979,6 +1021,8 @@ int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
     return 0;
 }
 
+/*****************************************************************************/
+
 // Twitter cURL File
 static size_t twitter_curl_file_cb(void *ptr, size_t size, size_t nmemb, void *data) {
 
@@ -986,6 +1030,8 @@ static size_t twitter_curl_file_cb(void *ptr, size_t size, size_t nmemb, void *d
     fwrite(ptr, size, nmemb, (FILE*)data);
     return realsize;
 }
+
+/*****************************************************************************/
 
 // cURL Fetch image
 int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
@@ -1040,56 +1086,7 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     return 0;
 }
 
-// The following two functions were part of xTwitter, but are not currently used for AmiTwitter...
-
-// XML unescape only &lt; and &gt;  notice: destructive conversion.
-/*static void xmlunescape(const char *str) {
-
-    char *p;
-    while((p = strstr(str, "&lt;")) != NULL) {
-        *p++ = '<';
-        while(*p = *(p + 3)) p++;
-        *p = '\0';
-    }
-    while((p = strstr(str, "&gt;")) != NULL) {
-        *p++ = '>';
-        while(*p = *(p + 3)) p++;
-        *p = '\0';
-    }
-}   */
-
-// XML escape only &, > and <;
-/*static void xmlescape(char *dest, const char *src, size_t n) {
-
-    int i = 0;
-    int j = 0;
-    size_t len = strlen(src);
-    do{
-        if(j + 6 > n){
-            dest[j] = '\0';
-            break;
-        }else if(src[i] == '&'){
-            dest[j++] = '&';
-            dest[j++] = 'a';
-            dest[j++] = 'm';
-            dest[j++] = 'p';
-            dest[j++] = ';';
-        }else if(src[i] == '>'){
-            dest[j++] = '&';
-            dest[j++] = 'g';
-            dest[j++] = 't';
-            dest[j++] = ';';
-        }else if(src[i] == '<'){
-            dest[j++] = '&';
-            dest[j++] = 'l';
-            dest[j++] = 't';
-            dest[j++] = ';';
-        }else{
-            dest[j] = src[i];
-            j++;
-        }
-    }while(src[i++]);
-} */
+/*****************************************************************************/
 
 // UFT8
 int utf8pos(const char *str, int width) {
@@ -1111,6 +1108,8 @@ int utf8pos(const char *str, int width) {
     return i;
 }
 
+/*****************************************************************************/
+
 // Show timeline
 void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
     twitter_status_t *status;
@@ -1126,8 +1125,10 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 
     }while((statuses = g_list_previous(statuses)));
 
-      set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
 }
+
+/*****************************************************************************/
 
 // Get most recent Tweets (statuses/friends_timeline API)
 void amitwitter_loop() {
@@ -1152,7 +1153,7 @@ void amitwitter_loop() {
 
 // original 'while' loop.  my loop below gets content once....
 
-/*    while(1) {
+ /* while(1) {
         timeline = twitter_friends_timeline(twitter);
         if(twitter->debug >= 2)
             printf("timeline num: %d\n", g_list_length(timeline));
@@ -1162,9 +1163,7 @@ void amitwitter_loop() {
         twitter_statuses_free(timeline);
         timeline = NULL;
         sleep(twitter->fetch_interval);
-
-    }
-*/
+    } */
 
 // my 'for' loop, pulls data once
 
@@ -1182,8 +1181,10 @@ void amitwitter_loop() {
     if(i==1) break;
     } 
 
-// twitter_free(twitter);
+    twitter_free(twitter);
 }
+
+/*****************************************************************************/
 
 // Show users most recent messages (statuses/user_timeline API)
 void amitwitter_user_loop() {
@@ -1214,8 +1215,10 @@ void amitwitter_user_loop() {
     if(i==1) break;
     }
 
-// twitter_free(twitter);
+    twitter_free(twitter);
 }
+
+/*****************************************************************************/
 
 // Shows all mentions @Replies (statuses/mentions API)
 void amitwitter_mentions_loop() {
@@ -1246,8 +1249,10 @@ void amitwitter_mentions_loop() {
     if(i==1) break;
     }
 
-// twitter_free(twitter);
+     twitter_free(twitter);
 }
+
+/*****************************************************************************/
 
 // Shows most recent random messages (statuses/public_timeline API)
 void amitwitter_public_loop() {
@@ -1278,8 +1283,10 @@ void amitwitter_public_loop() {
     if(i==1) break;
     }
 
-// twitter_free(twitter);
+    twitter_free(twitter);
 }
+
+/*****************************************************************************/
 
 // Send a Tweet
 void amitwitter_update(const char *text) {
@@ -1299,11 +1306,12 @@ void amitwitter_update(const char *text) {
     twitter = twitter_new();
     twitter_config(twitter);
     twitter_update(twitter, text);
-//  twitter_free(twitter);
+    twitter_free(twitter);
 
     fprintf(stdout, "done\n");
-
 }
+
+/*****************************************************************************/
 
 // Direct Messages
 void amitwitter_direct_message(const char *screen_name, const char *text) {
@@ -1312,7 +1320,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
 
     fprintf(stdout, "sending...");
     fflush(stdout);
-
+   
     get(STR_user_id, MUIA_String_Contents, &screen_name);
     get(STR_directmessage, MUIA_String_Contents, &text);
 
@@ -1324,11 +1332,12 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     twitter = twitter_new();
     twitter_config(twitter);
     twitter_direct_message(twitter, screen_name, text);
-//  twitter_free(twitter);
+    twitter_free(twitter);
 
     fprintf(stdout, "done\n");
-
 }
+
+/*****************************************************************************/
 
 // Update stdin
 /*void amitwitter_update_stdin() {
@@ -1340,28 +1349,28 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     amitwitter_update(text);
 } */
 
+/*****************************************************************************/
 
 ///
 
-/// My functions
+/// My functions **************************************************************/
 
-// 'clear' 
+// "clear Tweet"
 void do_clear(void ) {
     set(STR_message, MUIA_String_Contents,0);
 }
 
-// 'clear direct message' 
+// "clear direct message"
 void do_clear_dm(void) {
     set(STR_directmessage, MUIA_String_Contents,0);
-
 }
 
-// 'about' 
+// "about HTML"
 void about(void ) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
 }
 
-// 'help' 
+// "help HTML"
 void help(void ) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_HELP);
 }
@@ -1376,9 +1385,11 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
     End;
 }
 
+/*****************************************************************************/
+
 ///
 
-/// Main Program
+/// Main Program **************************************************************/
 
 int main(int argc, char *argv[]) {
 
@@ -1399,6 +1410,7 @@ recent_gad, mentions_gad, public_gad;
       MUIA_Application_Description, "A Twitter program",
       MUIA_Application_Base  , "AmiTwitter",
 
+/*****************************************************************************/
 
       // The Preferences Window
       SubWindow, win_preferences = WindowObject,
@@ -1419,12 +1431,13 @@ recent_gad, mentions_gad, public_gad;
               End,
 
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
-                  Child, but_save   = KeyButton("Save",'s'),
-                  Child, but_cancel = KeyButton("Cancel",'c'),
+                  Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
+                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"), 
               End,
           End,
       End,
 
+/*****************************************************************************/
 
       // The Donate Window
       SubWindow, win_donate = WindowObject,
@@ -1454,6 +1467,7 @@ recent_gad, mentions_gad, public_gad;
           End,
       End,
 
+/*****************************************************************************/
 
       // The Main Program Window
       SubWindow, window = WindowObject,
@@ -1488,16 +1502,16 @@ recent_gad, mentions_gad, public_gad;
                   End,
               End,
 
-              Child, HGroup, GroupFrame, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
-                  Child, home_gad = KeyButton("Home", 'h'),
-                  Child, recent_gad = KeyButton("My Tweets", 'm'),
-                  Child, mentions_gad = KeyButton("@Replies", 'r'),
-                  Child, public_gad = KeyButton("Random",'d'),
-                  Child, clear_gad = KeyButton("Clear Tweet",'c'),
-                  Child, sendupdate_gad = KeyButton("Update",'u'),
+              Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                  Child, home_gad = MUI_MakeObject(MUIO_Button,"_Home"),
+                  Child, recent_gad = MUI_MakeObject(MUIO_Button,"_Profile"),
+                  Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
+                  Child, public_gad = MUI_MakeObject(MUIO_Button,"R_andom"),
+                  Child, clear_gad = MUI_MakeObject(MUIO_Button,"_Clear"),
+                  Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
               End, 
 
-              Child, HGroup, GroupFrame, MUIA_Group_SameSize, TRUE,
+              Child, HGroup, MUIA_Group_SameSize, TRUE,
                   Child, ColGroup(2),
                        Child, Label2("Current Tweet Stats..."),
                   End,
@@ -1538,25 +1552,27 @@ recent_gad, mentions_gad, public_gad;
                   End,
               End,
 
-              Child, ColGroup(2),
-                  Child, Label2("Direct Message:"),
-                //Child, STR_directmessage = String("",141),
-                  Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE, End,
-              End,
+              Child, HGroup, 
 
-              Child, HGroup, GroupFrame, MUIA_Group_SameSize, TRUE,
-
-              Child, ColGroup(2),
-                  Child, Label2("Recipient:"),
+                  Child, RectangleObject, MUIA_Weight, 6, End,
+                  Child, Label2("Send:"),
                 //Child, STR_user_id = String("",141),
                   Child, STR_user_id = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE, End,
                   MUIA_ShortHelp, "Enter a screen name only",
+                  Child, Label2("a direct message."),
+                  Child, RectangleObject, MUIA_Weight, 100, End,
               End,
      
-              Child, ColGroup(2),      
-                  Child, clear_dm_gad = KeyButton("Clear Message", 'l'),
-                  Child, send_gad = KeyButton("Send Message", 's'), MUIA_CycleChain, 5,
-                  End,
+              Child, HGroup,
+                  Child, Label2("Message:"),
+                  Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE, End,
+              End,
+
+              Child, HGroup,     
+                  Child, RectangleObject, MUIA_Weight, 200, End,
+                  MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                  Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                  Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
               End,
   
               Child, VGroup, GroupFrame, MUIA_Background, MUII_GroupBack,
@@ -1576,6 +1592,8 @@ recent_gad, mentions_gad, public_gad;
       End,
   End;
 
+/*****************************************************************************/
+
   if (!app) {
 
     printf("Cannot create application!\n");
@@ -1584,7 +1602,7 @@ recent_gad, mentions_gad, public_gad;
 
 ///
 
-/// DoMethods
+/// DoMethods *****************************************************************/
 
   // Load Preferences
   DoMethod(app,MUIM_Application_Load,MUIV_Application_Load_ENV);
@@ -1594,9 +1612,18 @@ recent_gad, mentions_gad, public_gad;
   DoMethod(window,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     app,2,MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
 
-  // Buttons
+  // Main Buttons
   DoMethod(home_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,ID_HOME);
+    app,2,MUIM_Application_ReturnID,HOME);
+
+  DoMethod(recent_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,PROFILE);
+
+  DoMethod(mentions_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,REPLIES);
+
+  DoMethod(public_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,RANDOM);
 
   DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEAR);
@@ -1604,22 +1631,14 @@ recent_gad, mentions_gad, public_gad;
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
 
-  DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
-
+  // Direct Message Buttons
   DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARDM);
 
-  DoMethod(recent_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,RECENT);
+  DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
 
-  DoMethod(mentions_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,MENTIONS);
-
-  DoMethod(public_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,RANDOM);
-
-  // Return keys
+  // Return key
   DoMethod(STR_message,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
 
@@ -1640,9 +1659,11 @@ recent_gad, mentions_gad, public_gad;
   DoMethod(win_donate,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_donate,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
+/*****************************************************************************/
+
 ///
 
-/// Switch 
+/// Switch *******************************************************************/
 
   // Open the main window
   set(window,MUIA_Window_Open,TRUE);
@@ -1662,21 +1683,24 @@ recent_gad, mentions_gad, public_gad;
                      break;
 
                 // Pull Tweets  
-                case ID_HOME:
+                case HOME:
+                case MEN_HOME:
                     remove("PROGDIR:data/temp/twitter.html");
                     set (txt_source, MUIA_HTMLtext_Contents, (int)"Downloading the latest Tweets...");
                     amitwitter_loop();
                     break;
 
                 // Recent
-                case RECENT:
+                case PROFILE:
+                case MEN_PROFILE:
                      remove("PROGDIR:data/temp/twitter.html");
                      set (txt_source, MUIA_HTMLtext_Contents, (int)"Downloading your recently sent Tweets...");
                      amitwitter_user_loop();
                     break;
 
                 // Mentions @Recipient
-                case MENTIONS:
+                case REPLIES:
+                case MEN_REPLIES:
                      remove("PROGDIR:data/temp/twitter.html");
                      set (txt_source, MUIA_HTMLtext_Contents, (int)"Downloading your @Replies...");
                      amitwitter_mentions_loop();
@@ -1684,10 +1708,16 @@ recent_gad, mentions_gad, public_gad;
 
                 // Random
                 case RANDOM:
+                case MEN_RANDOM:
                      remove("PROGDIR:data/temp/twitter.html");
-                     set (txt_source, MUIA_HTMLtext_Contents, (int)"Downloading the most recent Public Tweets (random fun)...");
+                     set (txt_source, MUIA_HTMLtext_Contents, (int)"Downloading the most recent Public Timeline Tweets (random fun)...");
                      amitwitter_public_loop();
                     break;
+
+                // Clear tweet string gadget
+                case CLEAR:
+                     do_clear();
+                     break;
 
                 // Send Tweets
                 case SENDUPDATE:
@@ -1695,27 +1725,23 @@ recent_gad, mentions_gad, public_gad;
                      set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Tweet was sent!");
                      break;
 
-                case DIRECTMESSAGE:
-                     amitwitter_direct_message(screen_name, text);
-                     set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Direct Message was sent!");
-                     break;
-
-                // Clear tweet string gadget
-                case CLEAR:
-                     do_clear();
-                     break;
-
                 // Clear direct message string gadget
                 case CLEARDM:
                      do_clear_dm();
                      break;
 
-                // Show 'about'
+                // Send a Direct Message
+                case DIRECTMESSAGE:
+                     amitwitter_direct_message(screen_name, text);
+                     set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Direct Message was sent!");
+                     break;
+              
+                // Show 'about' HTML
                 case MEN_ABOUT:                   
                      about();
                      break;
 
-                // Show 'help'
+                // Show 'help' HTML
                 case MEN_HELP2:
                      help();
                      break;
@@ -1776,6 +1802,8 @@ recent_gad, mentions_gad, public_gad;
         if (running && sigs) Wait(sigs);
 
     }
+
+/*****************************************************************************/
 
   // Kill the main window
   set(window,MUIA_Window_Open,FALSE);

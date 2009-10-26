@@ -1,7 +1,7 @@
 /*
  * AmiTwitter 0.1.1 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
  *
- * Compiled with Cubic IDE/gcc 2.95.3-4
+ * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
  *
  */
 
+/*****************************************************************************/
+
 #include <time.h>
 
 #define TWITTER_BASE_URI "http://twitter.com"   //https...
@@ -32,6 +34,8 @@
 #define TWITTER_API_PATH_USER_TIMELINE "/statuses/user_timeline.xml"     //added
 #define TWITTER_API_PATH_MENTIONS "/statuses/mentions.xml"               //added
 #define TWITTER_API_PATH_PUBLIC_TIMELINE "/statuses/public_timeline.xml" //added
+
+/*****************************************************************************/
 
 // HTML Introduction/About Message
 #define HTML_INTRO \
@@ -62,6 +66,8 @@
 "<CENTER>No Warranty is Expressed or Implied!</CENTER>" \
 "<HR>" \
 "</FONT></BODY></HTML>"
+
+/*****************************************************************************/
 
 // HTML Help/FAQ Message
 #define HTML_HELP \
@@ -105,7 +111,9 @@
 "<BR>" \
 "</FONT></BODY></HTML>"
 
+/*****************************************************************************/
 
+// Twitter structure
 typedef struct {
     const char *base_uri;
     const char *user;
@@ -126,12 +134,14 @@ typedef struct {
   
 }twitter_t;
 
+/*****************************************************************************/
 
+// User structure
 typedef struct {
     const char *id;
-    const char *name; //added
+    const char *name;              //added
     const char *screen_name;
-    const char *location; //added
+    const char *location;          //added
     const char *profile_image_url;
     const char *followers_count;   //added
     const char *friends_count;     //added
@@ -139,7 +149,9 @@ typedef struct {
     const char *statuses_count;    //added
 }twitter_user_t;
 
+/*****************************************************************************/
 
+// Status structure
 typedef struct {
     const char *created_at;
     const char *id;
@@ -147,6 +159,8 @@ typedef struct {
     const char *source;
     const twitter_user_t *user;
 }twitter_status_t;
+
+/*****************************************************************************/
 
 twitter_t *twitter_new();
 void twitter_free(twitter_t *twitter);
@@ -168,3 +182,5 @@ void twitter_status_print(twitter_status_t *status);
 
 int twitter_fetch_images(twitter_t *twitter, GList *statuses);
 int twitter_fetch_image(twitter_t *twitter, const char *url, char* path);
+
+/*****************************************************************************/
