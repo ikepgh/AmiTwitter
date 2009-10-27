@@ -107,7 +107,8 @@ struct MUIMasterIFace   *IMUIMaster     = NULL;
 /// Variables *****************************************************************/
 
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
-*STR_following, *STR_statuses, *STR_favourites, *STR_user_id, *STR_directmessage;
+*STR_following, *STR_statuses, *STR_favourites, *STR_user_id,
+*STR_directmessage, *STR_name, *STR_location;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink, txt_source,
@@ -909,11 +910,12 @@ void twitter_status_print(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small> ",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
-  //printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s aka %s</b> hailing from %s %s <p><small>%s</small> from %s", status->user->id, status->user->screen_name, status->user->name, status->user->location, status->text, status->created_at, status->source);
     printf("<p>");
 
   //printf("[%s]%s: %s\n", status->id, status->user->screen_name, status->text);
 
+    set (STR_name, MUIA_String_Contents, (int)status->user->name);
+    set (STR_location, MUIA_String_Contents, (int)status->user->location);
     set (STR_following, MUIA_String_Contents, (int)status->user->friends_count);
     set (STR_friends, MUIA_String_Contents, (int)status->user->followers_count);
     set (STR_statuses, MUIA_String_Contents, (int)status->user->statuses_count);
@@ -1339,18 +1341,6 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
 
 /*****************************************************************************/
 
-// Update stdin
-/*void amitwitter_update_stdin() {
-
-    twitter_t *twitter = NULL;
-    int i;
-    char text[1024];
-    fgets(text, 1024, stdin);
-    amitwitter_update(text);
-} */
-
-/*****************************************************************************/
-
 ///
 
 /// My functions **************************************************************/
@@ -1497,8 +1487,7 @@ recent_gad, mentions_gad, public_gad;
 
               Child, ColGroup(2),
                   Child, Label2("Tweet:"),
-                //Child, STR_message = String("",141), 
-                  Child, STR_message = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE,
+                  Child, STR_message = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE,
                   End,
               End,
 
@@ -1511,7 +1500,24 @@ recent_gad, mentions_gad, public_gad;
                   Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
               End, 
 
-              Child, HGroup, MUIA_Group_SameSize, TRUE,
+             Child, HGroup,
+
+                  Child, ColGroup(2),
+                       Child, Label2("Name:"),
+                       Child, STR_name = BetterStringObject,
+                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                       End,
+                  End,
+
+                  Child, ColGroup(2),
+                       Child, Label2("Location:"),
+                       Child, STR_location = BetterStringObject,
+                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                       End,
+                  End,
+              End,
+
+              Child, HGroup, 
                   Child, ColGroup(2),
                        Child, Label2("Current Tweet Stats..."),
                   End,
@@ -1556,8 +1562,7 @@ recent_gad, mentions_gad, public_gad;
 
                   Child, RectangleObject, MUIA_Weight, 6, End,
                   Child, Label2("Send:"),
-                //Child, STR_user_id = String("",141),
-                  Child, STR_user_id = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE, End,
+                  Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
                   MUIA_ShortHelp, "Enter a screen name only",
                   Child, Label2("a direct message."),
                   Child, RectangleObject, MUIA_Weight, 100, End,
@@ -1565,7 +1570,7 @@ recent_gad, mentions_gad, public_gad;
      
               Child, HGroup,
                   Child, Label2("Message:"),
-                  Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE, End,
+                  Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
               End,
 
               Child, HGroup,     
