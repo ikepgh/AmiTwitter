@@ -52,6 +52,9 @@ VERSION HISTORY
 
 x.x.x - Initial Release (Coming soon...)
 
+0.1.2 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
+cleaned up direct message interface to be more useable (cycle chain); added the Source that a Tweet was sent from to the
+results: fixed some memory leaks
 0.1.1 - Fixed bug that caused some malformed image names to not display the image; implemented users/show for the 
 id logged in, returns 20 most recent Tweets you have sent; implemented @Replies and implemented "Random" (most 
 recent Tweets from unprotected accounts in which you do not have to be subscribed...kinda neat)
