@@ -1,5 +1,5 @@
 /*
- * AmiTwitter 0.1.1 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
+ * AmiTwitter 0.1.2 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
  *
  * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
  *
@@ -1394,7 +1394,7 @@ recent_gad, mentions_gad, public_gad;
 
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
-      MUIA_Application_Version , "$VER: AmiTwitter 0.1.1",
+      MUIA_Application_Version , "$VER: AmiTwitter 0.1.2",
       MUIA_Application_Copyright , "©2009, IKE",
       MUIA_Application_Author  , "IKE",
       MUIA_Application_Description, "A Twitter program",
@@ -1480,7 +1480,7 @@ recent_gad, mentions_gad, public_gad;
 
                   Child, TextObject, TextFrame,
                        MUIA_Background, MUII_TextBack,
-                       MUIA_Text_Contents, "\33c\nWhat Are You Doing?\n",
+                       MUIA_Text_Contents, "\33c\0338\33b\nWhat Are You Doing?\n",
                   End,
 
               End,
