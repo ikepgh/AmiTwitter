@@ -1,5 +1,5 @@
 /*
- * AmiTwitter 0.1.1 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
+ * AmiTwitter 0.1.2 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
  *
  * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
  *
@@ -43,7 +43,7 @@
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
 "<FONT COLOR=#000000><CENTER><B>Welcome to AmiTwitter </B></CENTER><BR>" \
 "<HR>"\
-"<CENTER><I><B>Version 0.1.1 © 2009 IKE </B></I></CENTER><BR>" \
+"<CENTER><I><B>Version 0.1.2 © 2009 IKE </B></I></CENTER><BR>" \
 "<HR>" \
 "<CENTER>This program is released under the</CENTER><BR>" \
 "<CENTER>GNU  General Public License</CENTER><BR>" \
