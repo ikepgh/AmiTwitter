@@ -69,7 +69,9 @@
 /// Definitions ***************************************************************/
 
 // Defines
+#ifndef MAKE_ID
 #define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
+#endif
 
 #define SENDUPDATE    44
 #define CLEAR         45
@@ -81,6 +83,8 @@
 #define PROFILE       58
 #define REPLIES       59
 #define RANDOM        60
+
+long __stack = 65536;
 
 // Base Structures
 /* Both setup by startup-code */
@@ -165,7 +169,7 @@ BOOL running = TRUE;
 
 BOOL Open_Libs(void ) {
 
-    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary("intuition.library",39)) ) {
+    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary("intuition.library",0L)) ) {
 
         #ifdef __amigaos4__
         if (!(IIntuition = (struct IntuitionIFace *) GetInterface((struct Library *)IntuitionBase,
@@ -209,7 +213,7 @@ BOOL Open_Libs(void ) {
         return(0);
     }
 
-    if ((MUIMasterBase=OpenLibrary(MUIMASTER_NAME,19)) ) {
+    if ((MUIMasterBase=OpenLibrary(MUIMASTER_NAME,MUIMASTER_VMIN)) ) {
 
         #ifdef __amigaos4__
         if (!(IMUIMaster = (struct MUIMasterIFace *) GetInterface((struct Library *)MUIMasterBase,
@@ -1500,6 +1504,8 @@ recent_gad, mentions_gad, public_gad;
                   Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
               End, 
 
+             Child, MUI_MakeObject(MUIO_HBar,4),
+
              Child, HGroup,
 
                   Child, ColGroup(2),
@@ -1560,15 +1566,14 @@ recent_gad, mentions_gad, public_gad;
 
               Child, HGroup, 
 
-                  Child, RectangleObject, MUIA_Weight, 6, End,
-                  Child, Label2("Send:"),
+                  Child, Label2("      Send:"),
                   Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
                   MUIA_ShortHelp, "Enter a screen name only",
                   Child, Label2("a direct message."),
                   Child, RectangleObject, MUIA_Weight, 100, End,
               End,
      
-              Child, HGroup,
+              Child, HGroup,   
                   Child, Label2("Message:"),
                   Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
               End,
@@ -1680,7 +1685,7 @@ recent_gad, mentions_gad, public_gad;
          LONG result;
 
 
-        switch (DoMethod(app,MUIM_Application_Input,&sigs)) {
+        switch (DoMethod(app,MUIM_Application_NewInput,&sigs)) {
 
                 // Quit program
                 case MUIV_Application_ReturnID_Quit:
@@ -1804,8 +1809,11 @@ recent_gad, mentions_gad, public_gad;
         }
 
         // Continue running and wait for user input
-        if (running && sigs) Wait(sigs);
-
+        if (running && sigs) //Wait(sigs);
+           {
+              sigs = Wait(sigs | SIGBREAKF_CTRL_C);
+               if (sigs & SIGBREAKF_CTRL_C) break;
+           }
     }
 
 /*****************************************************************************/
