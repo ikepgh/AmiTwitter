@@ -1,27 +1,43 @@
-/*
- * AmiTwitter 0.1.2 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
- *
- * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
- * This code is based heavily on xTwitter written
- * by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
- *
- */
+/** $Revision Header *** Header built automatically - do not edit! ***********
+ **
+ ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ **
+ ** File             : amitwitter.c
+ ** Created on       : Friday, 06-Nov-09
+ ** Created by       : IKE
+ ** Current revision : V 0.14
+ **
+ ** Purpose
+ ** -------
+ **   AmiTwitter - a Twitter Program
+ **
+ ** Date        Author                 Comment
+ ** =========   ====================   ====================
+ ** 06-Nov-09   IKE                    added bumprevision
+ **
+ ** $Revision Header *********************************************************/
+/**
+ **
+ ** This program is free software; you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation; either version 2 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ **
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program; if not, write to the Free Software
+ ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ **
+ ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
+ **
+ ** This code is based heavily on xTwitter written
+ ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
+ **
+ ******************************************************************************/
 
 
 /// Includes ******************************************************************/
@@ -60,7 +76,9 @@
 #include <glib.h>
 #include <curl/curl.h>
 #include <libxml/xmlreader.h>
+
 #include "amitwitter.h"
+#include "AmiTwitter_rev.h"
 
 /*****************************************************************************/
 
@@ -302,7 +320,7 @@ twitter_t* twitter_new() {
     twitter->debug = 0;
 //  snprintf(twitter->res_dir, PATH_MAX, "%s.amitwitter", home);
 //  snprintf(twitter->images_dir, PATH_MAX, "%s.amitwitter/images", home);
-    snprintf(twitter->images_dir, PATH_MAX, "%sPROGDIR:data/temp", home);
+    snprintf(twitter->images_dir, PATH_MAX, "%sdata/temp", home);  // PROGDIR:
 
     return twitter;
 }
@@ -1398,7 +1416,7 @@ recent_gad, mentions_gad, public_gad;
 
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
-      MUIA_Application_Version , "$VER: AmiTwitter 0.1.2",
+      MUIA_Application_Version , "$VER: "VSTRING"",
       MUIA_Application_Copyright , "©2009, IKE",
       MUIA_Application_Author  , "IKE",
       MUIA_Application_Description, "A Twitter program",

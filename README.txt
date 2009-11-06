@@ -50,25 +50,28 @@ window, be connected to the internet.
 VERSION HISTORY
 ---------------
 
-x.x.x - Initial Release (Coming soon...)
+1.0 - Initial Release (Coming soon...)
 
-0.1.2 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
+
+0.14 - added proper bumprevision to sources
+0.13 - added stack, CTR-C from CLI, other minor enhancements
+0.12 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
 cleaned up direct message interface to be more useable (cycle chain); added the Source that a Tweet was sent from to the
 results: fixed some memory leaks
-0.1.1 - Fixed bug that caused some malformed image names to not display the image; implemented users/show for the 
+0.11 - Fixed bug that caused some malformed image names to not display the image; implemented users/show for the 
 id logged in, returns 20 most recent Tweets you have sent; implemented @Replies and implemented "Random" (most 
 recent Tweets from unprotected accounts in which you do not have to be subscribed...kinda neat)
-0.1.0 - Added current 'Following', 'Followers', 'Tweets' and 'Favourites' counts; sends Direct Messages!
-0.0.9 - Added 'Donate' window dialog, FAQ help text, fixed download directory locations
-0.0.8 - Fixed download logic/display; added date/time a Tweet was sent
-0.0.7 - Images are now displayed!
-0.0.6 - Downloads recent Tweet data into a window now; working on images...
-0.0.5 - Fixed endless update loop (now only pulls Tweets once when user selects 'Home')
-0.0.4 - Downloads images to a directory
-0.0.3 - Pulls current Tweets from account and dumps to stdout
-0.0.2 - Added 'Settings' window dialog, URLtext links
-0.0.1 - Got it sending Tweets!
-0.0.0 - libtwitter compiled as an .o file
+0.10 - Added current 'Following', 'Followers', 'Tweets' and 'Favourites' counts; sends Direct Messages!
+0.09 - Added 'Donate' window dialog, FAQ help text, fixed download directory locations
+0.08 - Fixed download logic/display; added date/time a Tweet was sent
+0.07 - Images are now displayed!
+0.06 - Downloads recent Tweet data into a window now; working on images...
+0.05 - Fixed endless update loop (now only pulls Tweets once when user selects 'Home')
+0.04 - Downloads images to a directory
+0.03 - Pulls current Tweets from account and dumps to stdout
+0.02 - Added 'Settings' window dialog, URLtext links
+0.01 - Got it sending Tweets!
+0.00 - libtwitter compiled as an .o file
 
 RECOMPILING
 -----------
