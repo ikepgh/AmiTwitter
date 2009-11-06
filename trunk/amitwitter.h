@@ -1,31 +1,49 @@
-/*
- * AmiTwitter 0.1.2 Copyright (C) 2009 IKE <ikepgh@yahoo.com>
- *
- * Compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
- * This code is based heavily on xTwitter written
- * by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
- *
- */
+/** $Revision Header *** Header built automatically - do not edit! ***********
+ **
+ ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ **
+ ** File             : amitwitter.h
+ ** Created on       : Friday, 06-Nov-09
+ ** Created by       : IKE
+ ** Current revision : V 0.14
+ **
+ ** Purpose
+ ** -------
+ **   AmiTwitter - a Twitter Program
+ **
+ ** Date        Author                 Comment
+ ** =========   ====================   ====================
+ ** 06-Nov-09   IKE                    added bumprevision
+ **
+ ** $Revision Header *********************************************************/
+/**
+ **
+ ** This program is free software; you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation; either version 2 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ **
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program; if not, write to the Free Software
+ ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ **
+ ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
+ **
+ ** This code is based heavily on xTwitter written
+ ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
+ **
+ ******************************************************************************/
 
-/*****************************************************************************/
+
+/******************************************************************************/
 
 #include <time.h>
+#include "AmiTwitter_rev.h"
 
 #define TWITTER_BASE_URI "http://twitter.com"   //https...
 #define TWITTER_API_PATH_FRIENDS_TIMELINE "/statuses/friends_timeline.xml"
@@ -35,16 +53,14 @@
 #define TWITTER_API_PATH_MENTIONS "/statuses/mentions.xml"               //added
 #define TWITTER_API_PATH_PUBLIC_TIMELINE "/statuses/public_timeline.xml" //added
 
-/*****************************************************************************/
+/******************************************************************************/
 
 // HTML Introduction/About Message
 #define HTML_INTRO \
 "<HTML><HEAD><BODY>" \
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
-"<FONT COLOR=#000000><CENTER><B>Welcome to AmiTwitter </B></CENTER><BR>" \
+"<FONT COLOR=#000000><CENTER><B>"VSTRING"  © "AUTHOR" </B></CENTER><BR><BR>" \
 "<HR>"\
-"<CENTER><I><B>Version 0.1.2 © 2009 IKE </B></I></CENTER><BR>" \
-"<HR>" \
 "<CENTER>This program is released under the</CENTER><BR>" \
 "<CENTER>GNU  General Public License</CENTER><BR>" \
 "<HR>" \
@@ -67,7 +83,7 @@
 "<HR>" \
 "</FONT></BODY></HTML>"
 
-/*****************************************************************************/
+/******************************************************************************/
 
 // HTML Help/FAQ Message
 #define HTML_HELP \
@@ -111,7 +127,7 @@
 "<BR>" \
 "</FONT></BODY></HTML>"
 
-/*****************************************************************************/
+/******************************************************************************/
 
 // Twitter structure
 typedef struct {
@@ -134,7 +150,7 @@ typedef struct {
   
 }twitter_t;
 
-/*****************************************************************************/
+/******************************************************************************/
 
 // User structure
 typedef struct {
@@ -149,7 +165,7 @@ typedef struct {
     const char *statuses_count;    //added
 }twitter_user_t;
 
-/*****************************************************************************/
+/******************************************************************************/
 
 // Status structure
 typedef struct {
@@ -160,7 +176,7 @@ typedef struct {
     const twitter_user_t *user;
 }twitter_status_t;
 
-/*****************************************************************************/
+/******************************************************************************/
 
 twitter_t *twitter_new();
 void twitter_free(twitter_t *twitter);
@@ -183,4 +199,4 @@ void twitter_status_print(twitter_status_t *status);
 int twitter_fetch_images(twitter_t *twitter, GList *statuses);
 int twitter_fetch_image(twitter_t *twitter, const char *url, char* path);
 
-/*****************************************************************************/
+/******************************************************************************/
