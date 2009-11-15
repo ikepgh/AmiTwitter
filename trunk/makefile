@@ -91,6 +91,41 @@ endif
 
 
 #
+## Default, MOS gcc part
+#
+BIN	   = AmiTwitter_MOS
+
+ifeq ($(debug),)
+  CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
+			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
+
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+else
+  CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
+			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+endif
+
+LIBS	=
+
+RM		= rm -f
+
+LINK	= ppc-morphos-gcc
+
+CC		= ppc-morphos-gcc
+
+STRIP	= ppc-morphos-strip
+
+ifeq ($(comp),)
+ comp = gcc
+endif
+
+ifeq ($(os),)
+  os = morphos
+endif
+
+
+#
 ## Default-strip invocation: OS3, MorphOS, OS4.
 ## AROS needs an other call to avoid that the executable is corrupted.
 #
@@ -165,11 +200,13 @@ else # <~vbcc>
     STRIP = ppc-morphos-strip
     LIBS = -ldebug
       ifeq ($(debug),)
-        CFLAGS = -I./include -I../include  -s -O1
+        CFLAGS = -I./include -I../include  -s -O1 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
         LDFLAGS =
+        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
       else
-        CFLAGS = -I./include -I../include -D_DBUG
+        CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
         LDFLAGS = -gstabs
+        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
       endif  # <~debug>
   else
     ifeq ($(os), os3)
