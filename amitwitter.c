@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.14
+ ** Current revision : V 0.15
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
  **
  ** $Revision Header *********************************************************/
@@ -63,6 +64,9 @@
 #include <libraries/mui.h>
 #if defined(__AMIGA__) && !defined(__PPC__)
 #include <clib/gadtools_protos.h>
+#endif
+#if defined (__MORPHOS__)
+#include <proto/exec.h>
 #endif
 #include <mui/Urltext_mcc.h>
 #include <mui/HTMLtext_mcc.h>
@@ -122,6 +126,27 @@ struct IntuitionIFace   *IIntuition     = NULL;
 struct MUIMasterIFace   *IMUIMaster     = NULL;
 #endif
 
+#ifdef __MORPHOS__
+#ifndef __ixemul__
+
+struct Library *SocketBase = NULL;
+
+//#include <proto/dos.h>
+//#include <bsdsocket.h>
+#include <amitcp/socketbasetags.h>
+
+#define select(args...) WaitSelect( args, NULL)
+#define inet_ntoa(x)    Inet_NtoA( x ## .s_addr)
+#define ioctl(a,b,c,d)  IoctlSocket( (LONG)a, (ULONG)b, (char*)c)
+#define _AMIGASF        1
+
+#else /* __ixemul__ */
+
+//#warning compiling with ixemul...
+
+#endif
+#endif
+
 /*****************************************************************************/
 
 ///
@@ -152,7 +177,7 @@ enum {
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
     MEN_HELP, MEN_HELP2, MEN_ABOUTMUI, MEN_ABOUT,
 };
-
+/*
 // Menu structure
 static struct NewMenu MenuData1[]=
 {
@@ -175,7 +200,7 @@ static struct NewMenu MenuData1[]=
     {NM_END,   NULL,                           0 , 0, 0,  (APTR)0           },
 
 };
-
+*/
 /*****************************************************************************/
 
 ///
@@ -186,8 +211,19 @@ static struct NewMenu MenuData1[]=
 BOOL running = TRUE;
 
 BOOL Open_Libs(void ) {
+    
+#ifdef __MORPHOS__
 
-    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary("intuition.library",0L)) ) {
+    if( !(SocketBase = OpenLibrary((CONST_STRPTR)"bsdsocket.library", 4)) ) {
+        
+        fprintf(stderr, "No TCP/IP Stack running!\n\a");
+        CloseLibrary((struct Library *)SocketBase);
+        return (0);
+    }
+#endif
+    
+
+    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary((CONST_STRPTR)"intuition.library",37)) ) {
 
         #ifdef __amigaos4__
         if (!(IIntuition = (struct IntuitionIFace *) GetInterface((struct Library *)IntuitionBase,
@@ -204,7 +240,7 @@ BOOL Open_Libs(void ) {
         return(0);
 
 
-    if ((GfxBase=(struct GfxBase *) OpenLibrary("graphics.library",0)) ) {
+    if ((GfxBase=(struct GfxBase *) OpenLibrary((CONST_STRPTR)"graphics.library",0)) ) {
 
         #ifdef __amigaos4__
         if (!(IGraphics = (struct GraphicsIFace *) GetInterface((struct Library *)GfxBase,
@@ -286,6 +322,10 @@ void Close_Libs(void ) {
     if ( MUIMasterBase )
         CloseLibrary(MUIMasterBase);
 
+#ifdef __MORPHOS__        
+    if ( SocketBase )
+        CloseLibrary(SocketBase);        
+#endif
 }
 
 /*****************************************************************************/
@@ -1406,7 +1446,7 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 int main(int argc, char *argv[]) {
 
 APTR app, window, sendupdate_gad, clear_gad, home_gad, clear_dm_gad, send_gad,
-recent_gad, mentions_gad, public_gad;
+recent_gad, mentions_gad, public_gad, settings_gad;
 
   if ( ! Open_Libs() ) {
 
@@ -1485,7 +1525,7 @@ recent_gad, mentions_gad, public_gad;
       SubWindow, window = WindowObject,
           MUIA_Window_Title, "AmiTwitter",
           MUIA_Window_ID , MAKE_ID('W','T','M','F'),
-          MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,MenuData1,0),
+    //      MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,MenuData1,0),
 
           WindowContents, VGroup,
 
@@ -1616,6 +1656,10 @@ recent_gad, mentions_gad, public_gad;
                   Child, HSpace(0),
                   End,
               End,
+
+              Child, HGroup,
+                  Child, settings_gad = MUI_MakeObject(MUIO_Button,"Settings"),
+              End,
           End,
       End,
   End;
@@ -1658,6 +1702,9 @@ recent_gad, mentions_gad, public_gad;
 
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
+
+  DoMethod(settings_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,MEN_PREFS); 
 
   // Direct Message Buttons
   DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,

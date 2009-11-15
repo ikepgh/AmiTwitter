@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.14
+ ** Current revision : V 0.15
  **
  ** Purpose
  ** -------
@@ -13,14 +13,15 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	14
-#define DATE		"06.11.09"
-#define VERS		"AmiTwitter 0.14"
-#define VSTRING		"AmiTwitter 0.14 (06.11.09)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.14 (06.11.09)\r\n"
-#define AUTHOR		"IKE"
+#define REVISION	15
+#define DATE		"15.11.09"
+#define VERS		"AmiTwitter 0.15"
+#define VSTRING		"AmiTwitter 0.15 (15.11.09)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.15 (15.11.09)\r\n"
+#define AUTHOR		"- Unknown -"
 #define PROJECT		"AmiTwitter"

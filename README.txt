@@ -36,9 +36,12 @@ REQUIREMENTS
 OS 3: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
 libiconv.ixlibary (Libs directory), OpenURL (optional)
 
-OS 4: ixemul.library
+OS 4: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
+ixemul.library (Libs directory), OpenURL (optional)
 
-MorphOS: ...
+MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
+libiconv.ixlibary (Libs directory), OpenURL (optional)
+
 
 USAGE
 -----
@@ -52,7 +55,7 @@ VERSION HISTORY
 
 1.0 - Initial Release (Coming soon...)
 
-
+0.15 - preliminary compile on MorphOS, fixed AmiTwitter icons/image
 0.14 - added proper bumprevision to sources
 0.13 - added stack, CTR-C from CLI, other minor enhancements
 0.12 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
