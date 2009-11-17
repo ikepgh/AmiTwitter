@@ -47,7 +47,7 @@ USAGE
 -----
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
-window, be connected to the internet.
+window, be connected to the internet.  It also helps if you are already following some people currently.
 
 
 VERSION HISTORY
@@ -55,6 +55,7 @@ VERSION HISTORY
 
 1.0 - Initial Release (Coming soon...)
 
+0.16 - added hothelp, improved interface, added cross-platform Menus
 0.15 - preliminary compile on MorphOS, fixed AmiTwitter icons/image
 0.14 - added proper bumprevision to sources
 0.13 - added stack, CTR-C from CLI, other minor enhancements
