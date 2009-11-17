@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.15
+ ** Current revision : V 0.16
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
  **
@@ -62,6 +63,8 @@
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
 "<FONT COLOR=#000000><CENTER><B>"VSTRING"  © "AUTHOR" </B></CENTER><BR><BR>" \
 "<HR>"\
+"<CENTER>Enter your User Name/Password in the Settings window to get started... </CENTER><BR>" \
+"<HR>"\
 "<CENTER>This program is released under the</CENTER><BR>" \
 "<CENTER>GNU  General Public License</CENTER><BR>" \
 "<HR>" \
@@ -75,7 +78,7 @@
 "<CENTER>URLtext © Alfonso Ranieri</CENTER><BR>" \
 "<CENTER>HTMLtext © Dirk Holtwick</CENTER><BR>" \
 "<CENTER>OpenURL, BetterString  © Open Source Team</CENTER><BR>" \
-"<CENTER>libiconv.ixlibrary © GNU, port by Bruno Haible</CENTER><BR>" \
+"<CENTER>libiconv.ixlibrary © GNU, port by Bruno Haible </CENTER><BR>" \
 "<HR>" \
 "<CENTER><IMG SRC = PROGDIR:data/program_images/curl.gif>&nbsp;</CENTER><BR>" \
 "<BR>" \
@@ -96,10 +99,10 @@
 "<CENTER>Answer: MUI, HTMLtext, URLtext, BetterString.  'libiconv.ixlibrary' is required to be in your 'Libs' directory.  OpenURL is optional. </CENTER><BR>" \
 "<HR>"\
 "<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>" \
-"<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter username/password in the 'Tools' ->'Settings' window and saved them?</CENTER><BR>" \
+"<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter username/password in the 'Tools' ->'Settings' window and saved them? Are you already following some people (for Home to work) and have you sent some Tweets (for Profile to work)?</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Direct Messages don't seem to work?</CENTER><BR>" \
-"<CENTER>Answer: Ensure you enter the recipient's 'Screen Name' (i.e. username) correctly, it does not currently accept user id numbers.</CENTER><BR>" \
+"<CENTER>Answer: Ensure you enter the recipient's 'Screen Name' (i.e. their User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>" \
 "<HR>" \
 "<CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>" \
 "<CENTER>Answer: Follow the 'Click to Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>" \
@@ -108,19 +111,19 @@
 "<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Why is the file size so large?</CENTER><BR>" \
-"<CENTER>Answer: Because AmiTwitter relies on numerous libs to work: cURL, SSL, xml2, glib, etc....</CENTER><BR>" \
+"<CENTER>Answer: Because AmiTwitter relies on numerous libs to work, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Why did you write AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: To prove it could be done on AmigaOS 3.x!</CENTER><BR>" \
+"<CENTER>Answer: To prove it could be done!</CENTER><BR>" \
 "<HR>" \
 "<CENTER>What is AmiTwitter based on?</CENTER><BR>" \
 "<CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>" \
 "<HR>" \
 "<CENTER>Links in the main Tweets window don't work?</CENTER><BR>" \
-"<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of the .mcc's currently available for 3.x and useable with gcc (i.e. HTMLtext)</CENTER><BR>" \
+"<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (plan to switch to HTMLview.mcc in the future)</CENTER><BR>" \
 "<HR>" \
 "<CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: First, learn more of the Twitter API, but it depends on the feedback I recieve.  Also, ports to other systems (i.e MorphOS and OS 4.x) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>" \
+"<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>" \
 "<HR>" \
 "<CENTER>I don't know how to code, what can I do?</CENTER><BR>" \
 "<CENTER>Consider donating.<BR>" \

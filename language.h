@@ -1,0 +1,64 @@
+/** $Revision Header *** Header built automatically - do not edit! ***********
+ **
+ ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ **
+ ** File             : amitwitter.h
+ ** Created on       : Friday, 06-Nov-09
+ ** Created by       : IKE
+ ** Current revision : V 0.16
+ **
+ ** Purpose
+ ** -------
+ **   AmiTwitter - a Twitter Program
+ **
+ ** Date        Author                 Comment
+ ** =========   ====================   ====================
+ ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
+ ** 15-Nov-09   - Unknown -            initial MorphOS compile
+ ** 06-Nov-09   IKE                    added bumprevision
+ **
+ ** $Revision Header *********************************************************/
+/**
+ **
+ ** This program is free software; you can redistribute it and/or modify
+ ** it under the terms of the GNU General Public License as published by
+ ** the Free Software Foundation; either version 2 of the License, or
+ ** (at your option) any later version.
+ **
+ ** This program is distributed in the hope that it will be useful,
+ ** but WITHOUT ANY WARRANTY; without even the implied warranty of
+ ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ ** GNU General Public License for more details.
+ **
+ ** You should have received a copy of the GNU General Public License
+ ** along with this program; if not, write to the Free Software
+ ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ **
+ ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
+ **
+ ** This code is based heavily on xTwitter written
+ ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
+ **
+ ******************************************************************************/
+
+
+/******************************************************************************/
+
+// Menu Items
+
+#define MSG_FILE     "File"
+#define MSG_HOME     "Home"
+#define MSG_PROFILE  "Profile"
+#define MSG_REPLIES  "@Replies"
+#define MSG_RANDOM   "Random"
+#define MSG_DONATE   "Donate"
+#define MSG_QUIT     "Quit"
+#define MSG_TOOLS    "Tools"
+#define MSG_PREFS    "Settings"
+#define MSG_MUIPREFS "MUI Settings"
+#define MSG_HELP     "Help"
+#define MSG_HELP2    "FAQs"
+#define MSG_ABOUT    "About AmiTwitter"
+#define MSG_ABOUTMUI "About MUI"
+
+/******************************************************************************/

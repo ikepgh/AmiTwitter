@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.15
+ ** Current revision : V 0.16
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
  **
@@ -62,6 +63,7 @@
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 #include <libraries/mui.h>
+#include <libraries/gadtools.h>
 #if defined(__AMIGA__) && !defined(__PPC__)
 #include <clib/gadtools_protos.h>
 #endif
@@ -83,6 +85,7 @@
 
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
+#include "language.h"
 
 /*****************************************************************************/
 
@@ -159,7 +162,7 @@ Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink, txt_source,
-scroll_source, scroll_main, donate, win_donate;
+scroll_source, scroll_main, donate, win_donate, twittersite;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -175,32 +178,40 @@ enum {
 
     MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RANDOM, MEN_DONATE, MEN_QUIT,
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
-    MEN_HELP, MEN_HELP2, MEN_ABOUTMUI, MEN_ABOUT,
+    MEN_HELP, MEN_HELP2, MEN_ABOUT, MEN_ABOUTMUI
 };
-/*
+
+#define M(type,title_id,flags,men) type, (UBYTE *)(title_id), 0, flags, 0, (APTR)(men)
+#define BAR    NM_ITEM, NM_BARLABEL, NULL, 0, 0, NULL
+#define MENU_END  NM_END, NULL, NULL, 0, 0, NULL
+
 // Menu structure
 static struct NewMenu MenuData1[]=
 {
-    {NM_TITLE, "File",                         0 , 0, 0,  (APTR)MEN_FILE    },
-    {NM_ITEM,  "Home",                        "H", 0, 0,  (APTR)MEN_HOME    },
-    {NM_ITEM,  "Profile",                     "P", 0, 0,  (APTR)MEN_PROFILE },
-    {NM_ITEM,  "@Replies",                    "R", 0, 0,  (APTR)MEN_REPLIES },
-    {NM_ITEM,  "Random",                      "A", 0, 0,  (APTR)MEN_RANDOM  },
-    {NM_ITEM,  "Donate",                      "D", 0, 0,  (APTR)MEN_DONATE  },
-    {NM_ITEM,  "Quit",                        "Q", 0, 0,  (APTR)MEN_QUIT    },
-    {NM_TITLE, "Tools",                        0 , 0, 0,  (APTR)MEN_TOOLS   },
-    {NM_ITEM,  "Settings",                    "I", 0, 0,  (APTR)MEN_PREFS   },
-    {NM_ITEM,  NM_BARLABEL,                    0 , 0, 0,  (APTR)0           },
-    {NM_ITEM,  "MUI Settings",                 0 , 0, 0,  (APTR)MEN_MUIPREFS},
-    {NM_TITLE, "Help",                         0 , 0, 0,  (APTR)MEN_HELP    },
-    {NM_ITEM,  "FAQs",                        "?", 0, 0,  (APTR)MEN_HELP2   },
-    {NM_ITEM,  "About AmiTwitter",            "T", 0, 0,  (APTR)MEN_ABOUT   },
-    {NM_ITEM,  NM_BARLABEL,                    0 , 0, 0,  (APTR)0           },
-    {NM_ITEM,  "About MUI",                    0 , 0, 0,  (APTR)MEN_ABOUTMUI},
-    {NM_END,   NULL,                           0 , 0, 0,  (APTR)0           },
 
+    M( NM_TITLE,  MSG_FILE,      0,   MEN_FILE    ),
+    M( NM_ITEM,   MSG_HOME,      0,   MEN_HOME    ),
+    M( NM_ITEM,   MSG_PROFILE,   0,   MEN_PROFILE ),
+    M( NM_ITEM,   MSG_REPLIES,   0,   MEN_REPLIES ),
+    M( NM_ITEM,   MSG_RANDOM,    0,   MEN_RANDOM  ),
+    M( NM_ITEM,   MSG_DONATE,    0,   MEN_DONATE  ),
+    M( NM_ITEM,   MSG_QUIT,      0,   MEN_QUIT    ),
+
+    M( NM_TITLE,  MSG_TOOLS,     0,   MEN_TOOLS   ),
+    M( NM_ITEM,   MSG_PREFS,     0,   MEN_PREFS   ),
+    BAR,          
+    M( NM_ITEM,   MSG_MUIPREFS,  0,   MEN_MUIPREFS),
+
+    M( NM_TITLE,  MSG_HELP,      0,   MEN_HELP    ),
+    M( NM_ITEM,   MSG_HELP2,     0,   MEN_HELP2   ),
+    M( NM_ITEM,   MSG_ABOUT,     0,   MEN_ABOUT   ),
+    BAR,
+    M( NM_ITEM,   MSG_ABOUTMUI,  0,   MEN_ABOUTMUI),
+    M( NM_END,    NULL,          0,   0           ),
+
+    MENU_END
 };
-*/
+
 /*****************************************************************************/
 
 ///
@@ -1125,7 +1136,8 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     i = strlen(url);
     while(i-- && url[i] != '/');
 
-    /*  esc = curl_easy_escape(curl, url + i + 1, 0);  /* changed to line below for curl 7.14.0 capatability */
+    /* esc = curl_easy_escape(curl, url + i + 1, 0); */
+    /* changed to line below for curl 7.14.0 compatability */
     esc = curl_escape(url + i + 1, 0);
 
     strncpy(escaped_url, url, PATH_MAX - 1);
@@ -1446,7 +1458,7 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 int main(int argc, char *argv[]) {
 
 APTR app, window, sendupdate_gad, clear_gad, home_gad, clear_dm_gad, send_gad,
-recent_gad, mentions_gad, public_gad, settings_gad;
+recent_gad, mentions_gad, public_gad;
 
   if ( ! Open_Libs() ) {
 
@@ -1485,6 +1497,25 @@ recent_gad, mentions_gad, public_gad, settings_gad;
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
                   Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
                   Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"), 
+              End,
+
+              Child, VGroup, GroupFrameT("Help!"),
+
+                  MUIA_Background, MUII_GroupBack,
+                  Child, TextObject, TextFrame,
+                       MUIA_Background, MUII_TextBack,
+                       MUIA_Text_Contents, "\33c\nDon't already have a User Name/Password?\n  You must register at the Twitter website first!\n",
+                  End,
+
+                  Child, HGroup,
+                  Child, HSpace(0),
+                  Child, ColGroup(0),
+                  Child, twittersite = urlTextObject(MUIMasterBase,"http://twitter.com/","Establish an Account",MUIV_Font_Normal),
+                  Child, HSpace(0),
+                  Child, HSpace(0),
+                  End,
+                  Child, HSpace(0),
+                  End,
               End,
           End,
       End,
@@ -1525,7 +1556,7 @@ recent_gad, mentions_gad, public_gad, settings_gad;
       SubWindow, window = WindowObject,
           MUIA_Window_Title, "AmiTwitter",
           MUIA_Window_ID , MAKE_ID('W','T','M','F'),
-    //      MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,MenuData1,0),
+          MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,MenuData1,0),
 
           WindowContents, VGroup,
 
@@ -1547,70 +1578,79 @@ recent_gad, mentions_gad, public_gad, settings_gad;
 
               End,
 
-              Child, ColGroup(2),
-                  Child, Label2("Tweet:"),
-                  Child, STR_message = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE,
-                  End,
-              End,
+              Child, HGroup, GroupFrameT("Send a Tweet"),
 
-              Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
-                  Child, home_gad = MUI_MakeObject(MUIO_Button,"_Home"),
-                  Child, recent_gad = MUI_MakeObject(MUIO_Button,"_Profile"),
-                  Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
-                  Child, public_gad = MUI_MakeObject(MUIO_Button,"R_andom"),
-                  Child, clear_gad = MUI_MakeObject(MUIO_Button,"_Clear"),
-                  Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
-              End, 
+                  Child, ColGroup(4), 
+                       Child, Label2("Tweet:"),
+                       Child, STR_message = BetterStringObject, StringFrame,
+                       MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                       MUIA_ShortHelp, "Enter your Tweet here and click 'Update' to send a Tweet",
 
-             Child, MUI_MakeObject(MUIO_HBar,4),
-
-             Child, HGroup,
-
-                  Child, ColGroup(2),
-                       Child, Label2("Name:"),
-                       Child, STR_name = BetterStringObject,
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                       End,
-                  End,
-
-                  Child, ColGroup(2),
-                       Child, Label2("Location:"),
-                       Child, STR_location = BetterStringObject,
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                  Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                       Child, clear_gad = MUI_MakeObject(MUIO_Button,"_Clear"),
+                       Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
                        End,
                   End,
               End,
 
-              Child, HGroup, 
-                  Child, ColGroup(2),
-                       Child, Label2("Current Tweet Stats..."),
+              Child, VGroup, GroupFrameT("User Status"),
+
+                  Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                       Child, home_gad = MUI_MakeObject(MUIO_Button,"_Home"),
+                       Child, recent_gad = MUI_MakeObject(MUIO_Button,"_Profile"),
+                       Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
+                       Child, public_gad = MUI_MakeObject(MUIO_Button,"R_andom"),
                   End,
 
-                  Child, ColGroup(2),
-                       Child, Label2("Following:"),
-                       Child, STR_following = BetterStringObject, 
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                  Child, HGroup,
+
+                       Child, ColGroup(2),
+                           Child, Label2("Name:"),
+                           Child, STR_name = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
+                       End,
+
+                       Child, ColGroup(2),
+                           Child, Label2("Location:"),
+                           Child, STR_location = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
                        End,
                   End,
 
-                  Child, ColGroup(2),
-                       Child, Label2("Followers:"),
-                       Child, STR_friends = BetterStringObject, 
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                  Child, HGroup,
+                       Child, ColGroup(2),
+                           Child, Label2("Current Tweet Stats..."),
+                           MUIA_ShortHelp, "Displays statistics for most recent Tweet",
                        End,
-                  End,
 
-                  Child, ColGroup(2),
-                       Child, Label2("Tweets:"),
-                       Child, STR_statuses = BetterStringObject,
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                       Child, ColGroup(2),
+                           Child, Label2("Following:"),
+                           Child, STR_following = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
                        End,
-                  End,
 
-                  Child, ColGroup(2),
-                       Child, Label2("Favourites:"),
-                       Child, STR_favourites = BetterStringObject, 
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                       Child, ColGroup(2),
+                           Child, Label2("Followers:"),
+                           Child, STR_friends = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
+                       End,
+
+                       Child, ColGroup(2),
+                           Child, Label2("Tweets:"),
+                           Child, STR_statuses = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
+                       End,
+
+                       Child, ColGroup(2),
+                           Child, Label2("Favorites:"),
+                           Child, STR_favourites = BetterStringObject,
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
+                           End,
                        End,
                   End,
               End,
@@ -1622,25 +1662,29 @@ recent_gad, mentions_gad, public_gad, settings_gad;
                   End,
               End,
 
-              Child, HGroup, 
+              Child, VGroup, GroupFrameT("Send a Direct Message"),
+         
+                  Child, HGroup,
 
-                  Child, Label2("      Send:"),
-                  Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                  MUIA_ShortHelp, "Enter a screen name only",
-                  Child, Label2("a direct message."),
-                  Child, RectangleObject, MUIA_Weight, 100, End,
-              End,
+                       Child, Label2("      Send:"),
+                       Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                       MUIA_ShortHelp, "Enter a screen name only",
+                       Child, Label2("a direct message."),
+                       Child, RectangleObject, MUIA_Weight, 100, End,
+                  End,
      
-              Child, HGroup,   
-                  Child, Label2("Message:"),
-                  Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-              End,
+                  Child, HGroup,
+                       Child, ColGroup(4),
+                           Child, Label2("Message:"),
+                           Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter your message here and click 'Send' to send a Direct Message",
 
-              Child, HGroup,     
-                  Child, RectangleObject, MUIA_Weight, 200, End,
-                  MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
-                  Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                  Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
+                       Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
+                           End,
+                       End,
+                  End,
               End,
   
               Child, VGroup, GroupFrame, MUIA_Background, MUII_GroupBack,
@@ -1655,10 +1699,6 @@ recent_gad, mentions_gad, public_gad, settings_gad;
                   End,
                   Child, HSpace(0),
                   End,
-              End,
-
-              Child, HGroup,
-                  Child, settings_gad = MUI_MakeObject(MUIO_Button,"Settings"),
               End,
           End,
       End,
@@ -1688,30 +1728,43 @@ recent_gad, mentions_gad, public_gad, settings_gad;
   DoMethod(home_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,HOME);
 
+  set(home_gad, MUIA_ShortHelp, (ULONG)"Download latest Tweets");
+
   DoMethod(recent_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,PROFILE);
+
+  set(recent_gad, MUIA_ShortHelp, (ULONG)"View recently sent Tweets");
 
   DoMethod(mentions_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,REPLIES);
 
+  set(mentions_gad, MUIA_ShortHelp, (ULONG)"View recent @Replies");
+
   DoMethod(public_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,RANDOM);
+
+  set(public_gad, MUIA_ShortHelp, (ULONG)"Download Random Tweets");
 
   DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEAR);
 
+  set(clear_gad, MUIA_ShortHelp, (ULONG)"Clear Tweet text");
+
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
 
-  DoMethod(settings_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,MEN_PREFS); 
+  set(sendupdate_gad, MUIA_ShortHelp, (ULONG)"Send a Tweet");
 
   // Direct Message Buttons
   DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARDM);
 
+  set(clear_dm_gad, MUIA_ShortHelp, (ULONG)"Clear Direct Message text");
+
   DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
+
+  set(send_gad, MUIA_ShortHelp, (ULONG)"Send a Direct Message");
 
   // Return key
   DoMethod(STR_message,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
@@ -1733,6 +1786,7 @@ recent_gad, mentions_gad, public_gad, settings_gad;
   // Donate
   DoMethod(win_donate,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_donate,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
 
 /*****************************************************************************/
 
