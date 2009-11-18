@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.16
+ ** Current revision : V 0.17
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
@@ -47,8 +48,8 @@
 // Menu Items
 
 #define MSG_FILE     "File"
-#define MSG_HOME     "Home"
-#define MSG_PROFILE  "Profile"
+#define MSG_HOME     "Timeline"
+#define MSG_PROFILE  "My Tweets"
 #define MSG_REPLIES  "@Replies"
 #define MSG_RANDOM   "Random"
 #define MSG_DONATE   "Donate"
