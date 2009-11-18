@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.16
+ ** Current revision : V 0.17
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
  ** 06-Nov-09   IKE                    added bumprevision
@@ -47,13 +48,14 @@
 #include <time.h>
 #include "AmiTwitter_rev.h"
 
-#define TWITTER_BASE_URI "http://twitter.com"   //https...
+#define TWITTER_BASE_URI                  "http://twitter.com"   //https...
+#define TWITTER_API_PATH_UPDATE           "/statuses/update.xml"
+#define TWITTER_API_PATH_DIRECT_MESSAGE   "/direct_messages/new.xml"
+
 #define TWITTER_API_PATH_FRIENDS_TIMELINE "/statuses/friends_timeline.xml"
-#define TWITTER_API_PATH_UPDATE "/statuses/update.xml"
-#define TWITTER_API_PATH_DIRECT_MESSAGE "/direct_messages/new.xml"       //added
-#define TWITTER_API_PATH_USER_TIMELINE "/statuses/user_timeline.xml"     //added
-#define TWITTER_API_PATH_MENTIONS "/statuses/mentions.xml"               //added
-#define TWITTER_API_PATH_PUBLIC_TIMELINE "/statuses/public_timeline.xml" //added
+#define TWITTER_API_PATH_USER_TIMELINE    "/statuses/user_timeline.xml"
+#define TWITTER_API_PATH_MENTIONS         "/statuses/mentions.xml"
+#define TWITTER_API_PATH_PUBLIC_TIMELINE  "/statuses/public_timeline.xml"
 
 /******************************************************************************/
 
@@ -61,9 +63,9 @@
 #define HTML_INTRO \
 "<HTML><HEAD><BODY>" \
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
-"<FONT COLOR=#000000><CENTER><B>"VSTRING"  © "AUTHOR" </B></CENTER><BR><BR>" \
+"<FONT COLOR=#000000><CENTER><B>"VSTRING"  © IKE </B></CENTER><BR><BR>" \
 "<HR>"\
-"<CENTER>Enter your User Name/Password in the Settings window to get started... </CENTER><BR>" \
+"<CENTER>...Enter your User Name/Password in the Tools->Settings dialog window to get started... </CENTER><BR>" \
 "<HR>"\
 "<CENTER>This program is released under the</CENTER><BR>" \
 "<CENTER>GNU  General Public License</CENTER><BR>" \
@@ -99,13 +101,13 @@
 "<CENTER>Answer: MUI, HTMLtext, URLtext, BetterString.  'libiconv.ixlibrary' is required to be in your 'Libs' directory.  OpenURL is optional. </CENTER><BR>" \
 "<HR>"\
 "<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>" \
-"<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter username/password in the 'Tools' ->'Settings' window and saved them? Are you already following some people (for Home to work) and have you sent some Tweets (for Profile to work)?</CENTER><BR>" \
+"<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter Username/Password in the 'Tools'->'Settings' window and saved them? Are you already following some people for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Direct Messages don't seem to work?</CENTER><BR>" \
 "<CENTER>Answer: Ensure you enter the recipient's 'Screen Name' (i.e. their User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>" \
 "<HR>" \
 "<CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>" \
-"<CENTER>Answer: Follow the 'Click to Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>" \
+"<CENTER>Answer: Follow the 'Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Nothing happens when I click on the links at the very bottom of the main program window?</CENTER><BR>" \
 "<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>" \
@@ -120,7 +122,7 @@
 "<CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>" \
 "<HR>" \
 "<CENTER>Links in the main Tweets window don't work?</CENTER><BR>" \
-"<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (plan to switch to HTMLview.mcc in the future)</CENTER><BR>" \
+"<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (plan to switch to HTMLview.mcc in the future...)</CENTER><BR>" \
 "<HR>" \
 "<CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>" \
 "<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>" \
@@ -139,13 +141,13 @@ typedef struct {
     const char *user;
     const char *pass;
     const char *source;
-    const char *text;                   //added
+    const char *text;                   
     char res_dir[PATH_MAX];
     char images_dir[PATH_MAX];
     unsigned long last_friends_timeline;
-    unsigned long last_user_timeline;   //added
-    unsigned long mentions;             //added
-    unsigned long last_public_timeline; //added
+    unsigned long last_user_timeline;   
+    unsigned long mentions;             
+    unsigned long last_public_timeline; 
     int fetch_interval;
     int show_interval;
     int alignment;
@@ -159,14 +161,14 @@ typedef struct {
 // User structure
 typedef struct {
     const char *id;
-    const char *name;              //added
+    const char *name;              
     const char *screen_name;
-    const char *location;          //added
+    const char *location;          
     const char *profile_image_url;
-    const char *followers_count;   //added
-    const char *friends_count;     //added
-    const char *favourites_count;  //added
-    const char *statuses_count;    //added
+    const char *followers_count;   
+    const char *friends_count;     
+    const char *favourites_count;  
+    const char *statuses_count;    
 }twitter_user_t;
 
 /******************************************************************************/
@@ -188,14 +190,16 @@ int twitter_config(twitter_t *twitter);
 
 int twitter_fetch(twitter_t *twitter, const char *api_uri, GByteArray *buf);
 int twitter_update(twitter_t *twitter, const char *status);
-int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); //added
+int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
+
 GList* twitter_friends_timeline(twitter_t *twitter);
-GList* twitter_user_timeline(twitter_t *twitter);   //added
-GList* twitter_public_timeline(twitter_t *twitter); //added
-GList* twitter_mentions(twitter_t *twitter);        //added
+GList* twitter_user_timeline(twitter_t *twitter);   
+GList* twitter_mentions(twitter_t *twitter);
+GList* twitter_public_timeline(twitter_t *twitter); 
+       
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader);
-twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader);
 twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader);
+twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader);
 
 void twitter_statuses_free(GList *statuses);
 void twitter_status_print(twitter_status_t *status);

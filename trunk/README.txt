@@ -33,15 +33,10 @@ the same directory as the binary file or the program will not run.
 REQUIREMENTS
 -----------
 
-OS 3: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
+OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
 libiconv.ixlibary (Libs directory), OpenURL (optional)
 
-OS 4: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
-ixemul.library (Libs directory), OpenURL (optional)
-
-MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
-libiconv.ixlibary (Libs directory), OpenURL (optional)
-
+OS4/AROS: Unknown
 
 USAGE
 -----
@@ -53,8 +48,9 @@ window, be connected to the internet.  It also helps if you are already followin
 VERSION HISTORY
 ---------------
 
-1.0 - Initial Release (Coming soon...)
+0.xx - Initial Release (Coming soon...)
 
+0.17 - fixed login, now loaded on startup (and displayed); added rudimentary error checking, serious code cleanup 
 0.16 - added hothelp, improved interface, added cross-platform Menus
 0.15 - preliminary compile on MorphOS, fixed AmiTwitter icons/image
 0.14 - added proper bumprevision to sources
@@ -104,6 +100,12 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
+THANKS
+------
+
+Special thanks to ShInKurO for joining the project, contributing to the codebase
+and tons of patience.S procki for his testing of the MorphOS version and helpful suggestions
+
 ABOUT/AUTHORS
 -------------
 
@@ -112,10 +114,8 @@ AmiTwitter is © 2009 IKE <ikepgh@yahoo.com>
 Look at some of my other projects and ports @
 http://www.ezcyberspace.com/programming.shtml
 
-Special thanks to ShInKurO for joining the project, contributing to the codebase
-and tons of patience.
 
-AmiTwitter was based heavily on the following program:
+AmiTwitter is based heavily on the following program:
 
 http://www.cuspy.org/xtwitter/  
  xTwitter is © 2008 Tsukasa Hamano <code@cuspy.org>
