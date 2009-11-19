@@ -97,6 +97,9 @@
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
 "<FONT COLOR=#000000><CENTER><B>FAQs </B></CENTER><BR>" \
 "<HR>" \
+"<CENTER>What does AmiTwitter stand for?</CENTER><BR>" \
+"<CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>" \
+"<HR>" \
 "<CENTER>What are the requirements for AmiTwitter?</CENTER><BR>" \
 "<CENTER>Answer: MUI, HTMLtext, URLtext, BetterString.  'libiconv.ixlibrary' is required to be in your 'Libs' directory.  OpenURL is optional. </CENTER><BR>" \
 "<HR>"\
