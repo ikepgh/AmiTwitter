@@ -1504,11 +1504,13 @@ recent_gad, mentions_gad, public_gad;
                        MUIA_ShortHelp, "AmiTwitter can send up to 140 characters",
                   End,
 
-                  Child, TextObject, TextFrame,
-                       MUIA_Background, MUII_TextBack,
-                       MUIA_Text_Contents, "\33c\0338\33b\nWhat Are You Doing?\n",
-                  End,
+                  Child, RectangleObject, MUIA_Weight, 20, End,
+                  Child, Label2("What Are You Doing?"),
 
+                  Child, STR_login = BetterStringObject,
+                       MUIA_BetterString_NoInput,
+                       MUIA_BetterString_Columns,8, TRUE,
+                  End,
               End,
 
               Child, HGroup, GroupFrameT("Send a Tweet"),
@@ -1519,7 +1521,7 @@ recent_gad, mentions_gad, public_gad;
                        MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
                        MUIA_ShortHelp, "Enter your Tweet here and click 'Update' to send a Tweet",
 
-                  Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                  Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                        Child, clear_gad = MUI_MakeObject(MUIO_Button,"_Clear"),
                        Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
                        End,
@@ -1597,22 +1599,16 @@ recent_gad, mentions_gad, public_gad;
 
               Child, VGroup, GroupFrameT("Send a Direct Message"),
          
-                  Child, HGroup,
-
-                       Child, Label2("      Send:"),
+                  Child, HGroup, MUIA_Group_SameSize, FALSE,
+                     Child, ColGroup(6),
+                       Child, Label2("Send"),
                        Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                       MUIA_ShortHelp, "Enter a screen name only",
-                       Child, Label2("a direct message."),
-                       Child, RectangleObject, MUIA_Weight, 100, End,
-                  End,
-     
-                  Child, HGroup,
-                       Child, ColGroup(4),
-                           Child, Label2("Message:"),
-                           Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter your message here and click 'Send' to send a Direct Message",
+                       Child, Label2("a direct message:"),
+    
+                       Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                       MUIA_ShortHelp, "Enter a screen name and a message here, click 'Send' to send a Direct Message",
 
-                       Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                            Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
                            Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
                            End,
@@ -1622,17 +1618,14 @@ recent_gad, mentions_gad, public_gad;
   
               Child, VGroup, GroupFrame, MUIA_Background, MUII_GroupBack,
                   Child, HGroup,
-                       Child, ColGroup(5), //6
-                       Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
-                       Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
-                       Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Feedback",MUIV_Font_Normal),
-                       Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
+                       Child, HSpace(0),
+                       Child, ColGroup(4), //5
+                           Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
+                           Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
+                           Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Feedback",MUIV_Font_Normal),
+                           Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
                        End,
-
-                       Child, Label2("Logged In As:"),
-                       Child, STR_login = BetterStringObject,
-                       MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                       End,
+                       Child, HSpace(0),
 
                     // Child, busy = BusyObject, MUIA_Busy_Speed,
                     // MUIV_Busy_Speed_Off,
