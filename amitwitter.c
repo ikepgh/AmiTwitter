@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.17
+ ** Current revision : V 0.18
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
@@ -106,13 +107,18 @@
 #define SENDUPDATE    44
 #define CLEAR         45
 #define HOME          46
-#define ID_CANCEL     54
-#define ID_SAVE       55
+#define TEST          53
+#define CANCEL        54
+#define SAVE          55
 #define DIRECTMESSAGE 56
 #define CLEARDM       57
 #define PROFILE       58
 #define REPLIES       59
-#define RANDOM        60
+#define RELOAD        61
+#define TWEET         62
+#define CANCEL2       63
+#define DIRMSG        64
+#define CANCEL3       65
 
 long __stack = 65536;
 
@@ -148,7 +154,7 @@ struct Library *SocketBase = NULL;
 
 #else /* __ixemul__ */
 
-//#warning compiling with ixemul...
+#warning compiling with ixemul...
 
 #endif
 #endif
@@ -159,13 +165,13 @@ struct Library *SocketBase = NULL;
 
 /// Variables *****************************************************************/
 
-Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_friends,
-*STR_following, *STR_statuses, *STR_favourites, *STR_user_id,
-*STR_directmessage, *STR_name, *STR_location, *STR_login, *busy;
+Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
+*STR_directmessage, *STR_login, *busy;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
-username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink, txt_source,
-scroll_source, scroll_main, donate, win_donate, twittersite;
+but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
+txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
+win_tweet, but_cancel2, win_dirmsg, but_cancel3;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -179,9 +185,11 @@ const char *screen_name, *text;
 enum {
     ADD_METHOD=1,
 
-    MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RANDOM, MEN_DONATE, MEN_QUIT,
+    MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RELOAD,
+    MEN_DIRMSG, MEN_TWEET, MEN_QUIT,
+    MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME, MEN_RANDOM,
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
-    MEN_HELP, MEN_HELP2, MEN_ABOUT, MEN_ABOUTMUI
+    MEN_HELP, MEN_HELP2, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
 };
 
 #define M(type,title_id,flags,men) type, (UBYTE *)(title_id), 0, flags, 0, (APTR)(men)
@@ -192,25 +200,35 @@ enum {
 static struct NewMenu MenuData1[]=
 {
 
-    M( NM_TITLE,  MSG_FILE,      0,   MEN_FILE    ),
-    M( NM_ITEM,   MSG_HOME,      0,   MEN_HOME    ),
-    M( NM_ITEM,   MSG_PROFILE,   0,   MEN_PROFILE ),
-    M( NM_ITEM,   MSG_REPLIES,   0,   MEN_REPLIES ),
-    M( NM_ITEM,   MSG_RANDOM,    0,   MEN_RANDOM  ),
-    M( NM_ITEM,   MSG_DONATE,    0,   MEN_DONATE  ),
-    M( NM_ITEM,   MSG_QUIT,      0,   MEN_QUIT    ),
-
-    M( NM_TITLE,  MSG_TOOLS,     0,   MEN_TOOLS   ),
-    M( NM_ITEM,   MSG_PREFS,     0,   MEN_PREFS   ),
-    BAR,          
-    M( NM_ITEM,   MSG_MUIPREFS,  0,   MEN_MUIPREFS),
-
-    M( NM_TITLE,  MSG_HELP,      0,   MEN_HELP    ),
-    M( NM_ITEM,   MSG_HELP2,     0,   MEN_HELP2   ),
-    M( NM_ITEM,   MSG_ABOUT,     0,   MEN_ABOUT   ),
+    M( NM_TITLE,  MSG_FILE,          0,   MEN_FILE        ),
+    M( NM_ITEM,   MSG_HOME,          0,   MEN_HOME        ),
+    M( NM_ITEM,   MSG_PROFILE,       0,   MEN_PROFILE     ),
+    M( NM_ITEM,   MSG_REPLIES,       0,   MEN_REPLIES     ),
+    M( NM_ITEM,   MSG_RELOAD,        0,   MEN_RELOAD      ),
+    M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
+    M( NM_ITEM,   MSG_TWEET,         0,   MEN_TWEET       ),
     BAR,
-    M( NM_ITEM,   MSG_ABOUTMUI,  0,   MEN_ABOUTMUI),
-    M( NM_END,    NULL,          0,   0           ),
+    M( NM_ITEM,   MSG_QUIT,          0,   MEN_QUIT        ),
+
+    M( NM_TITLE,  MSG_RETWEET,       0,   MEN_RETWEET     ),
+    M( NM_ITEM,   MSG_RETWEETBYME,   0,   MEN_RETWEETBYME ),
+    M( NM_ITEM,   MSG_RETWEETTOME,   0,   MEN_RETWEETTOME ),
+    M( NM_ITEM,   MSG_RETWEETOFME,   0,   MEN_RETWEETOFME ),
+    BAR,
+    M( NM_ITEM,   MSG_RANDOM,        0,   MEN_RANDOM      ),
+
+    M( NM_TITLE,  MSG_TOOLS,         0,   MEN_TOOLS       ),
+    M( NM_ITEM,   MSG_PREFS,         0,   MEN_PREFS       ),
+    BAR,          
+    M( NM_ITEM,   MSG_MUIPREFS,      0,   MEN_MUIPREFS    ),
+
+    M( NM_TITLE,  MSG_HELP,          0,   MEN_HELP        ),
+    M( NM_ITEM,   MSG_HELP2,         0,   MEN_HELP2       ),
+    M( NM_ITEM,   MSG_DONATE,        0,   MEN_DONATE      ),
+    M( NM_ITEM,   MSG_ABOUT,         0,   MEN_ABOUT       ),
+    BAR,
+    M( NM_ITEM,   MSG_ABOUTMUI,      0,   MEN_ABOUTMUI    ),
+    M( NM_END,    NULL,              0,   0               ),
 
     MENU_END
 };
@@ -428,6 +446,7 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
     curl = curl_easy_init();
     if(!curl) {
         fprintf(stderr, "error: curl_easy_init()\n");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
         return -1;
     }
 
@@ -444,13 +463,13 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
 
     if(code) {
         fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         fprintf(stderr, "error respose code: %ld\n", res);
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Hmm...An error occurred! Are you connected to the internet?  Is your username/password set correctly?  Is the Twitter site down?");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?  Are you following/do you have tweets in your timeline? Is the Twitter site down?");
         return res;
     }
      else {
@@ -483,6 +502,7 @@ int twitter_update(twitter_t *twitter, const char *status) {
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
         return -1;
     }
     snprintf(api_uri, PATH_MAX, "%s%s",
@@ -515,13 +535,14 @@ int twitter_update(twitter_t *twitter, const char *status) {
     code = curl_easy_perform(curl);
     if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         printf("error respose code: %ld\n", res);
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Hmm...An error occurred! Are you connected to the internet?  Is your username/password set correctly?  Did you enter some text?");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?  Did you enter some text to send?");
 
 //      if(twitter->debug > 2){
             fwrite(buf->data, 1, buf->len, stderr);
@@ -561,6 +582,7 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
         return -1;
     }
     snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_DIRECT_MESSAGE);
@@ -592,13 +614,14 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     code = curl_easy_perform(curl);
     if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet? Did you enter the recipients Screen Name correctly?");
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         printf("error respose code: %ld\n", res);
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Hmm...An error occurred! Are you connected to the internet?  Is your username/password set correctly?  Did you enter the recipients screen name correctly?  Did you enter some text?");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error  occurred!</B> Is your username/password set correctly?  Did you enter the recipients screen name correctly?  Did you enter some text to send?");
 
 //      if(twitter->debug > 2){
             fwrite(buf->data, 1, buf->len, stderr);
@@ -614,6 +637,70 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     curl_easy_cleanup(curl);
     curl_formfree(formpost);
     curl_slist_free_all(headers);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Verify Credentials with cURL
+int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?");
+        return -1;
+    }
+    snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_VERIFY_CREDENTIALS);
+    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?");
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+
+     // Pulls xml data
+    // curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &res);
+
+    if(res != 200) {
+        printf("error respose code: %ld\n", res);
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error  occurred!</B> Is your username/password set correctly?");
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+    else {
+
+       set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> Your username/password is valid!");
+    }
+
+    curl_easy_cleanup(curl);
 
     return 0;
 }
@@ -796,6 +883,138 @@ GList* twitter_public_timeline(twitter_t *twitter) {
 
 /*****************************************************************************/
 
+// statuses/twitter_retweeted_by_me API
+GList* twitter_retweeted_by_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETED_BY_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_friends_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// statuses/twitter_retweeted_to_me API
+GList* twitter_retweeted_to_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETED_TO_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_friends_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// statuses/twitter_retweets_of_me API
+GList* twitter_retweets_of_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETS_OF_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_friends_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
 // XML parse Statuses node
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
 
@@ -850,6 +1069,24 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
             }else if (!xmlStrcmp(name, (xmlChar *)"source")) {
                 ret = xmlTextReaderRead(reader);
                 status->source = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"truncated")) {
+                ret = xmlTextReaderRead(reader);
+                status->truncated = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_status_id")) {
+                ret = xmlTextReaderRead(reader);
+                status->in_reply_to_status_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_user_id")) {
+                ret = xmlTextReaderRead(reader);
+                status->in_reply_to_user_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"favorited")) {
+                ret = xmlTextReaderRead(reader);
+                status->favorited = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                status->in_reply_to_screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"retweeted_status")) {
+                ret = xmlTextReaderRead(reader);
+                status->retweeted_status = (const char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"user")) {
                 status->user = twitter_parse_user_node(reader);
             }
@@ -894,19 +1131,21 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
             }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
                 ret = xmlTextReaderRead(reader);
                 user->location = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
+                ret = xmlTextReaderRead(reader);
+                user->description = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
                 ret = xmlTextReaderRead(reader);
-                user->profile_image_url =
-                    (const char *)xmlTextReaderValue(reader);
+                user->profile_image_url = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->followers_count = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->friends_count = (const char *)xmlTextReaderValue(reader);
-            }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
+            }else if(!xmlStrcmp(name, (xmlChar *)"favorites_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->favourites_count = (const char *)xmlTextReaderValue(reader);
+                user->favorites_count = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->statuses_count = (const char *)xmlTextReaderValue(reader);
@@ -933,19 +1172,11 @@ void twitter_status_print(twitter_status_t *status) {
         
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
-    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small> ",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small><br>",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
+    printf("<small>Name: %s Location: %s Friends: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
- // printf("[%s]%s: %s\n", status->id, status->user->screen_name, status->text);
-
-    set (STR_name, MUIA_String_Contents, (int)status->user->name);
-    set (STR_location, MUIA_String_Contents, (int)status->user->location);
-    set (STR_following, MUIA_String_Contents, (int)status->user->friends_count);
-    set (STR_friends, MUIA_String_Contents, (int)status->user->followers_count);
-    set (STR_statuses, MUIA_String_Contents, (int)status->user->statuses_count);
-    set (STR_favourites, MUIA_String_Contents, (int)status->user->favourites_count);
-
-  fclose(stdout);
+    fclose(stdout);
 }
 
 /*****************************************************************************/
@@ -966,16 +1197,23 @@ void twitter_statuses_free(GList *statuses) {
         free((void*)(status->id));
         free((void*)(status->text));
         free((void*)(status->source));
+        free((void*)(status->truncated));
+        free((void*)(status->in_reply_to_status_id));
+        free((void*)(status->in_reply_to_user_id));
+        free((void*)(status->favorited));
+        free((void*)(status->in_reply_to_screen_name));
+        free((void*)(status->retweeted_status));
 
         if(status->user){
             free((void*)(status->user->id));
             free((void*)(status->user->name));
             free((void*)(status->user->screen_name));
             free((void*)(status->user->location));
+            free((void*)(status->user->description));
             free((void*)(status->user->profile_image_url));
             free((void*)(status->user->followers_count));
             free((void*)(status->user->friends_count));
-            free((void*)(status->user->favourites_count));
+            free((void*)(status->user->favorites_count));
             free((void*)(status->user->statuses_count));
             free((void*)(status->user));
         }
@@ -1068,12 +1306,14 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     fp = fopen(path, "w");
     if(!fp) {
         fprintf(stderr, "error: can't openfile %s\n", path);
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred! Could not open file...</B>");
         return -1;
     }
 
     curl = curl_easy_init();
     if(!curl) {
         fprintf(stderr, "error: curl_easy_init()\n");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
         return -1;
     }
 
@@ -1096,11 +1336,13 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     code = curl_easy_perform(curl);
     if(code) {
         fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         fprintf(stderr, "error respose code: %ld\n", res);
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
         return res;
     }
     fclose(fp);
@@ -1303,6 +1545,99 @@ void amitwitter_public_loop() {
 
 /*****************************************************************************/
 
+// Shows retweeted by me (statuses/retweeted_by_me API)
+void amitwitter_retweeted_by_me() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_retweeted_by_me(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Shows retweeted to me (statuses/retweeted_to_me API)
+void amitwitter_retweeted_to_me() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_retweeted_to_me(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Shows retweets of me (statuses/retweets_of_me API)
+void amitwitter_retweets_of_me() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_retweets_of_me(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
 // Send a Tweet
 void amitwitter_update(const char *text) {
 
@@ -1348,12 +1683,29 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
 
 /*****************************************************************************/
 
+// Verify Credentials
+void amitwitter_verify_credentials(const char *screen_name, const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    get(STR_user_id, MUIA_String_Contents, &screen_name);
+    get(STR_directmessage, MUIA_String_Contents, &text);
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_verify_credentials(twitter, screen_name, text);
+    twitter_free(twitter);
+
+}
+
+/*****************************************************************************/
+
 ///
 
 /// My functions **************************************************************/
 
 // clear Tweet
-void do_clear(void ) {
+void do_clear(void) {
     set(STR_message, MUIA_String_Contents,0);
 }
 
@@ -1363,12 +1715,12 @@ void do_clear_dm(void) {
 }
 
 // about HTML
-void about(void ) {
+void about(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
 }
 
 // FAQ HTML
-void help(void ) {
+void help(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_HELP);
 }
 
@@ -1391,7 +1743,7 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 int main(int argc, char *argv[]) {
 
 APTR app, window, sendupdate_gad, clear_gad, home_gad, clear_dm_gad, send_gad,
-recent_gad, mentions_gad, public_gad;
+recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
 
   if ( ! Open_Libs() ) {
 
@@ -1429,6 +1781,7 @@ recent_gad, mentions_gad, public_gad;
 
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
                   Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
+                  Child, but_test   = MUI_MakeObject(MUIO_Button,"_Test"),
                   Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"), 
               End,
 
@@ -1485,6 +1838,71 @@ recent_gad, mentions_gad, public_gad;
 
 /*****************************************************************************/
 
+      // The Tweet Window
+      SubWindow, win_tweet = WindowObject,
+          MUIA_Window_Title, "Send a Tweet",
+          MUIA_Window_ID, MAKE_ID('T','W','E','T'),
+
+          WindowContents, VGroup,
+
+              Child, HGroup, GroupFrameT("Send a Tweet"),
+
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2("Tweet:"),
+                           Child, HGroup,
+                           Child, STR_message = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter your Tweet and click Update to send",
+                           End,
+                      End,
+                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
+                           Child, but_cancel2 = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                      End,
+                  End,
+              End,
+          End,
+      End,
+
+/*****************************************************************************/
+
+      // The Direct Message Window
+      SubWindow, win_dirmsg = WindowObject,
+          MUIA_Window_Title, "Send a Direct Message",
+          MUIA_Window_ID, MAKE_ID('D','I','R','M'),
+
+          WindowContents, VGroup,
+
+              Child, HGroup, GroupFrameT("Send a Direct Message"),
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2("Recipient:"),
+                           Child, STR_user_id = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter a screen name only",
+                      End,
+  
+                      Child, HGroup,
+                           Child, Label2("Message:"),
+                           Child, STR_directmessage = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter a message",
+                      End,
+ 
+                     Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
+                           Child, but_cancel3 = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                     End,
+                  End,
+              End,
+          End,
+      End,
+
+/*****************************************************************************/
+
       // The Main Program Window
       SubWindow, window = WindowObject,
           MUIA_Window_Title, "AmiTwitter",
@@ -1505,28 +1923,13 @@ recent_gad, mentions_gad, public_gad;
                   End,
 
                   Child, RectangleObject, MUIA_Weight, 20, End,
-                  Child, Label2("What Are You Doing?"),
+                  Child, Label2("What's Happening?"),
 
                   Child, STR_login = BetterStringObject,
                        MUIA_BetterString_NoInput,
                        MUIA_BetterString_Columns,8, TRUE,
                   End,
-              End,
-
-              Child, HGroup, GroupFrameT("Send a Tweet"),
-
-                  Child, ColGroup(4), 
-                       Child, Label2("Tweet:"),
-                       Child, STR_message = BetterStringObject, StringFrame,
-                       MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                       MUIA_ShortHelp, "Enter your Tweet here and click 'Update' to send a Tweet",
-
-                  Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                       Child, clear_gad = MUI_MakeObject(MUIO_Button,"_Clear"),
-                       Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
-                       End,
-                  End,
-              End,
+              End,             
 
               Child, VGroup, GroupFrameT("User Status"),
 
@@ -1534,59 +1937,9 @@ recent_gad, mentions_gad, public_gad;
                        Child, home_gad = MUI_MakeObject(MUIO_Button,"_Timeline"),
                        Child, recent_gad = MUI_MakeObject(MUIO_Button,"_My Tweets"),
                        Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
-                       Child, public_gad = MUI_MakeObject(MUIO_Button,"R_andom"),
-                  End,
-
-                  Child, HGroup,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Name:"),
-                           Child, STR_name = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Location:"),
-                           Child, STR_location = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
-                  End,
-
-                  Child, HGroup,
-                       Child, ColGroup(2),
-                           Child, Label2("Current Tweet Stats..."),
-                           MUIA_ShortHelp, "Displays statistics for most recent Tweet",
-                       End,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Following:"),
-                           Child, STR_following = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Followers:"),
-                           Child, STR_friends = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Tweets:"),
-                           Child, STR_statuses = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
-
-                       Child, ColGroup(2),
-                           Child, Label2("Favorites:"),
-                           Child, STR_favourites = BetterStringObject,
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
-                           End,
-                       End,
+                       Child, reload_gad = MUI_MakeObject(MUIO_Button,"Rel_oad"),
+                       Child, dirmsg_gad = MUI_MakeObject(MUIO_Button,"_Direct Message"),
+                       Child, tweet_gad = MUI_MakeObject(MUIO_Button, "Tw_eet"),
                   End,
               End,
 
@@ -1594,25 +1947,6 @@ recent_gad, mentions_gad, public_gad;
                   MUIA_Scrollgroup_UseWinBorder, TRUE,
                   MUIA_Scrollgroup_Contents, txt_source = HTMLtextObject, TextFrame,
                   MUIA_HTMLtext_Contents, HTML_INTRO,
-                  End,
-              End,
-
-              Child, VGroup, GroupFrameT("Send a Direct Message"),
-         
-                  Child, HGroup, MUIA_Group_SameSize, FALSE,
-                     Child, ColGroup(6),
-                       Child, Label2("Send"),
-                       Child, STR_user_id = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                       Child, Label2("a direct message:"),
-    
-                       Child, STR_directmessage = BetterStringObject, StringFrame, MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                       MUIA_ShortHelp, "Enter a screen name and a message here, click 'Send' to send a Direct Message",
-
-                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
-                           End,
-                       End,
                   End,
               End,
   
@@ -1652,51 +1986,37 @@ recent_gad, mentions_gad, public_gad;
   DoMethod(app,MUIM_Application_Load,MUIV_Application_Load_ENV);
   DoMethod(app,MUIM_Application_Load,MUIV_Application_Load_ENVARC);
 
+
   // Quit
   DoMethod(window,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     app,2,MUIM_Application_ReturnID,MUIV_Application_ReturnID_Quit);
 
+
   // Main Buttons
   DoMethod(home_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,HOME);
-
-  set(home_gad, MUIA_ShortHelp, (ULONG)"Get most recent Tweets (max 20)");
+    set(home_gad, MUIA_ShortHelp, (ULONG)"Get most recent Tweets (max 20)");
 
   DoMethod(recent_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,PROFILE);
-
-  set(recent_gad, MUIA_ShortHelp, (ULONG)"Get most recently sent Tweets (max 20)");
+    set(recent_gad, MUIA_ShortHelp, (ULONG)"Get most recently sent Tweets (max 20)");
 
   DoMethod(mentions_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,REPLIES);
+    set(mentions_gad, MUIA_ShortHelp, (ULONG)"Get most recent @Replies (max 20)");
 
-  set(mentions_gad, MUIA_ShortHelp, (ULONG)"Get most recent @Replies (max 20)");
+  DoMethod(reload_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,RELOAD);
+    set(reload_gad, MUIA_ShortHelp, (ULONG)"Reload current local file");
 
-  DoMethod(public_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,RANDOM);
+  DoMethod(dirmsg_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,DIRMSG);
+    set(dirmsg_gad, MUIA_ShortHelp, (ULONG)"Send a Direct Message");
 
-  set(public_gad, MUIA_ShortHelp, (ULONG)"Get Random Public Tweets! (max 20)");
+  DoMethod(tweet_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,TWEET);
+    set(tweet_gad, MUIA_ShortHelp, (ULONG)"Send a Tweet");
 
-  DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,CLEAR);
-
-  set(clear_gad, MUIA_ShortHelp, (ULONG)"Clear Tweet text");
-
-  DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,SENDUPDATE);
-
-  set(sendupdate_gad, MUIA_ShortHelp, (ULONG)"Send a Tweet");
-
-  // Direct Message Buttons
-  DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,CLEARDM);
-
-  set(clear_dm_gad, MUIA_ShortHelp, (ULONG)"Clear Direct Message text");
-
-  DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
-
-  set(send_gad, MUIA_ShortHelp, (ULONG)"Send a Direct Message");
 
   // Return key
   DoMethod(STR_message,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
@@ -1705,23 +2025,64 @@ recent_gad, mentions_gad, public_gad;
   DoMethod(STR_directmessage,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
 
-  // Prefs
+
+  // Prefs subwindow
   DoMethod(but_save,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,ID_SAVE);
+    app,2,MUIM_Application_ReturnID,SAVE);
+
+  DoMethod(but_test,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,TEST);
 
   DoMethod(but_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,ID_CANCEL);
+    app,2,MUIM_Application_ReturnID,CANCEL);
 
   DoMethod(win_preferences,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_preferences,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
-  // Donate
+
+  // Donate subwindow
   DoMethod(win_donate,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_donate,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
+
+  // Send a Tweet subwindow
+  DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CLEAR);
+    set(clear_gad, MUIA_ShortHelp, (ULONG)"Clear Tweet");
+
+  DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,SENDUPDATE);
+    set(sendupdate_gad, MUIA_ShortHelp, (ULONG)"Send Tweet");
+
+  DoMethod(but_cancel2,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCEL2);
+    set(but_cancel2, MUIA_ShortHelp, (ULONG)"Cancel Tweet");
+
+  DoMethod(win_tweet,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
+    win_tweet,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
+
+  // Direct Message subwindow
+  DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CLEARDM);
+    set(clear_dm_gad, MUIA_ShortHelp, (ULONG)"Clear Direct Message");
+
+  DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
+    set(send_gad, MUIA_ShortHelp, (ULONG)"Send Direct Message");
+
+  DoMethod(but_cancel3,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCEL3);
+    set(but_cancel3, MUIA_ShortHelp, (ULONG)"Cancel Direct Message");
+
+  DoMethod(win_dirmsg,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
+    win_dirmsg,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
 
   // Get User Name/Password
   get(str_user_pref, MUIA_String_Contents, &username);
   get(str_pass_pref, MUIA_String_Contents, &password);
+
 
   // Set login string
   set (STR_login, MUIA_String_Contents, (int)username);
@@ -1745,70 +2106,76 @@ recent_gad, mentions_gad, public_gad;
 
         switch (DoMethod(app,MUIM_Application_NewInput,&sigs)) {
 
-                // Quit program
+              // Quit program
                 case MUIV_Application_ReturnID_Quit:
                      running = FALSE;
                      break;
 
-                // Pull Tweets  
+                // Timeline
                 case HOME:
                 case MEN_HOME:
                     remove("PROGDIR:data/temp/twitter.html");
                     amitwitter_loop();
                     break;
 
-                // Recent
+                // My Tweets
                 case PROFILE:
                 case MEN_PROFILE:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_user_loop();
                     break;
 
-                // Mentions @Recipient
+                // @Replies
                 case REPLIES:
                 case MEN_REPLIES:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_mentions_loop();
                     break;
 
-                // Random
-                case RANDOM:
-                case MEN_RANDOM:
-                     remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_public_loop();
-                    break;
-
-                // Clear tweet string 
-                case CLEAR:
-                     do_clear();
+                // Reload
+                case RELOAD:
+                case MEN_RELOAD:
+                     set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
                      break;
 
-                // Send Tweets
-                case SENDUPDATE:
-                     amitwitter_update(optarg);
+                // Direct Message window
+                case DIRMSG:
+                case MEN_DIRMSG:
+                     set(win_dirmsg, MUIA_Window_Open, TRUE);
                      break;
 
-                // Clear direct message string 
                 case CLEARDM:
                      do_clear_dm();
                      break;
 
-                // Send a Direct Message
                 case DIRECTMESSAGE:
                      amitwitter_direct_message(screen_name, text);
                      break;
-              
-                // Show 'about' HTML
-                case MEN_ABOUT:                   
-                     about();
+
+
+                case CANCEL3:
+                     set(win_dirmsg, MUIA_Window_Open, FALSE);
                      break;
 
-                // Show 'help' HTML
-                case MEN_HELP2:
-                     help();
+                // Tweet window
+                case TWEET:
+                case MEN_TWEET:
+                    set(win_tweet, MUIA_Window_Open, TRUE);
+                    break;
+
+                case CLEAR:
+                     do_clear();
                      break;
 
-                // Quit the program 
+                case SENDUPDATE:
+                     amitwitter_update(optarg);
+                     break;
+
+                case CANCEL2:
+                     set(win_tweet, MUIA_Window_Open, FALSE);
+                     break;
+
+                // Quit the program
                 case MEN_QUIT:
                      result=MUI_RequestA(app,0,0,"Quit","_Quit|_Cancel","\33cAre you sure you want\nto quit AmiTwitter?",0);
 
@@ -1816,12 +2183,73 @@ recent_gad, mentions_gad, public_gad;
                            running=FALSE;
                      break;
 
-                // Open MUI prefs
-                case MEN_MUIPREFS:                    
+                // Retweets
+                case MEN_RETWEETBYME:
+                    remove("PROGDIR:data/temp/twitter.html");
+                    amitwitter_retweeted_by_me();
+                    break;
+
+                case MEN_RETWEETTOME:
+                    remove("PROGDIR:data/temp/twitter.html");
+                    amitwitter_retweeted_to_me();
+                    break;
+
+                case MEN_RETWEETOFME:
+                    remove("PROGDIR:data/temp/twitter.html");
+                    amitwitter_retweets_of_me();
+                    break;
+
+                // Random
+                case MEN_RANDOM:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_public_loop();
+                    break;
+
+                // Settings window
+                case MEN_PREFS:
+                     set(win_preferences, MUIA_Window_Open, TRUE);
+                     break;
+
+                case SAVE:
+                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENV);
+                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENVARC);
+
+                     set (STR_login, MUIA_String_Contents, (int)username);
+
+                     MUI_RequestA(app,0,0,"Save","*OK","Settings Saved",NULL);
+
+                     set(win_preferences, MUIA_Window_Open, FALSE);
+                     break;
+
+                case TEST:
+                     amitwitter_verify_credentials(screen_name, text);
+                     break;
+
+                case CANCEL:
+                     set(win_preferences, MUIA_Window_Open, FALSE);
+                     break;
+
+                // MUI prefs
+                case MEN_MUIPREFS:
                      DoMethod(app, MUIM_Application_OpenConfigWindow, 0);
                      break;
 
-                // Open MUI about 
+                // Show FAQ HTML
+                case MEN_HELP2:
+                     help();
+                     break;
+
+                // Donate window
+                case MEN_DONATE:
+                     set(win_donate, MUIA_Window_Open, TRUE);
+                     break;
+
+                // Show about HTML
+                case MEN_ABOUT:                   
+                     about();
+                     break;
+
+                // MUI about
                 case MEN_ABOUTMUI:
         
                      if(!aboutwin) {
@@ -1835,30 +2263,6 @@ recent_gad, mentions_gad, public_gad;
                      }
                      break;
 
-                // Prefs window
-                case MEN_PREFS:
-                     set(win_preferences, MUIA_Window_Open, TRUE);
-                     break;
-
-                case ID_SAVE:
-                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENV);
-                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENVARC);
-
-                     set (STR_login, MUIA_String_Contents, (int)username);
-
-                     MUI_RequestA(app,0,0,"Save","*OK","Settings Saved",NULL);  
-                
-                     set(win_preferences, MUIA_Window_Open, FALSE);
-                     break;
-
-                case ID_CANCEL:
-                     set(win_preferences, MUIA_Window_Open, FALSE);
-                     break;
-
-                // Donate window
-                case MEN_DONATE:
-                     set(win_donate, MUIA_Window_Open, TRUE);
-                     break;
         }
 
         // Continue running and wait for user input

@@ -3,7 +3,7 @@ Uploader:  ikepgh@yahoo.com (IKE)
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
 Version: x.x.x
-Architecture:  m68k-amigaos, others coming soon.....
+Architecture:  m68k-amigaos, MorphOS, others coming soon.....
 Requires:  MUI, .mcc's, libiconv.ixlibary
 Distribution: GPL
 
@@ -12,11 +12,11 @@ INTRODUCTION
 ------------
 
 AmiTwitter is a  program to send and view Tweets received on the Twitter network.  It has the
-capability to send Direct Messages.  It can display the 'Following', 'Followers', 'Tweets'
-and 'Favourites' count statistics for the user who sent the most recently received Tweet!  It can 
-download your most recent Tweets and display all @Replies to your account.  It also has a 
-"Random" function that downloads the most Recent Tweets to open public accounts in
-which you are 'not' subscribed...just for fun...and very entertaining.  ;-)
+capability to send Direct Messages.  It can display the Name, Location as well as Friends, Followers 
+and Tweets count statistics for each user.  It can download your most recent Tweets 
+and display all @Replies to your account.  It also has a "Random" function that downloads 
+the most Recent Tweets to open public accounts in which you are 'not' subscribed...just for fun...
+and very entertaining.  ;-).  AmiTwitter also displays Retweets: to me, of me and by me.
 
 Thanks! 
 
@@ -36,7 +36,7 @@ REQUIREMENTS
 OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
 libiconv.ixlibary (Libs directory), OpenURL (optional)
 
-OS4/AROS: Unknown
+OS4/AROS: Unknown at this time
 
 USAGE
 -----
@@ -50,11 +50,13 @@ VERSION HISTORY
 
 0.xx - Initial Release (Coming soon...)
 
-0.17 - fixed login, now loaded on startup (and displayed); added rudimentary error checking, serious code cleanup 
-0.16 - added hothelp, improved interface, added cross-platform Menus
-0.15 - preliminary compile on MorphOS, fixed AmiTwitter icons/image
-0.14 - added proper bumprevision to sources
-0.13 - added stack, CTR-C from CLI, other minor enhancements
+0.18 - Revised display of name/location/friends/followers/tweets stats; reworked interface; added user/pass Test routine, 
+added retweet by, to and of me,  reloads current local file, more error checking
+0.17 - Fixed login, now loaded on startup (and displayed); added rudimentary error checking, serious code cleanup 
+0.16 - Added hothelp, improved interface, added cross-platform Menus
+0.15 - Preliminary compile on MorphOS, fixed AmiTwitter icons/image
+0.14 - Added proper bumprevision to sources
+0.13 - Added stack, CTR-C from CLI, other minor enhancements
 0.12 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
 cleaned up direct message interface to be more useable (cycle chain); added the Source that a Tweet was sent from to the
 results: fixed some memory leaks
@@ -103,8 +105,9 @@ GNU General Public License for more details.
 THANKS
 ------
 
-Special thanks to ShInKurO for joining the project, contributing to the codebase
-and tons of patience.S procki for his testing of the MorphOS version and helpful suggestions
+Special thanks to: 
+- ShInKurO for joining the project, contributing to the codebase,
+- Sprocki for his testing of the MorphOS version and very helpful suggestions!
 
 ABOUT/AUTHORS
 -------------
