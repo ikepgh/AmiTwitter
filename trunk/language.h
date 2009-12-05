@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.17
+ ** Current revision : V 0.18
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
  ** 15-Nov-09   - Unknown -            initial MorphOS compile
@@ -47,19 +48,29 @@
 
 // Menu Items
 
-#define MSG_FILE     "File"
-#define MSG_HOME     "Timeline"
-#define MSG_PROFILE  "My Tweets"
-#define MSG_REPLIES  "@Replies"
-#define MSG_RANDOM   "Random"
-#define MSG_DONATE   "Donate"
-#define MSG_QUIT     "Quit"
-#define MSG_TOOLS    "Tools"
-#define MSG_PREFS    "Settings"
-#define MSG_MUIPREFS "MUI Settings"
-#define MSG_HELP     "Help"
-#define MSG_HELP2    "FAQs"
-#define MSG_ABOUT    "About AmiTwitter"
-#define MSG_ABOUTMUI "About MUI"
+#define MSG_FILE        "File"
+#define MSG_HOME        "Timeline"
+#define MSG_PROFILE     "My Tweets"
+#define MSG_REPLIES     "@Replies"
+#define MSG_RELOAD      "Reload"
+#define MSG_TWEET       "Tweet"
+#define MSG_DIRMSG      "Direct Message"
+#define MSG_QUIT        "Quit"
+
+#define MSG_RETWEET     "Misc"
+#define MSG_RETWEETBYME "Retweet By Me"
+#define MSG_RETWEETTOME "Retweet To Me"
+#define MSG_RETWEETOFME "Retweet Of Me"
+#define MSG_RANDOM      "Random"
+
+#define MSG_TOOLS       "Tools"
+#define MSG_PREFS       "Settings"
+#define MSG_MUIPREFS    "MUI Settings"
+
+#define MSG_HELP        "Help"
+#define MSG_HELP2       "FAQs"
+#define MSG_DONATE      "Donate"
+#define MSG_ABOUT       "About AmiTwitter"
+#define MSG_ABOUTMUI    "About MUI"
 
 /******************************************************************************/
