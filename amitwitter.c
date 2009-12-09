@@ -1143,9 +1143,9 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->friends_count = (const char *)xmlTextReaderValue(reader);
-            }else if(!xmlStrcmp(name, (xmlChar *)"favorites_count")) {
+            }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->favorites_count = (const char *)xmlTextReaderValue(reader);
+                user->favourites_count = (const char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
                 ret = xmlTextReaderRead(reader);
                 user->statuses_count = (const char *)xmlTextReaderValue(reader);
@@ -1172,7 +1172,7 @@ void twitter_status_print(twitter_status_t *status) {
         
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
-    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s from %s</small><br>",status->user->id, status->user->screen_name, status->text, status->created_at, status->source);
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
     printf("<small>Name: %s Location: %s Friends: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
@@ -1213,7 +1213,7 @@ void twitter_statuses_free(GList *statuses) {
             free((void*)(status->user->profile_image_url));
             free((void*)(status->user->followers_count));
             free((void*)(status->user->friends_count));
-            free((void*)(status->user->favorites_count));
+            free((void*)(status->user->favourites_count));
             free((void*)(status->user->statuses_count));
             free((void*)(status->user));
         }
