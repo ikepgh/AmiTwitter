@@ -54,7 +54,7 @@
 #define TWITTER_API_PATH_DIRECT_MESSAGE     "/direct_messages/new.xml"
 
 #define TWITTER_API_PATH_UPDATE             "/statuses/update.xml"
-#define TWITTER_API_PATH_FRIENDS_TIMELINE   "/statuses/friends_timeline.xml"
+#define TWITTER_API_PATH_FRIENDS_TIMELINE   "/statuses/home_timeline.xml" //friends_timeline.xml"
 #define TWITTER_API_PATH_USER_TIMELINE      "/statuses/user_timeline.xml"
 #define TWITTER_API_PATH_MENTIONS           "/statuses/mentions.xml"
 #define TWITTER_API_PATH_PUBLIC_TIMELINE    "/statuses/public_timeline.xml"
@@ -175,7 +175,7 @@ typedef struct {
     const char *profile_image_url;
     const char *followers_count;   
     const char *friends_count;     
-    const char *favorites_count;
+    const char *favourites_count;
     const char *statuses_count;    
 }twitter_user_t;
 
