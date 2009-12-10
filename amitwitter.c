@@ -364,6 +364,56 @@ void Close_Libs(void ) {
 
 /// 
 
+/// My functions **************************************************************/
+
+// clear Tweet
+void do_clear(void) {
+    set(STR_message, MUIA_String_Contents,0);
+}
+
+// clear direct message
+void do_clear_dm(void) {
+    set(STR_directmessage, MUIA_String_Contents,0);
+}
+
+// about HTML
+void about(void) {
+    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
+}
+
+// FAQ HTML
+void help(void) {
+    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_HELP);
+}
+
+// Error
+void error(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li>");
+}
+
+// Error2
+void error2(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>");
+}
+
+// Error3
+void error3(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?");
+}
+
+// urlTextObject
+Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG font) {
+    return UrltextObject,
+        MUIA_Font,          font,
+        MUIA_Urltext_Text,  text,
+        MUIA_Urltext_Url,   url,
+    End;
+}
+
+/*****************************************************************************/
+
+///
+
 /// Amitwitter ****************************************************************/
 
 // New Twitter instance
@@ -379,7 +429,7 @@ twitter_t* twitter_new() {
     twitter->user = username;
     twitter->pass = password;  
     twitter->source = "AmiTwitter";
-    twitter->last_friends_timeline = 1;
+    twitter->last_home_timeline = 1;
     twitter->last_user_timeline = 1;   
     twitter->mentions = 1;             
     twitter->last_public_timeline = 1; 
@@ -446,7 +496,7 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
     curl = curl_easy_init();
     if(!curl) {
         fprintf(stderr, "error: curl_easy_init()\n");
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
+        error();
         return -1;
     }
 
@@ -463,13 +513,13 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
 
     if(code) {
         fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
+        error();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         fprintf(stderr, "error respose code: %ld\n", res);
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?  Are you following/do you have tweets in your timeline? Is the Twitter site down?");
+        error();
         return res;
     }
      else {
@@ -502,7 +552,7 @@ int twitter_update(twitter_t *twitter, const char *status) {
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
+        error2();
         return -1;
     }
     snprintf(api_uri, PATH_MAX, "%s%s",
@@ -535,14 +585,14 @@ int twitter_update(twitter_t *twitter, const char *status) {
     code = curl_easy_perform(curl);
     if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
+        error2();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         printf("error respose code: %ld\n", res);
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?  Did you enter some text to send?");
+        error2();
 
 //      if(twitter->debug > 2){
             fwrite(buf->data, 1, buf->len, stderr);
@@ -582,7 +632,7 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet?");
+        error2();
         return -1;
     }
     snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_DIRECT_MESSAGE);
@@ -614,14 +664,14 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     code = curl_easy_perform(curl);
     if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly? Is the Twitter server down? Are you connected to the internet? Did you enter the recipients Screen Name correctly?");
+        error2();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         printf("error respose code: %ld\n", res);
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error  occurred!</B> Is your username/password set correctly?  Did you enter the recipients screen name correctly?  Did you enter some text to send?");
+        error2();
 
 //      if(twitter->debug > 2){
             fwrite(buf->data, 1, buf->len, stderr);
@@ -658,7 +708,7 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?");
+        error3();
         return -1;
     }
     snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_VERIFY_CREDENTIALS);
@@ -676,7 +726,7 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
     code = curl_easy_perform(curl);
     if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B> Is your username/password set correctly?");
+        error3();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
@@ -687,7 +737,7 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
     if(res != 200) {
         printf("error respose code: %ld\n", res);
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error  occurred!</B> Is your username/password set correctly?");
+        error3();
 
 //      if(twitter->debug > 2){
             fwrite(buf->data, 1, buf->len, stderr);
@@ -707,8 +757,8 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
 
 /*****************************************************************************/
 
-// statuses/friends_timeline API
-GList* twitter_friends_timeline(twitter_t *twitter) {
+// statuses/home_timeline API
+GList* twitter_home_timeline(twitter_t *twitter) {
 
     int ret;
     GList *timeline = NULL;
@@ -718,8 +768,8 @@ GList* twitter_friends_timeline(twitter_t *twitter) {
     twitter_status_t *status;
 
     snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_FRIENDS_TIMELINE,
-             twitter->last_friends_timeline);
+             twitter->base_uri, TWITTER_API_PATH_HOME_TIMELINE,
+             twitter->last_home_timeline);
 //  if(twitter->debug > 1)
         printf("api_uri: %s\n", api_uri);
 
@@ -744,7 +794,7 @@ GList* twitter_friends_timeline(twitter_t *twitter) {
     if(timeline){
         status = timeline->data;
 
-        twitter->last_friends_timeline = atol(status->id);
+        twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -876,7 +926,7 @@ GList* twitter_public_timeline(twitter_t *twitter) {
     if(timeline){
         status = timeline->data;
 
-        twitter->last_friends_timeline = atol(status->id);
+        twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -920,7 +970,7 @@ GList* twitter_retweeted_by_me(twitter_t *twitter) {
     if(timeline){
         status = timeline->data;
 
-        twitter->last_friends_timeline = atol(status->id);
+        twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -964,7 +1014,7 @@ GList* twitter_retweeted_to_me(twitter_t *twitter) {
     if(timeline){
         status = timeline->data;
 
-        twitter->last_friends_timeline = atol(status->id);
+        twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -1008,7 +1058,7 @@ GList* twitter_retweets_of_me(twitter_t *twitter) {
     if(timeline){
         status = timeline->data;
 
-        twitter->last_friends_timeline = atol(status->id);
+        twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -1306,14 +1356,14 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     fp = fopen(path, "w");
     if(!fp) {
         fprintf(stderr, "error: can't openfile %s\n", path);
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred! Could not open file...</B>");
+        error();
         return -1;
     }
 
     curl = curl_easy_init();
     if(!curl) {
         fprintf(stderr, "error: curl_easy_init()\n");
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
+        error();
         return -1;
     }
 
@@ -1336,13 +1386,13 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
     code = curl_easy_perform(curl);
     if(code) {
         fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
+        error();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
         fprintf(stderr, "error respose code: %ld\n", res);
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B>");
+        error();
         return res;
     }
     fclose(fp);
@@ -1393,7 +1443,7 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 
 /*****************************************************************************/
 
-// Get most recent Tweets (statuses/friends_timeline API)
+// Get most recent Tweets (statuses/home_timeline API)
 void amitwitter_loop() {
 
     int i;
@@ -1407,14 +1457,14 @@ void amitwitter_loop() {
 
 /*
     if(!twitter->debug) {
-        timeline = twitter_friends_timeline(twitter);
+        timeline = twitter_home_timeline(twitter);
         twitter_statuses_free(timeline);
     } */
 
 // original 'while' loop.  my loop below gets content once....
 
  /* while(1) {
-        timeline = twitter_friends_timeline(twitter);
+        timeline = twitter_home_timeline(twitter);
         if(twitter->debug >= 2)
             printf("timeline num: %d\n", g_list_length(timeline));
 
@@ -1428,7 +1478,7 @@ void amitwitter_loop() {
 // my 'for' loop, pulls data once
 
     for(i=1; i<2; i++) {
-        timeline = twitter_friends_timeline(twitter);
+        timeline = twitter_home_timeline(twitter);
 //      if(twitter->debug >= 2)
 
 //      set(busy, MUIA_Busy_Speed, 20);
@@ -1648,7 +1698,7 @@ void amitwitter_update(const char *text) {
 
     get(STR_message, MUIA_String_Contents, &text);
 
-    printf("Message was %u characters long.\n", strlen(text));
+    printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1671,7 +1721,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     get(STR_user_id, MUIA_String_Contents, &screen_name);
     get(STR_directmessage, MUIA_String_Contents, &text);
 
-    printf("Message was %u characters long.\n", strlen(text));
+    printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1696,42 +1746,6 @@ void amitwitter_verify_credentials(const char *screen_name, const char *text) {
     twitter_verify_credentials(twitter, screen_name, text);
     twitter_free(twitter);
 
-}
-
-/*****************************************************************************/
-
-///
-
-/// My functions **************************************************************/
-
-// clear Tweet
-void do_clear(void) {
-    set(STR_message, MUIA_String_Contents,0);
-}
-
-// clear direct message
-void do_clear_dm(void) {
-    set(STR_directmessage, MUIA_String_Contents,0);
-}
-
-// about HTML
-void about(void) {
-    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
-}
-
-// FAQ HTML
-void help(void) {
-    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_HELP);
-}
-
-
-// urlTextObject
-Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG font) {
-    return UrltextObject,
-        MUIA_Font,          font,
-        MUIA_Urltext_Text,  text,
-        MUIA_Urltext_Url,   url,
-    End;
 }
 
 /*****************************************************************************/
@@ -1933,7 +1947,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
 
               Child, VGroup, GroupFrameT("User Status"),
 
-                  Child, HGroup, MUIA_Group_SameSize, TRUE, MUIA_CycleChain, TRUE,
+                  Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                        Child, home_gad = MUI_MakeObject(MUIO_Button,"_Timeline"),
                        Child, recent_gad = MUI_MakeObject(MUIO_Button,"_My Tweets"),
                        Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),

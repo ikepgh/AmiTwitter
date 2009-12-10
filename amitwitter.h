@@ -54,7 +54,7 @@
 #define TWITTER_API_PATH_DIRECT_MESSAGE     "/direct_messages/new.xml"
 
 #define TWITTER_API_PATH_UPDATE             "/statuses/update.xml"
-#define TWITTER_API_PATH_FRIENDS_TIMELINE   "/statuses/home_timeline.xml" //friends_timeline.xml"
+#define TWITTER_API_PATH_HOME_TIMELINE      "/statuses/home_timeline.xml"
 #define TWITTER_API_PATH_USER_TIMELINE      "/statuses/user_timeline.xml"
 #define TWITTER_API_PATH_MENTIONS           "/statuses/mentions.xml"
 #define TWITTER_API_PATH_PUBLIC_TIMELINE    "/statuses/public_timeline.xml"
@@ -151,7 +151,7 @@ typedef struct {
     const char *text;                   
     char res_dir[PATH_MAX];
     char images_dir[PATH_MAX];
-    unsigned long last_friends_timeline;
+    unsigned long last_home_timeline;
     unsigned long last_user_timeline;   
     unsigned long mentions;             
     unsigned long last_public_timeline; 
@@ -207,7 +207,7 @@ int twitter_update(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
 
-GList* twitter_friends_timeline(twitter_t *twitter);
+GList* twitter_home_timeline(twitter_t *twitter);
 GList* twitter_user_timeline(twitter_t *twitter);   
 GList* twitter_mentions(twitter_t *twitter);
 GList* twitter_public_timeline(twitter_t *twitter); 
