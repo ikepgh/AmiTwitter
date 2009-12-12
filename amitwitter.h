@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.18
+ ** Current revision : V 0.19
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
@@ -86,8 +87,9 @@
 "<CENTER>MUI © Stefen Stuntz</CENTER><BR>" \
 "<CENTER>URLtext © Alfonso Ranieri</CENTER><BR>" \
 "<CENTER>HTMLtext © Dirk Holtwick</CENTER><BR>" \
-"<CENTER>OpenURL, BetterString  © Open Source Team</CENTER><BR>" \
+"<CENTER>OpenURL, BetterString, TheBar © Open Source Team</CENTER><BR>" \
 "<CENTER>libiconv.ixlibrary © GNU port by Bruno Haible </CENTER><BR>" \
+"<CENTER>MasonIcons © Martin Merz </CENTER><BR>" \
 "<HR>" \
 "<CENTER><IMG SRC = PROGDIR:data/program_images/curl.gif>&nbsp;</CENTER><BR>" \
 "<HR>" \
@@ -105,7 +107,7 @@
 "<CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>" \
 "<HR>" \
 "<CENTER>What are the requirements for AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: MUI, HTMLtext, URLtext, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>" \
+"<CENTER>Answer: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>" \
 "<HR>"\
 "<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>" \
 "<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>" \

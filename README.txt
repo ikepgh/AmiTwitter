@@ -3,23 +3,22 @@ Uploader:  ikepgh@yahoo.com (IKE)
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
 Version: x.x.x
-Architecture:  m68k-amigaos, MorphOS, others coming soon.....
+Architecture:  m68k-amigaos, MorphOS, others coming soon?...
 Requires:  MUI, .mcc's, libiconv.ixlibary
-Distribution: GPL
+Distribution: GPL, SourceForge
 
 
 INTRODUCTION
 ------------
 
-AmiTwitter is a  program to send and view Tweets received on the Twitter network.  It has the
-capability to send Direct Messages.  It can display the Name, Location as well as Friends, Followers 
-and Tweets count statistics for each user.  It can download your most recent Tweets 
+AmiTwitter is a program to send and view Tweets received on the Twitter network.  It has the
+capability to send Direct Messages.  It can display the Name, Location, Following, Followers
+and Tweets count statistics for each user.  It can download your most recent Tweets
 and display all @Replies to your account.  It also has a "Random" function that downloads 
 the most Recent Tweets to open public accounts in which you are 'not' subscribed...just for fun...
 and very entertaining.  ;-).  AmiTwitter also displays Retweets: to me, of me and by me.
 
-Thanks! 
-
+Thanks for your interest!
 AmiTwitter Open Source Team
 
 Send email/feedback to: ikepgh@yahoo.com
@@ -27,13 +26,13 @@ Send email/feedback to: ikepgh@yahoo.com
 INSTALLATION
 -----------
 
-Just place the binary wherever you'd like on your hard drive.  The 'data' directory must be in
-the same directory as the binary file or the program will not run.  
+Just place the binary wherever you'd like on your hard drive.  The 'data' directory (and subdirectories)
+must be in the same directory as the binary file or the program will not run correctly.
 
 REQUIREMENTS
 -----------
 
-OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc,
+OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc,
 libiconv.ixlibary (Libs directory), OpenURL (optional)
 
 OS4/AROS: Unknown at this time
@@ -42,7 +41,7 @@ USAGE
 -----
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
-window, be connected to the internet.  It also helps if you are already following some people currently.
+window, be connected to the internet.  It currently also helps if you are already following some people.
 
 
 VERSION HISTORY
@@ -50,25 +49,27 @@ VERSION HISTORY
 
 0.xx - Initial Release (Coming soon...)
 
-0.18 - Revised display of name/location/friends/followers/tweets stats; reworked interface; added user/pass Test routine, 
+0.19 - Fixed resize issue; cleaned up error checking; renamed friends_timeline to the new home_timeline; added TheBar.mcc 
+buttons and MasonIcons
+0.18 - Revised display of name/location/following/followers/tweets stats; reworked interface; added user/pass Test routine,
 added retweet by, to and of me,  reloads current local file, more error checking
 0.17 - Fixed login, now loaded on startup (and displayed); added rudimentary error checking, serious code cleanup 
 0.16 - Added hothelp, improved interface, added cross-platform Menus
 0.15 - Preliminary compile on MorphOS, fixed AmiTwitter icons/image
 0.14 - Added proper bumprevision to sources
 0.13 - Added stack, CTR-C from CLI, other minor enhancements
-0.12 - Added Name, Location of last Tweet received to main window; added drop down menu items for buttons/shortcuts, 
+0.12 - Added Name, Location of last Tweet received to main window (removed now); added drop down menu items for buttons/shortcuts,
 cleaned up direct message interface to be more useable (cycle chain); added the Source that a Tweet was sent from to the
-results: fixed some memory leaks
+results (disabled now); fixed some memory leaks
 0.11 - Fixed bug that caused some malformed image names to not display the image; implemented users/show for the 
 id logged in, returns 20 most recent Tweets you have sent; implemented @Replies and implemented "Random" (most 
 recent Tweets from unprotected accounts in which you do not have to be subscribed...kinda neat)
-0.10 - Added current 'Following', 'Followers', 'Tweets' and 'Favourites' counts; sends Direct Messages!
+0.10 - Added current 'Following', 'Followers', 'Tweets' and 'Favorites (disabled now)' counts; sends Direct Messages!
 0.09 - Added 'Donate' window dialog, FAQ help text, fixed download directory locations
 0.08 - Fixed download logic/display; added date/time a Tweet was sent
 0.07 - Images are now displayed!
 0.06 - Downloads recent Tweet data into a window now; working on images...
-0.05 - Fixed endless update loop (now only pulls Tweets once when user selects 'Home')
+0.05 - Fixed endless update loop (now only pulls Tweets once when user selects 'Timeline'(Home))
 0.04 - Downloads images to a directory
 0.03 - Pulls current Tweets from account and dumps to stdout
 0.02 - Added 'Settings' window dialog, URLtext links
