@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.18
+ ** Current revision : V 0.19
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
  ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
@@ -81,6 +82,7 @@
 #include <mui/Urltext_mcc.h>
 #include <mui/HTMLtext_mcc.h>
 #include <mui/BetterString_mcc.h>
+#include <mui/TheBar_mcc.h>
 //#include <mui/Busy_mcc.h>
 
 // Dependencies
@@ -171,7 +173,7 @@ Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
 txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
-win_tweet, but_cancel2, win_dirmsg, but_cancel3;
+passforgot, win_tweet, but_cancel2, win_dirmsg, but_cancel3;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -231,6 +233,55 @@ static struct NewMenu MenuData1[]=
     M( NM_END,    NULL,              0,   0               ),
 
     MENU_END
+};
+
+/*****************************************************************************/
+
+///
+
+/// TheBar buttons ************************************************************/
+
+/*
+Object *appearance, *labelPos, *borderless, *sunny, *raised, *scaled, *update;
+*/
+
+enum {
+
+    B_TIMELINE, B_MYTWEETS, B_REPLIES,
+    B_RELOAD, B_DIRECTMESSAGE, B_TWEET, 
+
+    };
+
+static struct MUIS_TheBar_Button buttons[] =
+{
+    {0, B_TIMELINE,      "_Timeline",       "Get most recent Tweets (max 20)"         ,0 },
+    {1, B_MYTWEETS,      "_My Tweets",      "Get most recently sent Tweets (max 20)"  ,0 },
+    {2, B_REPLIES,       "@_Replies",       "Get most recent @Replies (max 20)"       ,0 },
+    {3, B_RELOAD,        "Rel_oad",         "Reload current local file"               ,0 },
+    {4, B_DIRECTMESSAGE, "_Direct Message", "Send a Direct Message"                   ,0 },
+    {5, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
+    {MUIV_TheBar_End                                                                     },
+};
+
+// Buttons
+/*
+char *appearances[] = {"Images and text","Images","Text",NULL};
+char *labelPoss[] = {"Bottom","Top","Right","Left",NULL};
+char *borderlessSel[]={"On", "Off",NULL};
+char *sunnySel[]={"Yes", "No",NULL};
+char *raisedSel[]={"Don't Use", "Use",NULL};
+char *scaledSel[]={"Large", "Small",NULL};
+*/
+
+STRPTR pics[] =
+{
+    "timeline",
+    "mytweets",
+    "replies",
+    "reload",
+    "directmessage",
+    "tweet",
+    NULL
 };
 
 /*****************************************************************************/
@@ -414,7 +465,7 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 
 ///
 
-/// Amitwitter ****************************************************************/
+/// AmiTwitter ****************************************************************/
 
 // New Twitter instance
 twitter_t* twitter_new() {
@@ -524,7 +575,7 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Getting the latest...");
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"Attempting to get the latest...");
     }
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
@@ -1223,7 +1274,7 @@ void twitter_status_print(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
-    printf("<small>Name: %s Location: %s Friends: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
     fclose(stdout);
@@ -1756,8 +1807,8 @@ void amitwitter_verify_credentials(const char *screen_name, const char *text) {
 
 int main(int argc, char *argv[]) {
 
-APTR app, window, sendupdate_gad, clear_gad, home_gad, clear_dm_gad, send_gad,
-recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
+APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
+/*home_gad, recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad; */
 
   if ( ! Open_Libs() ) {
 
@@ -1810,7 +1861,8 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
                   Child, HGroup,
                   Child, HSpace(0),
                   Child, ColGroup(0),
-                  Child, twittersite = urlTextObject(MUIMasterBase,"http://twitter.com/","Establish an Account",MUIV_Font_Normal),
+                  Child, twittersite = urlTextObject(MUIMasterBase,"http://twitter.com/","Establish An Account!",MUIV_Font_Normal),
+                  Child, passforgot =  urlTextObject(MUIMasterBase,"http://twitter.com/account/resend_password ","Forgot Your Password?",MUIV_Font_Normal),
                   Child, HSpace(0),
                   Child, HSpace(0),
                   End,
@@ -1867,7 +1919,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
                            Child, HGroup,
                            Child, STR_message = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter your Tweet and click Update to send",
+                           MUIA_ShortHelp, "Enter your Tweet and click Update to send (max 140 characters)",
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
@@ -1902,7 +1954,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
                            Child, Label2("Message:"),
                            Child, STR_directmessage = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter a message",
+                           MUIA_ShortHelp, "Enter a message (max 140 characters)",
                       End,
  
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
@@ -1933,7 +1985,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
                        MUIA_Image_FreeHoriz, TRUE,
                        MUIA_FixWidth, 157,
                        MUIA_FixHeight, 66,
-                       MUIA_ShortHelp, "AmiTwitter can send up to 140 characters",
+                       MUIA_ShortHelp, "AmiTwitter © IKE",
                   End,
 
                   Child, RectangleObject, MUIA_Weight, 20, End,
@@ -1947,14 +1999,27 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
 
               Child, VGroup, GroupFrameT("User Status"),
 
-                  Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+              Child, toolbar = TheBarObject,
+                 GroupFrame,
+                 MUIA_Group_Horiz,       TRUE,
+                 MUIA_TheBar_EnableKeys, TRUE,
+           /*    MUIA_TheBar_Borderless, TRUE,
+                 MUIA_TheBar_Sunny,      TRUE,
+                 MUIA_TheBar_Raised,     TRUE,
+                 MUIA_TheBar_Scaled,     FALSE,  */
+                 MUIA_TheBar_Buttons,    buttons,
+                 MUIA_TheBar_PicsDrawer, "PROGDIR:data/program_images",
+                 MUIA_TheBar_Pics,        pics,
+              End,
+
+         /*     Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                        Child, home_gad = MUI_MakeObject(MUIO_Button,"_Timeline"),
                        Child, recent_gad = MUI_MakeObject(MUIO_Button,"_My Tweets"),
                        Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
                        Child, reload_gad = MUI_MakeObject(MUIO_Button,"Rel_oad"),
                        Child, dirmsg_gad = MUI_MakeObject(MUIO_Button,"_Direct Message"),
                        Child, tweet_gad = MUI_MakeObject(MUIO_Button, "Tw_eet"),
-                  End,
+                  End,   */
               End,
 
               Child, scroll_main = ScrollgroupObject,
@@ -2007,6 +2072,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
 
 
   // Main Buttons
+/*
   DoMethod(home_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,HOME);
     set(home_gad, MUIA_ShortHelp, (ULONG)"Get most recent Tweets (max 20)");
@@ -2030,6 +2096,25 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
   DoMethod(tweet_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,TWEET);
     set(tweet_gad, MUIA_ShortHelp, (ULONG)"Send a Tweet");
+*/
+
+ DoMethod(buttons[B_TIMELINE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,HOME);
+
+  DoMethod(buttons[B_MYTWEETS].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,PROFILE);
+
+  DoMethod(buttons[B_REPLIES].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,REPLIES);
+
+  DoMethod(buttons[B_RELOAD].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,RELOAD);
+
+  DoMethod(buttons[B_DIRECTMESSAGE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,DIRMSG);
+
+  DoMethod(buttons[B_TWEET].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,TWEET);
 
 
   // Return key
@@ -2106,7 +2191,7 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
 
 ///
 
-/// Switch *******************************************************************/
+/// Switch ********************************************************************/
 
   // Open the main window
   set(window,MUIA_Window_Open,TRUE);
@@ -2117,6 +2202,26 @@ recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad;
          ULONG sigs = 0;
          LONG result;
 
+        /*  if (TAG_USER) {
+
+            ULONG appareanceV, labelPosV, borderlessV, sunnyV, raisedV, scaledV;
+
+            get(appearance,MUIA_Cycle_Active,&appareanceV);
+            get(labelPos,MUIA_Cycle_Active,&labelPosV);
+            get(borderless,MUIA_Cycle_Active,&borderlessV);
+            get(sunny,MUIA_Cycle_Active,&sunnyV);
+            get(raised,MUIA_Cycle_Active,&raisedV);
+            get(scaled,MUIA_Cycle_Active,&scaledV);
+
+            SetAttrs(toolbar,
+                MUIA_TheBar_ViewMode,   appareanceV,
+                MUIA_TheBar_LabelPos,   labelPosV,
+                MUIA_TheBar_Borderless, borderlessV,
+                MUIA_TheBar_Sunny,      sunnyV,
+                MUIA_TheBar_Raised,     raisedV,
+                MUIA_TheBar_Scaled,     scaledV,
+                TAG_DONE);
+        }  */
 
         switch (DoMethod(app,MUIM_Application_NewInput,&sigs)) {
 
