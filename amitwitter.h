@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.19
+ ** Current revision : V 0.20
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
@@ -50,7 +51,10 @@
 #include <time.h>
 #include "AmiTwitter_rev.h"
 
-#define TWITTER_BASE_URI                    "http://twitter.com"   //https...
+#define TWITTER_BASE_URI                    "http://twitter.com"   
+#define TWITTER_BASE_SEARCH_URI             "http://search.twitter.com" 
+
+#define TWITTER_API_PATH_SEARCH             "/search.json?q=morphos"
 
 #define TWITTER_API_PATH_DIRECT_MESSAGE     "/direct_messages/new.xml"
 
@@ -62,8 +66,11 @@
 #define TWITTER_API_PATH_RETWEETED_BY_ME    "/statuses/retweeted_by_me.xml"
 #define TWITTER_API_PATH_RETWEETED_TO_ME    "/statuses/retweeted_to_me.xml"
 #define TWITTER_API_PATH_RETWEETS_OF_ME     "/statuses/retweets_of_me.xml"
+#define TWITTER_API_PATH_FRIENDS            "/statuses/friends.xml"
+#define TWITTER_API_PATH_FOLLOWERS          "/statuses/followers.xml"
 
 #define TWITTER_API_PATH_VERIFY_CREDENTIALS "/account/verify_credentials.xml"
+
 
 /******************************************************************************/
 
@@ -147,6 +154,7 @@
 // Twitter structure
 typedef struct {
     const char *base_uri;
+    const char *base_search_uri;
     const char *user;
     const char *pass;
     const char *source;
@@ -156,13 +164,14 @@ typedef struct {
     unsigned long last_home_timeline;
     unsigned long last_user_timeline;   
     unsigned long mentions;             
+    unsigned long last_friends_timeline;
+    unsigned long last_followers_timeline;
     unsigned long last_public_timeline; 
     int fetch_interval;
     int show_interval;
     int alignment;
     int debug;
     int error;
-  
 }twitter_t;
 
 /******************************************************************************/
@@ -208,11 +217,14 @@ int twitter_fetch(twitter_t *twitter, const char *api_uri, GByteArray *buf);
 int twitter_update(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
+int twitter_search(twitter_t *twitter, const char *apiuri, GByteArray *buf);
 
 GList* twitter_home_timeline(twitter_t *twitter);
 GList* twitter_user_timeline(twitter_t *twitter);   
 GList* twitter_mentions(twitter_t *twitter);
-GList* twitter_public_timeline(twitter_t *twitter); 
+GList* twitter_friends_timeline(twitter_t *twitter);
+GList* twitter_followers_timeline(twitter_t *twitter);
+GList* twitter_public_timeline(twitter_t *twitter);
 
 GList* twitter_retweeted_by_me(twitter_t *twitter);
 GList* twitter_retweeted_to_me(twitter_t *twitter);
