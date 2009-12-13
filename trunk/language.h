@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.19
+ ** Current revision : V 0.20
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
@@ -56,12 +57,15 @@
 #define MSG_RELOAD      "Reload"
 #define MSG_TWEET       "Tweet"
 #define MSG_DIRMSG      "Direct Message"
+#define MSG_SEARCH      "Search"
 #define MSG_QUIT        "Quit"
 
 #define MSG_RETWEET     "Misc"
 #define MSG_RETWEETBYME "Retweet By Me"
 #define MSG_RETWEETTOME "Retweet To Me"
 #define MSG_RETWEETOFME "Retweet Of Me"
+#define MSG_FRIENDS     "Friends"
+#define MSG_FOLLOWERS   "Followers"
 #define MSG_RANDOM      "Random"
 
 #define MSG_TOOLS       "Tools"

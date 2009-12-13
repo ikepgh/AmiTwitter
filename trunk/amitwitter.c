@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.19
+ ** Current revision : V 0.20
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
  ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
@@ -43,7 +44,6 @@
  ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
  **
  ******************************************************************************/
-
 
 /// Includes ******************************************************************/
 
@@ -83,7 +83,6 @@
 #include <mui/HTMLtext_mcc.h>
 #include <mui/BetterString_mcc.h>
 #include <mui/TheBar_mcc.h>
-//#include <mui/Busy_mcc.h>
 
 // Dependencies
 #include <glib.h>
@@ -106,21 +105,24 @@
 #define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
 #endif
 
-#define SENDUPDATE    44
-#define CLEAR         45
-#define HOME          46
-#define TEST          53
-#define CANCEL        54
-#define SAVE          55
-#define DIRECTMESSAGE 56
-#define CLEARDM       57
-#define PROFILE       58
-#define REPLIES       59
-#define RELOAD        61
-#define TWEET         62
-#define CANCEL2       63
-#define DIRMSG        64
-#define CANCEL3       65
+#define CLEAR         44
+#define SENDUPDATE    45
+#define CANCELTWEET   46
+#define SAVE          47
+#define TEST          48
+#define CANCEL        49
+#define HOME          50
+#define PROFILE       51
+#define REPLIES       52
+#define RELOAD        53
+#define DIRECTMESSAGE 54
+#define TWEET         55
+#define CLEARDM       56
+#define DIRMSG        57
+#define CANCELDM      58
+#define CLEARSEARCH   59
+#define SEARCH        60
+#define CANCELSEARCH  61
 
 long __stack = 65536;
 
@@ -168,12 +170,14 @@ struct Library *SocketBase = NULL;
 /// Variables *****************************************************************/
 
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
-*STR_directmessage, *STR_login, *busy;
+*STR_directmessage, *STR_login, *STR_search;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
 txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
-passforgot, win_tweet, but_cancel2, win_dirmsg, but_cancel3;
+passforgot, win_tweet, but_cancel_tweet, win_dirmsg, but_cancel_dm, win_search,
+window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad,
+clear_search_gad, search_gad, but_search_cancel;                            
 
 // Direct Messages
 const char *screen_name, *text;
@@ -188,8 +192,9 @@ enum {
     ADD_METHOD=1,
 
     MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RELOAD,
-    MEN_DIRMSG, MEN_TWEET, MEN_QUIT,
-    MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME, MEN_RANDOM,
+    MEN_DIRMSG, MEN_TWEET, MEN_SEARCH, MEN_QUIT,
+    MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
+    MEN_FRIENDS, MEN_FOLLOWERS, MEN_RANDOM,
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
     MEN_HELP, MEN_HELP2, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
 };
@@ -209,6 +214,7 @@ static struct NewMenu MenuData1[]=
     M( NM_ITEM,   MSG_RELOAD,        0,   MEN_RELOAD      ),
     M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
     M( NM_ITEM,   MSG_TWEET,         0,   MEN_TWEET       ),
+    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
     BAR,
     M( NM_ITEM,   MSG_QUIT,          0,   MEN_QUIT        ),
 
@@ -217,6 +223,8 @@ static struct NewMenu MenuData1[]=
     M( NM_ITEM,   MSG_RETWEETTOME,   0,   MEN_RETWEETTOME ),
     M( NM_ITEM,   MSG_RETWEETOFME,   0,   MEN_RETWEETOFME ),
     BAR,
+    M( NM_ITEM,   MSG_FRIENDS,       0,   MEN_FRIENDS     ),
+    M( NM_ITEM,   MSG_FOLLOWERS,     0,   MEN_FOLLOWERS   ),
     M( NM_ITEM,   MSG_RANDOM,        0,   MEN_RANDOM      ),
 
     M( NM_TITLE,  MSG_TOOLS,         0,   MEN_TOOLS       ),
@@ -427,6 +435,11 @@ void do_clear_dm(void) {
     set(STR_directmessage, MUIA_String_Contents,0);
 }
 
+// clear search
+void do_clear_search(void) {
+    set(STR_search, MUIA_String_Contents,0);
+}
+
 // about HTML
 void about(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
@@ -477,12 +490,15 @@ twitter_t* twitter_new() {
 
     twitter = (twitter_t *)malloc(sizeof(twitter_t));
     twitter->base_uri = TWITTER_BASE_URI;
+    twitter->base_search_uri = TWITTER_BASE_SEARCH_URI;
     twitter->user = username;
     twitter->pass = password;  
     twitter->source = "AmiTwitter";
     twitter->last_home_timeline = 1;
     twitter->last_user_timeline = 1;   
     twitter->mentions = 1;             
+    twitter->last_friends_timeline = 1;
+    twitter->last_followers_timeline = 1;
     twitter->last_public_timeline = 1; 
     twitter->fetch_interval = 60;
     twitter->show_interval = 5;
@@ -984,6 +1000,94 @@ GList* twitter_public_timeline(twitter_t *twitter) {
 
 /*****************************************************************************/
 
+// statuses/friends API
+GList* twitter_friends_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_FRIENDS,
+             twitter->last_friends_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_friends_timeline = atol(status->id);       
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// statuses/followers API
+GList* twitter_followers_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_FOLLOWERS,
+             twitter->last_followers_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_followers_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
 // statuses/twitter_retweeted_by_me API
 GList* twitter_retweeted_by_me(twitter_t *twitter) {
 
@@ -1266,7 +1370,7 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
 
 /*****************************************************************************/
 
-// Display in HTMLtext .mcc
+// Display in HTMLtext .mcc (timelines)
 void twitter_status_print(twitter_status_t *status) {
                                                                                                                                   
     FILE *outfile;
@@ -1275,6 +1379,20 @@ void twitter_status_print(twitter_status_t *status) {
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
     printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf("<p>");
+
+    fclose(stdout);
+}
+
+/*****************************************************************************/
+
+// Display in HTMLtext .mcc (friends and followers)
+void twitter_status_print_friendsfollowers(twitter_status_t *status) {
+
+    FILE *outfile;
+
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
+    printf("<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>",  status->id, status->text, status->created_at);
     printf("<p>");
 
     fclose(stdout);
@@ -1494,6 +1612,26 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 
 /*****************************************************************************/
 
+// Show timeline friends/followers
+void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *statuses) {
+    twitter_status_t *status;
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return;
+    }
+    do{
+        status = statuses->data;
+
+     // if(twitter->debug)
+            twitter_status_print_friendsfollowers(status);
+
+    }while((statuses = g_list_previous(statuses)));
+
+        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+}
+
+/*****************************************************************************/
+
 // Get most recent Tweets (statuses/home_timeline API)
 void amitwitter_loop() {
 
@@ -1532,9 +1670,6 @@ void amitwitter_loop() {
         timeline = twitter_home_timeline(twitter);
 //      if(twitter->debug >= 2)
 
-//      set(busy, MUIA_Busy_Speed, 20);
-//      DoMethod(busy, MUIM_Busy_Move);
-
             printf("timeline num: %d\n", g_list_length(timeline));
 
         twitter_fetch_images(twitter, timeline);
@@ -1547,8 +1682,6 @@ void amitwitter_loop() {
     }
 
     twitter_free(twitter);
-
-//  set(busy, MUIA_Busy_Speed, MUIV_Busy_Speed_Off);
 }
 
 /*****************************************************************************/
@@ -1611,37 +1744,6 @@ void amitwitter_mentions_loop() {
     }
 
      twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Shows most recent random messages (statuses/public_timeline API)
-void amitwitter_public_loop() {
-
-    int i;
-
-    twitter_t *twitter = NULL;
-
-    GList* timeline = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-
-    for(i=1; i<2; i++) {
-        timeline = twitter_public_timeline(twitter);
-//      if(twitter->debug >= 2)
-            printf("timeline num: %d\n", g_list_length(timeline));
-
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
-        timeline = NULL;
-//      sleep(twitter->fetch_interval);
-
-    if(i==1) break;
-    }
-
-    twitter_free(twitter);
 }
 
 /*****************************************************************************/
@@ -1739,6 +1841,97 @@ void amitwitter_retweets_of_me() {
 
 /*****************************************************************************/
 
+// Shows friends (statuses/friends API)
+void amitwitter_friends_loop() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_friends_timeline(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Shows followers (statuses/followers API)
+void amitwitter_followers_loop() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_followers_timeline(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Shows most recent random messages (statuses/public_timeline API)
+void amitwitter_public_loop() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_public_timeline(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
 // Send a Tweet
 void amitwitter_update(const char *text) {
 
@@ -1807,8 +2000,7 @@ void amitwitter_verify_credentials(const char *screen_name, const char *text) {
 
 int main(int argc, char *argv[]) {
 
-APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
-/*home_gad, recent_gad, mentions_gad, reload_gad, tweet_gad, dirmsg_gad; */
+  APTR app;
 
   if ( ! Open_Libs() ) {
 
@@ -1925,12 +2117,43 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                            Child, clear_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
                            Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
-                           Child, but_cancel2 = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, "_Cancel"),
                       End,
                   End,
               End,
           End,
       End,
+
+/*****************************************************************************/
+
+      // The Search Window
+      SubWindow, win_search = WindowObject,
+          MUIA_Window_Title, "Search",
+          MUIA_Window_ID, MAKE_ID('S','R','C','H'),
+
+          WindowContents, VGroup,
+
+              Child, HGroup, GroupFrameT("Search"),
+
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2("Search:"),
+                           Child, HGroup,
+                           Child, STR_search = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter your search string and click Search (max 140 characters)",
+                           End,
+                      End,
+                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_search_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, search_gad = MUI_MakeObject(MUIO_Button,"_Search"),
+                           Child, but_search_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                      End,
+                  End,
+              End,
+          End,
+      End,
+
 
 /*****************************************************************************/
 
@@ -1960,7 +2183,7 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                            Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
                            Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
-                           Child, but_cancel3 = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, but_cancel_dm = MUI_MakeObject(MUIO_Button, "_Cancel"),
                      End,
                   End,
               End,
@@ -1999,28 +2222,19 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
 
               Child, VGroup, GroupFrameT("User Status"),
 
-              Child, toolbar = TheBarObject,
-                 GroupFrame,
-                 MUIA_Group_Horiz,       TRUE,
-                 MUIA_TheBar_EnableKeys, TRUE,
-           /*    MUIA_TheBar_Borderless, TRUE,
-                 MUIA_TheBar_Sunny,      TRUE,
-                 MUIA_TheBar_Raised,     TRUE,
-                 MUIA_TheBar_Scaled,     FALSE,  */
-                 MUIA_TheBar_Buttons,    buttons,
-                 MUIA_TheBar_PicsDrawer, "PROGDIR:data/program_images",
-                 MUIA_TheBar_Pics,        pics,
-              End,
-
-         /*     Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                       Child, home_gad = MUI_MakeObject(MUIO_Button,"_Timeline"),
-                       Child, recent_gad = MUI_MakeObject(MUIO_Button,"_My Tweets"),
-                       Child, mentions_gad =  MUI_MakeObject(MUIO_Button,"@_Replies"),
-                       Child, reload_gad = MUI_MakeObject(MUIO_Button,"Rel_oad"),
-                       Child, dirmsg_gad = MUI_MakeObject(MUIO_Button,"_Direct Message"),
-                       Child, tweet_gad = MUI_MakeObject(MUIO_Button, "Tw_eet"),
-                  End,   */
-              End,
+                 Child, toolbar = TheBarObject,
+                       GroupFrame,
+                       MUIA_Group_Horiz,       TRUE,
+                       MUIA_TheBar_EnableKeys, TRUE,
+                 /*    MUIA_TheBar_Borderless, TRUE,
+                       MUIA_TheBar_Sunny,      TRUE,
+                       MUIA_TheBar_Raised,     TRUE,
+                       MUIA_TheBar_Scaled,     FALSE,  */
+                       MUIA_TheBar_Buttons,    buttons,
+                       MUIA_TheBar_PicsDrawer, "PROGDIR:data/program_images",
+                       MUIA_TheBar_Pics,        pics,
+                       End,
+                 End,
 
               Child, scroll_main = ScrollgroupObject,
                   MUIA_Scrollgroup_UseWinBorder, TRUE,
@@ -2032,17 +2246,13 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
               Child, VGroup, GroupFrame, MUIA_Background, MUII_GroupBack,
                   Child, HGroup,
                        Child, HSpace(0),
-                       Child, ColGroup(4), //5
+                       Child, ColGroup(4),
                            Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
                            Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
                            Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Feedback",MUIV_Font_Normal),
                            Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
                        End,
                        Child, HSpace(0),
-
-                    // Child, busy = BusyObject, MUIA_Busy_Speed,
-                    // MUIV_Busy_Speed_Off,
-				    // End,
                   End,
               End,
           End,
@@ -2072,33 +2282,7 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
 
 
   // Main Buttons
-/*
-  DoMethod(home_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,HOME);
-    set(home_gad, MUIA_ShortHelp, (ULONG)"Get most recent Tweets (max 20)");
-
-  DoMethod(recent_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,PROFILE);
-    set(recent_gad, MUIA_ShortHelp, (ULONG)"Get most recently sent Tweets (max 20)");
-
-  DoMethod(mentions_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,REPLIES);
-    set(mentions_gad, MUIA_ShortHelp, (ULONG)"Get most recent @Replies (max 20)");
-
-  DoMethod(reload_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,RELOAD);
-    set(reload_gad, MUIA_ShortHelp, (ULONG)"Reload current local file");
-
-  DoMethod(dirmsg_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,DIRMSG);
-    set(dirmsg_gad, MUIA_ShortHelp, (ULONG)"Send a Direct Message");
-
-  DoMethod(tweet_gad,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,TWEET);
-    set(tweet_gad, MUIA_ShortHelp, (ULONG)"Send a Tweet");
-*/
-
- DoMethod(buttons[B_TIMELINE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+  DoMethod(buttons[B_TIMELINE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,HOME);
 
   DoMethod(buttons[B_MYTWEETS].obj,MUIM_Notify,MUIA_Pressed,FALSE,
@@ -2117,12 +2301,15 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
     app,2,MUIM_Application_ReturnID,TWEET);
 
 
-  // Return key
+  // Return keys
   DoMethod(STR_message,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
 
   DoMethod(STR_directmessage,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
+
+  DoMethod(STR_search,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
+    app,2,MUIM_Application_ReturnID,SEARCH);
 
 
   // Prefs subwindow
@@ -2153,12 +2340,29 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
     set(sendupdate_gad, MUIA_ShortHelp, (ULONG)"Send Tweet");
 
-  DoMethod(but_cancel2,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,CANCEL2);
-    set(but_cancel2, MUIA_ShortHelp, (ULONG)"Cancel Tweet");
+  DoMethod(but_cancel_tweet,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCELTWEET);
+    set(but_cancel_tweet, MUIA_ShortHelp, (ULONG)"Cancel Tweet");
 
   DoMethod(win_tweet,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_tweet,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
+
+  // Search subwindow
+  DoMethod(clear_search_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CLEARSEARCH);
+    set(clear_search_gad, MUIA_ShortHelp, (ULONG)"Clear Search");
+
+  DoMethod(search_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,SEARCH);
+    set(search_gad, MUIA_ShortHelp, (ULONG)"Search");
+
+  DoMethod(but_search_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCELSEARCH);
+    set(but_search_cancel, MUIA_ShortHelp, (ULONG)"Cancel Search");
+
+  DoMethod(win_search,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
+    win_search,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
   // Direct Message subwindow
@@ -2170,9 +2374,9 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
     set(send_gad, MUIA_ShortHelp, (ULONG)"Send Direct Message");
 
-  DoMethod(but_cancel3,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,CANCEL3);
-    set(but_cancel3, MUIA_ShortHelp, (ULONG)"Cancel Direct Message");
+  DoMethod(but_cancel_dm,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCELDM);
+    set(but_cancel_dm, MUIA_ShortHelp, (ULONG)"Cancel Direct Message");
 
   DoMethod(win_dirmsg,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_dirmsg,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -2185,7 +2389,6 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
 
   // Set login string
   set (STR_login, MUIA_String_Contents, (int)username);
-
 
 /*****************************************************************************/
 
@@ -2271,8 +2474,7 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
                      amitwitter_direct_message(screen_name, text);
                      break;
 
-
-                case CANCEL3:
+                case CANCELDM:
                      set(win_dirmsg, MUIA_Window_Open, FALSE);
                      break;
 
@@ -2290,8 +2492,25 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
                      amitwitter_update(optarg);
                      break;
 
-                case CANCEL2:
+                case CANCELTWEET:
                      set(win_tweet, MUIA_Window_Open, FALSE);
+                     break;
+
+                // Search window
+                case MEN_SEARCH:
+                    set(win_search, MUIA_Window_Open, TRUE);
+                    break;
+
+                case CLEARSEARCH:
+                     do_clear_search();
+                     break;
+
+                case SEARCH:
+                     MUI_RequestA(app,window,0,"Search","*OK","Search not implemented yet...",NULL);
+                     break;
+
+                case CANCELSEARCH:
+                     set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
                 // Quit the program
@@ -2316,6 +2535,18 @@ APTR app, window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad;
                 case MEN_RETWEETOFME:
                     remove("PROGDIR:data/temp/twitter.html");
                     amitwitter_retweets_of_me();
+                    break;
+
+                // Friends
+                case MEN_FRIENDS:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_friends_loop();
+                    break;
+
+                // Followers
+                case MEN_FOLLOWERS:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_followers_loop();
                     break;
 
                 // Random
