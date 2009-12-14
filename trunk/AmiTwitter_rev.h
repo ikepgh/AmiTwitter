@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.20
+ ** Current revision : V 0.21
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
@@ -23,10 +24,10 @@
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	20
-#define DATE		"13.12.09"
-#define VERS		"AmiTwitter 0.20"
-#define VSTRING		"AmiTwitter 0.20 (13.12.09)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.20 (13.12.09)\r\n"
+#define REVISION	21
+#define DATE		"14.12.09"
+#define VERS		"AmiTwitter 0.21"
+#define VSTRING		"AmiTwitter 0.21 (14.12.09)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.21 (14.12.09)\r\n"
 #define AUTHOR		"IKE"
 #define PROJECT		"AmiTwitter"

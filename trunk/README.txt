@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: x.x.x
+Version: x.xx
 Architecture:  m68k-amigaos, MorphOS, others coming soon?...
 Requires:  MUI, .mcc's, libiconv.ixlibary
 Distribution: GPL, SourceForge
@@ -11,13 +11,17 @@ Distribution: GPL, SourceForge
 INTRODUCTION
 ------------
 
-AmiTwitter is a program to send and view Tweets received on the Twitter network.  It has the
-capability to send Direct Messages.  It can display the Name, Location, Following, Followers
-and Tweets count statistics for each user.  It can download your most recent Tweets
-and display all @Replies to your account.  It also has a "Random" function that downloads 
-the most Recent Tweets to open public accounts in which you are 'not' subscribed...just for fun...
-and very entertaining.  ;-).  AmiTwitter also displays Retweets: to me, of me and by me. It also
-displays the most recent tweet by friends & followers (currently only by User ID). 
+Features:
+
+    * Sends Tweets and Direct Messages on the Twitter network
+    * Downloads Following Tweets Timeline (and images)
+    * Downloads @Replies; Retweets of me, by me and to me
+    * Downloads Public Timeline (Random Tweets just for fun...)
+    * Displays the most recent Tweets that you have sent
+    * Displays the most recent Tweet by all friends & followers (User ID)
+    * Follows and Unfollows users
+    * MorphOS, OS 3.x compatible
+
 
 Thanks for your interest!
 AmiTwitter Open Source Team
@@ -42,15 +46,16 @@ USAGE
 -----
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
-window, be connected to the internet.  It currently also helps if you are already following some people.
-Additionally, it can be started from the commandline for a more verbose output (should you desire).
+window, be connected to the internet. Additionally, it can be started from the commandline for a more 
+verbose output (should you desire...).
 
 VERSION HISTORY
 ---------------
 
 0.xx - Initial Release (Coming soon...)
 
-0.20 - Added Followers, Following lists of most recent tweets (currently only by User ID); began search implementation
+0.21 - Can now Follow and Unfollow Users via Screen Name!
+0.20 - Added Friends, Followers most recent tweet (currently only by User ID); began search implementation
 0.19 - Fixed resize issue; cleaned up error checking; renamed friends_timeline to the new home_timeline; added TheBar.mcc 
 buttons and MasonIcons
 0.18 - Revised display of name/location/following/followers/tweets stats; reworked interface; added user/pass Test routine,
