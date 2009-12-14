@@ -75,6 +75,9 @@
 #define TWITTER_API_PATH_FOLLOW             "/friendships/create/" 
 #define TWITTER_API_PATH_UNFOLLOW           "/friendships/destroy/"
 
+#define TWITTER_API_PATH_BLOCK              "/blocks/create/"
+#define TWITTER_API_PATH_UNBLOCK            "/blocks/destroy/"
+
 /******************************************************************************/
 
 // HTML Introduction/About Message
@@ -220,6 +223,8 @@ int twitter_fetch(twitter_t *twitter, const char *api_uri, GByteArray *buf);
 int twitter_update(twitter_t *twitter, const char *status);
 int twitter_follow(twitter_t *twitter, const char *status);
 int twitter_unfollow(twitter_t *twitter, const char *status);
+int twitter_block(twitter_t *twitter, const char *status);
+int twitter_unblock(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
 int twitter_search(twitter_t *twitter, const char *apiuri, GByteArray *buf);
