@@ -130,6 +130,8 @@
 #define CANCELFOLLOW  65
 #define BTN_SEARCH    66
 #define BTN_FOLLOW    67
+#define BLOCK         68
+#define UNBLOCK       69
 
 long __stack = 65536;
 
@@ -185,7 +187,7 @@ txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
 passforgot, win_tweet, but_cancel_tweet, win_dirmsg, but_cancel_dm, win_search,
 window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad,
 clear_search_gad, search_gad, but_search_cancel, clear_follow_gad, follow_gad,
-but_follow_cancel, unfollow_gad, win_follow;
+but_follow_cancel, unfollow_gad, win_follow, block_gad, unblock_gad;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -277,7 +279,7 @@ static struct MUIS_TheBar_Button buttons[] =
     {2, B_REPLIES,       "@_Replies",       "Get most recent @Replies (max 20)"       ,0 },
     {3, B_RELOAD,        "Rel_oad",         "Reload current local file"               ,0 },
     {4, B_SEARCH,        "_Search",         "Search"                                  ,0 },
-    {5, B_FOLLOW,        "_Users",          "Follow / Unfollow Users"                 ,0 },
+    {5, B_FOLLOW,        "_Users",          "Mangage Users"                           ,0 },
     {6, B_DIRECTMESSAGE, "_Dir Msg",        "Send a Direct Message"                   ,0 },
     {7, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
     {MUIV_TheBar_End                                                                     },
@@ -488,6 +490,12 @@ void error3(void) {
 void error4(void) {
      set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>");
 }
+
+// Error5
+void error5(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>");
+}
+
 
 // urlTextObject
 Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG font) {
@@ -840,6 +848,145 @@ int twitter_unfollow(twitter_t *twitter, const char *status) {
 
     return 0;
 }
+
+/*****************************************************************************/
+
+// Block a user with cURL (blocks/create API)
+int twitter_block(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_BLOCK, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error5();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Blocking</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Unblocks a user with cURL (blocks/destroy API)
+int twitter_unblock(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UNBLOCK, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error5();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unblocking</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
 
 /*****************************************************************************/
 
@@ -2142,6 +2289,32 @@ void amitwitter_unfollow(const char *text) {
 
 /*****************************************************************************/
 
+// Block a User (blocks/create API)
+void amitwitter_block(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_block(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Unblock a User (blocks/destroy API)
+void amitwitter_unblock(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_unblock(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
 // Direct Messages
 void amitwitter_direct_message(const char *screen_name, const char *text) {
 
@@ -2344,14 +2517,14 @@ int main(int argc, char *argv[]) {
 
 /*****************************************************************************/
 
-      // The Follow/Unfollow Window
+      // The Follow/Unfollow/Block/Unblock Window
       SubWindow, win_follow = WindowObject,
-          MUIA_Window_Title, "Follow / Unfollow A User",
+          MUIA_Window_Title, "Follow/Unfollow or Block/Unblock A User",
           MUIA_Window_ID, MAKE_ID('F','L','L','W'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Follow / Unfollow"),
+              Child, HGroup, GroupFrameT("Change the Status for a User"),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -2359,13 +2532,15 @@ int main(int argc, char *argv[]) {
                            Child, HGroup,
                            Child, STR_follow = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter the Screen Name you want to follow or unfollow",
+                           MUIA_ShortHelp, "Enter the Screen Name you want to follow, unfollow, block or unblock",
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                            Child, clear_follow_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
                            Child, follow_gad =  MUI_MakeObject(MUIO_Button,"_Follow"),
                            Child, unfollow_gad = MUI_MakeObject(MUIO_Button,"_Unfollow"),
+                           Child, block_gad = MUI_MakeObject(MUIO_Button,"_Block"),
+                           Child, unblock_gad = MUI_MakeObject(MUIO_Button,"U_nblock"),
                            Child, but_follow_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
                       End,
                   End,
@@ -2589,10 +2764,10 @@ int main(int argc, char *argv[]) {
     win_search,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
-  // Follow subwindow
+  // Follow / Block subwindow
   DoMethod(clear_follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARFOLLOW);
-    set(clear_follow_gad, MUIA_ShortHelp, (ULONG)"Clear");
+    set(clear_follow_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
 
   DoMethod(follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,FOLLOW);
@@ -2602,9 +2777,17 @@ int main(int argc, char *argv[]) {
     app,2,MUIM_Application_ReturnID,UNFOLLOW);
     set(unfollow_gad, MUIA_ShortHelp, (ULONG)"Unfollow a User");
 
+  DoMethod(block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,BLOCK);
+    set(block_gad, MUIA_ShortHelp, (ULONG)"Block a User (Use with care!)");
+
+  DoMethod(unblock_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,UNBLOCK);
+    set(unblock_gad, MUIA_ShortHelp, (ULONG)"Unblock a currently blocked User");
+
   DoMethod(but_follow_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELFOLLOW);
-    set(but_follow_cancel, MUIA_ShortHelp, (ULONG)"Cancel");
+    set(but_follow_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
 
   DoMethod(win_follow,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_follow,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -2759,7 +2942,7 @@ int main(int argc, char *argv[]) {
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
-                // Follow window
+                // Follow / Block window
                 case MEN_FOLLOW:
                 case BTN_FOLLOW:
                      set(win_follow, MUIA_Window_Open, TRUE);
@@ -2775,6 +2958,22 @@ int main(int argc, char *argv[]) {
 
                 case UNFOLLOW:
                      amitwitter_unfollow(optarg);
+                     break;
+
+                case BLOCK:
+                    
+                    
+                     result=MUI_RequestA(app,0,0,"Block?","_Block|_Cancel","\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!",0);
+
+                        if(result==1)
+                            amitwitter_block(optarg);
+                        else
+                            break;
+                           
+                     break;
+
+                case UNBLOCK:
+                     amitwitter_unblock(optarg);
                      break;
 
                 case CANCELFOLLOW:
