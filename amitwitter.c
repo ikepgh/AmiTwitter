@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.20
+ ** Current revision : V 0.21
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
@@ -123,6 +124,12 @@
 #define CLEARSEARCH   59
 #define SEARCH        60
 #define CANCELSEARCH  61
+#define CLEARFOLLOW   62
+#define FOLLOW        63
+#define UNFOLLOW      64
+#define CANCELFOLLOW  65
+#define BTN_SEARCH    66
+#define BTN_FOLLOW    67
 
 long __stack = 65536;
 
@@ -170,14 +177,15 @@ struct Library *SocketBase = NULL;
 /// Variables *****************************************************************/
 
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
-*STR_directmessage, *STR_login, *STR_search;
+*STR_directmessage, *STR_login, *STR_search, *STR_follow;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
 txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
 passforgot, win_tweet, but_cancel_tweet, win_dirmsg, but_cancel_dm, win_search,
 window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad,
-clear_search_gad, search_gad, but_search_cancel;                            
+clear_search_gad, search_gad, but_search_cancel, clear_follow_gad, follow_gad,
+but_follow_cancel, unfollow_gad, win_follow;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -192,7 +200,7 @@ enum {
     ADD_METHOD=1,
 
     MEN_FILE, MEN_HOME, MEN_PROFILE, MEN_REPLIES, MEN_RELOAD,
-    MEN_DIRMSG, MEN_TWEET, MEN_SEARCH, MEN_QUIT,
+    MEN_SEARCH, MEN_FOLLOW, MEN_DIRMSG, MEN_TWEET, MEN_QUIT,
     MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
     MEN_FRIENDS, MEN_FOLLOWERS, MEN_RANDOM,
     MEN_TOOLS, MEN_PREFS, MEN_MUIPREFS,
@@ -212,9 +220,10 @@ static struct NewMenu MenuData1[]=
     M( NM_ITEM,   MSG_PROFILE,       0,   MEN_PROFILE     ),
     M( NM_ITEM,   MSG_REPLIES,       0,   MEN_REPLIES     ),
     M( NM_ITEM,   MSG_RELOAD,        0,   MEN_RELOAD      ),
+    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
+    M( NM_ITEM,   MSG_FOLLOW,        0,   MEN_FOLLOW      ),
     M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
     M( NM_ITEM,   MSG_TWEET,         0,   MEN_TWEET       ),
-    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
     BAR,
     M( NM_ITEM,   MSG_QUIT,          0,   MEN_QUIT        ),
 
@@ -256,7 +265,8 @@ Object *appearance, *labelPos, *borderless, *sunny, *raised, *scaled, *update;
 enum {
 
     B_TIMELINE, B_MYTWEETS, B_REPLIES,
-    B_RELOAD, B_DIRECTMESSAGE, B_TWEET, 
+    B_RELOAD, B_SEARCH, B_FOLLOW,
+    B_DIRECTMESSAGE, B_TWEET,
 
     };
 
@@ -266,8 +276,10 @@ static struct MUIS_TheBar_Button buttons[] =
     {1, B_MYTWEETS,      "_My Tweets",      "Get most recently sent Tweets (max 20)"  ,0 },
     {2, B_REPLIES,       "@_Replies",       "Get most recent @Replies (max 20)"       ,0 },
     {3, B_RELOAD,        "Rel_oad",         "Reload current local file"               ,0 },
-    {4, B_DIRECTMESSAGE, "_Direct Message", "Send a Direct Message"                   ,0 },
-    {5, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
+    {4, B_SEARCH,        "_Search",         "Search"                                  ,0 },
+    {5, B_FOLLOW,        "_Users",          "Follow / Unfollow Users"                 ,0 },
+    {6, B_DIRECTMESSAGE, "_Dir Msg",        "Send a Direct Message"                   ,0 },
+    {7, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
     {MUIV_TheBar_End                                                                     },
 };
 
@@ -287,6 +299,8 @@ STRPTR pics[] =
     "mytweets",
     "replies",
     "reload",
+    "search",
+    "follow",
     "directmessage",
     "tweet",
     NULL
@@ -440,6 +454,11 @@ void do_clear_search(void) {
     set(STR_search, MUIA_String_Contents,0);
 }
 
+// clear follow
+void do_clear_follow(void) {
+    set(STR_follow, MUIA_String_Contents,0);
+}
+
 // about HTML
 void about(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
@@ -463,6 +482,11 @@ void error2(void) {
 // Error3
 void error3(void) {
      set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?");
+}
+
+// Error4
+void error4(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>");
 }
 
 // urlTextObject
@@ -657,8 +681,8 @@ int twitter_update(twitter_t *twitter, const char *status) {
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
-        printf("error respose code: %ld\n", res);
 
+        printf("error respose code: %ld\n", res);
         error2();
 
 //      if(twitter->debug > 2){
@@ -675,6 +699,144 @@ int twitter_update(twitter_t *twitter, const char *status) {
     curl_easy_cleanup(curl);
     curl_formfree(formpost);
     curl_slist_free_all(headers);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Follow a user with cURL (friendships/create API)
+int twitter_follow(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_FOLLOW, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error4();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Following</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Unfollow a user with cURL (friendships/destroy API)
+int twitter_unfollow(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UNFOLLOW, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error4();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unfollowing</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
 
     return 0;
 }
@@ -1954,6 +2116,32 @@ void amitwitter_update(const char *text) {
 
 /*****************************************************************************/
 
+// Follow a User (friendships/create API)
+void amitwitter_follow(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_follow(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+// Unfollow a User (friendships/destroy API)
+void amitwitter_unfollow(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_unfollow(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
 // Direct Messages
 void amitwitter_direct_message(const char *screen_name, const char *text) {
 
@@ -2154,6 +2342,36 @@ int main(int argc, char *argv[]) {
           End,
       End,
 
+/*****************************************************************************/
+
+      // The Follow/Unfollow Window
+      SubWindow, win_follow = WindowObject,
+          MUIA_Window_Title, "Follow / Unfollow A User",
+          MUIA_Window_ID, MAKE_ID('F','L','L','W'),
+
+          WindowContents, VGroup,
+
+              Child, HGroup, GroupFrameT("Follow / Unfollow"),
+
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2("User:"),
+                           Child, HGroup,
+                           Child, STR_follow = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter the Screen Name you want to follow or unfollow",
+                           End,
+                      End,
+                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_follow_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, follow_gad =  MUI_MakeObject(MUIO_Button,"_Follow"),
+                           Child, unfollow_gad = MUI_MakeObject(MUIO_Button,"_Unfollow"),
+                           Child, but_follow_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                      End,
+                  End,
+              End,
+          End,
+      End,
 
 /*****************************************************************************/
 
@@ -2170,7 +2388,7 @@ int main(int argc, char *argv[]) {
                            Child, Label2("Recipient:"),
                            Child, STR_user_id = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter a screen name only",
+                           MUIA_ShortHelp, "Enter a Screen Name only",
                       End,
   
                       Child, HGroup,
@@ -2220,10 +2438,10 @@ int main(int argc, char *argv[]) {
                   End,
               End,             
 
-              Child, VGroup, GroupFrameT("User Status"),
+              Child, VGroup, GroupFrameT("User Status"), 
 
                  Child, toolbar = TheBarObject,
-                       GroupFrame,
+                       GroupFrame, 
                        MUIA_Group_Horiz,       TRUE,
                        MUIA_TheBar_EnableKeys, TRUE,
                  /*    MUIA_TheBar_Borderless, TRUE,
@@ -2294,6 +2512,12 @@ int main(int argc, char *argv[]) {
   DoMethod(buttons[B_RELOAD].obj,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,RELOAD);
 
+  DoMethod(buttons[B_SEARCH].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,BTN_SEARCH);
+
+  DoMethod(buttons[B_FOLLOW].obj,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,BTN_FOLLOW);
+
   DoMethod(buttons[B_DIRECTMESSAGE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,DIRMSG);
 
@@ -2363,6 +2587,27 @@ int main(int argc, char *argv[]) {
 
   DoMethod(win_search,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_search,3,MUIM_Set,MUIA_Window_Open,FALSE);
+
+
+  // Follow subwindow
+  DoMethod(clear_follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CLEARFOLLOW);
+    set(clear_follow_gad, MUIA_ShortHelp, (ULONG)"Clear");
+
+  DoMethod(follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,FOLLOW);
+    set(follow_gad, MUIA_ShortHelp, (ULONG)"Follow a User");
+
+  DoMethod(unfollow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,UNFOLLOW);
+    set(unfollow_gad, MUIA_ShortHelp, (ULONG)"Unfollow a User");
+
+  DoMethod(but_follow_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCELFOLLOW);
+    set(but_follow_cancel, MUIA_ShortHelp, (ULONG)"Cancel");
+
+  DoMethod(win_follow,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
+    win_follow,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
   // Direct Message subwindow
@@ -2445,14 +2690,14 @@ int main(int argc, char *argv[]) {
                 case MEN_PROFILE:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_user_loop();
-                    break;
+                     break;
 
                 // @Replies
                 case REPLIES:
                 case MEN_REPLIES:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_mentions_loop();
-                    break;
+                     break;
 
                 // Reload
                 case RELOAD:
@@ -2481,8 +2726,8 @@ int main(int argc, char *argv[]) {
                 // Tweet window
                 case TWEET:
                 case MEN_TWEET:
-                    set(win_tweet, MUIA_Window_Open, TRUE);
-                    break;
+                     set(win_tweet, MUIA_Window_Open, TRUE);
+                     break;
 
                 case CLEAR:
                      do_clear();
@@ -2498,8 +2743,9 @@ int main(int argc, char *argv[]) {
 
                 // Search window
                 case MEN_SEARCH:
-                    set(win_search, MUIA_Window_Open, TRUE);
-                    break;
+                case BTN_SEARCH:
+                     set(win_search, MUIA_Window_Open, TRUE);
+                     break;
 
                 case CLEARSEARCH:
                      do_clear_search();
@@ -2513,6 +2759,28 @@ int main(int argc, char *argv[]) {
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
+                // Follow window
+                case MEN_FOLLOW:
+                case BTN_FOLLOW:
+                     set(win_follow, MUIA_Window_Open, TRUE);
+                     break;
+
+                case CLEARFOLLOW:
+                     do_clear_follow();
+                     break;
+
+                case FOLLOW:
+                     amitwitter_follow(optarg);
+                     break;
+
+                case UNFOLLOW:
+                     amitwitter_unfollow(optarg);
+                     break;
+
+                case CANCELFOLLOW:
+                     set(win_follow, MUIA_Window_Open, FALSE);
+                     break;
+
                 // Quit the program
                 case MEN_QUIT:
                      result=MUI_RequestA(app,0,0,"Quit","_Quit|_Cancel","\33cAre you sure you want\nto quit AmiTwitter?",0);
@@ -2523,37 +2791,37 @@ int main(int argc, char *argv[]) {
 
                 // Retweets
                 case MEN_RETWEETBYME:
-                    remove("PROGDIR:data/temp/twitter.html");
-                    amitwitter_retweeted_by_me();
-                    break;
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_retweeted_by_me();
+                     break;
 
                 case MEN_RETWEETTOME:
-                    remove("PROGDIR:data/temp/twitter.html");
-                    amitwitter_retweeted_to_me();
-                    break;
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_retweeted_to_me();
+                     break;
 
                 case MEN_RETWEETOFME:
-                    remove("PROGDIR:data/temp/twitter.html");
-                    amitwitter_retweets_of_me();
-                    break;
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_retweets_of_me();
+                     break;
 
                 // Friends
                 case MEN_FRIENDS:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_friends_loop();
-                    break;
+                     break;
 
                 // Followers
                 case MEN_FOLLOWERS:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_followers_loop();
-                    break;
+                     break;
 
                 // Random
                 case MEN_RANDOM:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_public_loop();
-                    break;
+                     break;
 
                 // Settings window
                 case MEN_PREFS:

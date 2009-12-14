@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.20
+ ** Current revision : V 0.21
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
  ** 04-Dec-09   IKE                    revised interface, new features and error checking
@@ -58,7 +59,7 @@
 
 #define TWITTER_API_PATH_DIRECT_MESSAGE     "/direct_messages/new.xml"
 
-#define TWITTER_API_PATH_UPDATE             "/statuses/update.xml"
+#define TWITTER_API_PATH_UPDATE             "/statuses/update.xml" 
 #define TWITTER_API_PATH_HOME_TIMELINE      "/statuses/home_timeline.xml"
 #define TWITTER_API_PATH_USER_TIMELINE      "/statuses/user_timeline.xml"
 #define TWITTER_API_PATH_MENTIONS           "/statuses/mentions.xml"
@@ -71,6 +72,8 @@
 
 #define TWITTER_API_PATH_VERIFY_CREDENTIALS "/account/verify_credentials.xml"
 
+#define TWITTER_API_PATH_FOLLOW             "/friendships/create/" 
+#define TWITTER_API_PATH_UNFOLLOW           "/friendships/destroy/"
 
 /******************************************************************************/
 
@@ -215,6 +218,8 @@ int twitter_config(twitter_t *twitter);
 
 int twitter_fetch(twitter_t *twitter, const char *api_uri, GByteArray *buf);
 int twitter_update(twitter_t *twitter, const char *status);
+int twitter_follow(twitter_t *twitter, const char *status);
+int twitter_unfollow(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
 int twitter_search(twitter_t *twitter, const char *apiuri, GByteArray *buf);
