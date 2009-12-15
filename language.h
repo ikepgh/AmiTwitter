@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.21
+ ** Current revision : V 0.22
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
@@ -53,25 +54,36 @@
 
 #define MSG_FILE        "File"
 #define MSG_HOME        "Timeline"
-#define MSG_PROFILE     "My Tweets"
-#define MSG_REPLIES     "@Replies"
-#define MSG_RELOAD      "Reload"
-#define MSG_SEARCH      "Search"
-#define MSG_FOLLOW      "Users"
-#define MSG_DIRMSG      "Direct Message"
-#define MSG_TWEET       "Tweet"
-#define MSG_QUIT        "Quit"
-
-#define MSG_RETWEET     "Misc"
+#define MSG_RETWEET     "Retweets"
 #define MSG_RETWEETBYME "Retweet By Me"
 #define MSG_RETWEETTOME "Retweet To Me"
 #define MSG_RETWEETOFME "Retweet Of Me"
+#define MSG_REPLIES     "@Replies"
+#define MSG_RELOAD      "Reload"
+#define MSG_SEARCH      "Search"
+#define MSG_SEARCHUSER  "Find Users"
+#define MSG_USER        "Users"
+#define MSG_FOLLOW      "Follow / Unfollow"
+#define MSG_SHOW        "Show Details"
+#define MSG_BLOCK       "Block / Unblock"
+#define MSG_NOTIFY      "Notifications"
+#define MSG_DIRMSG      "Direct Message"
+#define MSG_DIRMSGSENT  "Sent"
+#define MSG_DIRMSGRCVD  "Received"
+#define MSG_TWEET       "Tweet"
+#define MSG_MYTWEET     "My Tweets"
+#define MSG_FAVS        "My Favorites"
+#define MSG_QUIT        "Quit"
+
+#define MSG_MISC        "Misc"
 #define MSG_FRIENDS     "My Friends"
 #define MSG_FOLLOWERS   "My Followers"
+#define MSG_BLOCKING    "Blocking"
 #define MSG_RANDOM      "Random"
 
 #define MSG_TOOLS       "Tools"
 #define MSG_PREFS       "Settings"
+#define MSG_USERPROFILE "Update Profile"
 #define MSG_MUIPREFS    "MUI Settings"
 
 #define MSG_HELP        "Help"
