@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.21
+ ** Current revision : V 0.22
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
  ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
@@ -58,6 +59,8 @@
 #define TWITTER_API_PATH_SEARCH             "/search.json?q=morphos"
 
 #define TWITTER_API_PATH_DIRECT_MESSAGE     "/direct_messages/new.xml"
+#define TWITTER_API_PATH_DIRECT_MSGSENT     "/direct_messages/sent.xml"
+#define TWITTER_API_PATH_DIRECT_MSGRCVD     "/direct_messages.xml"
 
 #define TWITTER_API_PATH_UPDATE             "/statuses/update.xml" 
 #define TWITTER_API_PATH_HOME_TIMELINE      "/statuses/home_timeline.xml"
@@ -71,12 +74,21 @@
 #define TWITTER_API_PATH_FOLLOWERS          "/statuses/followers.xml"
 
 #define TWITTER_API_PATH_VERIFY_CREDENTIALS "/account/verify_credentials.xml"
+#define TWITTER_API_PATH_UPDATEPROFILE      "/account/update_profile.xml"
 
 #define TWITTER_API_PATH_FOLLOW             "/friendships/create/" 
 #define TWITTER_API_PATH_UNFOLLOW           "/friendships/destroy/"
 
 #define TWITTER_API_PATH_BLOCK              "/blocks/create/"
 #define TWITTER_API_PATH_UNBLOCK            "/blocks/destroy/"
+#define TWITTER_API_PATH_BLOCKING           "/blocks/blocking.xml"
+
+#define TWITTER_API_PATH_NOTIFY             "/notifications/follow/"
+#define TWITTER_API_PATH_UNNOTIFY           "/notifications/leave/"
+
+#define TWITTER_API_PATH_FAVS               "/favorites.xml"
+
+
 
 /******************************************************************************/
 
@@ -173,6 +185,9 @@ typedef struct {
     unsigned long last_friends_timeline;
     unsigned long last_followers_timeline;
     unsigned long last_public_timeline; 
+    unsigned long last_dirmsgsent_timeline;
+    unsigned long last_favs_timeline;
+    unsigned long last_blocking_timeline;
     int fetch_interval;
     int show_interval;
     int alignment;
@@ -225,7 +240,10 @@ int twitter_follow(twitter_t *twitter, const char *status);
 int twitter_unfollow(twitter_t *twitter, const char *status);
 int twitter_block(twitter_t *twitter, const char *status);
 int twitter_unblock(twitter_t *twitter, const char *status);
+int twitter_notify(twitter_t *twitter, const char *status);
+int twitter_unnotify(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
+int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web, const char *location, const char *bio);
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
 int twitter_search(twitter_t *twitter, const char *apiuri, GByteArray *buf);
 
@@ -234,11 +252,16 @@ GList* twitter_user_timeline(twitter_t *twitter);
 GList* twitter_mentions(twitter_t *twitter);
 GList* twitter_friends_timeline(twitter_t *twitter);
 GList* twitter_followers_timeline(twitter_t *twitter);
+GList* twitter_blocking_timeline(twitter_t *twitter);
 GList* twitter_public_timeline(twitter_t *twitter);
 
 GList* twitter_retweeted_by_me(twitter_t *twitter);
 GList* twitter_retweeted_to_me(twitter_t *twitter);
 GList* twitter_retweets_of_me(twitter_t *twitter);
+
+GList* twitter_dirmsgsent(twitter_t *twitter);
+
+GList* twitter_favs(twitter_t *twitter);
 
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader);
 twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader);

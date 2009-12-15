@@ -19,7 +19,9 @@ Features:
     * Downloads Public Timeline (Random Tweets just for fun...)
     * Displays the most recent Tweets that you have sent
     * Displays the most recent Tweet by all friends & followers (User ID)
-    * Follow/Unfollow users; Block/Unblock users
+    * Follow/Unfollow, Block/Unblock specified users
+    * Receive/Stop receiving SMS messages from users
+    * Update your profile; view Favorites and users currently Blocking
     * MorphOS, OS 3.x compatible
 
 
@@ -54,7 +56,8 @@ VERSION HISTORY
 
 0.xx - Initial Release (Coming soon...)
 
-0.22 - Blocking/Unblocking implemented; 
+0.22 - Major implementations: Blocking/Unblocking; Receive/Stop receiving SMS messages; ability to update your profile;
+view Tweets that you have marked as Favorites, also can view users currently being Blocked by you (via User ID) 
 0.21 - Can now Follow and Unfollow Users via Screen Name!
 0.20 - Added Friends, Followers most recent tweet (currently only by User ID); began search implementation
 0.19 - Fixed resize issue; cleaned up error checking; renamed friends_timeline to the new home_timeline; added TheBar.mcc 
