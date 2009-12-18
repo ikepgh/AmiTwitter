@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.22
+ ** Current revision : V 0.23
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
@@ -62,11 +63,11 @@
 #define MSG_RELOAD      "Reload"
 #define MSG_SEARCH      "Search"
 #define MSG_SEARCHUSER  "Find Users"
-#define MSG_USER        "Users"
-#define MSG_FOLLOW      "Follow / Unfollow"
-#define MSG_SHOW        "Show Details"
-#define MSG_BLOCK       "Block / Unblock"
-#define MSG_NOTIFY      "Notifications"
+//#define MSG_USER        "Users"
+#define MSG_FOLLOW      "Users"
+//#define MSG_SHOW        "Show Details"
+//#define MSG_BLOCK       "Block / Unblock"
+//#define MSG_NOTIFY      "Notifications"
 #define MSG_DIRMSG      "Direct Message"
 #define MSG_DIRMSGSENT  "Sent"
 #define MSG_DIRMSGRCVD  "Received"

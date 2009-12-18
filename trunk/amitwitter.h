@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.22
+ ** Current revision : V 0.23
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
@@ -76,7 +77,7 @@
 #define TWITTER_API_PATH_VERIFY_CREDENTIALS "/account/verify_credentials.xml"
 #define TWITTER_API_PATH_UPDATEPROFILE      "/account/update_profile.xml"
 
-#define TWITTER_API_PATH_FOLLOW             "/friendships/create/" 
+#define TWITTER_API_PATH_FOLLOW             "/friendships/create/"
 #define TWITTER_API_PATH_UNFOLLOW           "/friendships/destroy/"
 
 #define TWITTER_API_PATH_BLOCK              "/blocks/create/"
@@ -87,6 +88,8 @@
 #define TWITTER_API_PATH_UNNOTIFY           "/notifications/leave/"
 
 #define TWITTER_API_PATH_FAVS               "/favorites.xml"
+
+#define TWITTER_API_PATH_USER_SHOW          "/users/show/"
 
 
 
@@ -188,6 +191,7 @@ typedef struct {
     unsigned long last_dirmsgsent_timeline;
     unsigned long last_favs_timeline;
     unsigned long last_blocking_timeline;
+    unsigned long last_usershow_timeline;
     int fetch_interval;
     int show_interval;
     int alignment;
@@ -254,6 +258,7 @@ GList* twitter_friends_timeline(twitter_t *twitter);
 GList* twitter_followers_timeline(twitter_t *twitter);
 GList* twitter_blocking_timeline(twitter_t *twitter);
 GList* twitter_public_timeline(twitter_t *twitter);
+GList* twitter_usershow_timeline(twitter_t *twitter);
 
 GList* twitter_retweeted_by_me(twitter_t *twitter);
 GList* twitter_retweeted_to_me(twitter_t *twitter);

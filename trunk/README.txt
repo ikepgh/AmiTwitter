@@ -2,9 +2,9 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: x.xx
-Architecture:  m68k-amigaos, MorphOS, others coming soon?...
-Requires:  MUI, .mcc's, libiconv.ixlibary
+Version: 0.23 Beta 1
+Architecture:  m68k-amigaos, MorphOS
+Requires:  see below
 Distribution: GPL, SourceForge
 
 
@@ -33,14 +33,16 @@ Send email/feedback to: ikepgh@yahoo.com
 INSTALLATION
 -----------
 
-Just place the binary wherever you'd like on your hard drive.  The 'data' directory (and subdirectories)
-must be in the same directory as the binary file or the program will not run correctly.
+Just place the binary wherever you'd like on your hard drive.  The 'data' directory 
+(and its subdirectories) must be in the same directory as the binary file or the program 
+will not run correctly.
 
 REQUIREMENTS
 -----------
 
-OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc,
-libiconv.ixlibary (Libs directory), OpenURL (optional)
+OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc (included in Libs/mui directory), 
+TheBar.mcc, libiconv.ixlibary (included in Libs directory), ixemul/ixnet libraries, working TCP stack, 
+gif/png/jpg/bmp datatypes, OpenURL (optional)
 
 OS4/AROS: Unknown at this time
 
@@ -52,10 +54,9 @@ window, be connected to the internet. Additionally, it can be started from the c
 verbose output (should you desire...).
 
 VERSION HISTORY
----------------
-
-0.xx - Initial Release (Coming soon...)
-
+--------------- 
+0.23 - Beta 1 Release - Fast Links button prefs can now be saved; Users controls are now tabbed; added Users/Show - can
+search by User Name and it will display the last Tweet by that User (whether you are following them or not)
 0.22 - Major implementations: Blocking/Unblocking; Receive/Stop receiving SMS messages; ability to update your profile;
 view Tweets that you have marked as Favorites, also can view users currently being Blocked by you (via User ID) 
 0.21 - Can now Follow and Unfollow Users via Screen Name!
