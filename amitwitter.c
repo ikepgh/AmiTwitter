@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.22
+ ** Current revision : V 0.23
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
  ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
@@ -156,9 +157,14 @@
 #define UNNOTIFY      77
 #define CANCELNOTIFY  78
 
-// User profile
-#define UPDATEPROFILE 79
-#define CANCELPROFILE 80
+// User Show
+#define CLEARSHOW     79
+#define USERSHOW      80
+#define CANCELSHOW    81
+
+// Update profile
+#define UPDATEPROFILE 82
+#define CANCELPROFILE 83
 
 long __stack = 65536;
 
@@ -208,7 +214,7 @@ struct Library *SocketBase = NULL;
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
 *STR_directmessage, *STR_login, *STR_search, *STR_follow, *STR_block,
 *STR_notify, *STR_profile_name, *STR_profile_web, *STR_profile_location,
-*STR_profile_bio;
+*STR_profile_bio, *STR_show;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
@@ -216,16 +222,19 @@ txt_source, scroll_source, scroll_main, donate, win_donate, twittersite,
 passforgot, win_tweet, but_cancel_tweet, win_dirmsg, but_cancel_dm, win_search,
 window, sendupdate_gad, clear_gad, toolbar, clear_dm_gad, send_gad,
 clear_search_gad, search_gad, but_search_cancel, clear_follow_gad, follow_gad,
-but_follow_cancel, unfollow_gad, win_follow, clear_block_gad, win_block, block_gad,
-unblock_gad, but_block_cancel, win_notify, clear_notify_gad, notify_gad,
+but_follow_cancel, unfollow_gad, win_follow, clear_block_gad, block_gad,
+unblock_gad, but_block_cancel, clear_notify_gad, notify_gad,
 unnotify_gad, but_notify_cancel, win_userprofile, update_profile_gad,
-but_cancel_profile;
+but_cancel_profile, clear_show_gad, show_gad, but_show_cancel;
 
 // Direct Messages
 const char *screen_name, *text;
 
 // Update Profile
 const char *name,  *web,  *location,  *bio;
+
+// Users tabs
+static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","Show User",NULL };
 
 /*****************************************************************************/
 
@@ -237,9 +246,8 @@ enum {
     ADD_METHOD=1,
                         
     MEN_FILE, MEN_HOME, MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
-    MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER,
-    MEN_USER, MEN_FOLLOW, MEN_SHOW, MEN_BLOCK, MEN_NOTIFY, MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD,
-    MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
+    MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_FOLLOW,
+    MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
     MEN_MISC, MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
     MEN_TOOLS, MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
     MEN_HELP, MEN_HELP2, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
@@ -265,14 +273,10 @@ static struct NewMenu MenuData1[]=
 //    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
 //    MX( NM_SUB,   MSG_SEARCH,        0,   0, MEN_SEARCH        ),
 //    MX( NM_SUB,   MSG_SEARCHUSER,    0,   0, MEN_SEARCHUSER    ),
-    M( NM_ITEM,   MSG_USER,          0,   MEN_USER        ),
-    MX( NM_SUB,   MSG_FOLLOW,        0,   0, MEN_FOLLOW        ),
-//    MX( NM_SUB,   MSG_SHOW,          0,   0, MEN_SHOW          ),
-    MX( NM_SUB,   MSG_BLOCK,         0,   0, MEN_BLOCK         ),
-    MX( NM_SUB,   MSG_NOTIFY,        0,   0, MEN_NOTIFY        ),
+    M( NM_ITEM,   MSG_FOLLOW,          0,   MEN_FOLLOW        ),
     BAR,
     M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
-    MX( NM_SUB,   MSG_DIRMSG,        0,   0, MEN_DIRMSG        ),
+//    MX( NM_SUB,   MSG_DIRMSG,        0,   0, MEN_DIRMSG        ),
 //    MX( NM_SUB,   MSG_DIRMSGSENT,    0,   0, MEN_DIRMSGSENT    ),
 //    MX( NM_SUB,   MSG_DIRMSGRCVD,    0,   0, MEN_DIRMSGRCVD    ),
     M( NM_ITEM,   MSG_TWEET,         0,   MEN_TWEET       ),
@@ -312,9 +316,8 @@ static struct NewMenu MenuData1[]=
 
 /// TheBar buttons ************************************************************/
 
-/*
+
 Object *appearance, *labelPos, *borderless, *sunny, *raised, *scaled, *update;
-*/
 
 enum {
 
@@ -327,25 +330,25 @@ enum {
 static struct MUIS_TheBar_Button buttons[] =
 {
     {0, B_TIMELINE,      "_Timeline",       "Get most recent Tweets (max 20)"         ,0 },
-    {1, B_RETWEETS,      "Ret_weets",       "Get most recent Retweets (max 20)"       ,0 },
+    {1, B_RETWEETS,      "Ret_weets",       "Get most recent Retweets to me (max 20)" ,0 },
     {2, B_REPLIES,       "@_Replies",       "Get most recent @Replies (max 20)"       ,0 },
     {3, B_RELOAD,        "Rel_oad",         "Reload current local file"               ,0 },
     {4, B_SEARCH,        "_Search",         "Search"                                  ,0 },
-    {5, B_FOLLOW,        "_Users",          "Follow / Unfollow Users"                 ,0 },
+    {5, B_FOLLOW,        "_Users",          "Manage Users"                            ,0 },
     {6, B_DIRECTMESSAGE, "_Dir Msg",        "Send a Direct Message"                   ,0 },
     {7, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
     {MUIV_TheBar_End                                                                     },
 };
 
 // Buttons
-/*
-char *appearances[] = {"Images and text","Images","Text",NULL};
+
+char *appearances[] = {"Images and Text","Images","Text",NULL};
 char *labelPoss[] = {"Bottom","Top","Right","Left",NULL};
 char *borderlessSel[]={"On", "Off",NULL};
 char *sunnySel[]={"Yes", "No",NULL};
 char *raisedSel[]={"Don't Use", "Use",NULL};
 char *scaledSel[]={"Large", "Small",NULL};
-*/
+
 
 STRPTR pics[] =
 {
@@ -523,6 +526,11 @@ void do_clear_notify(void) {
     set(STR_notify, MUIA_String_Contents,0);
 }
 
+// clear show
+void do_clear_show(void) {
+    set(STR_show, MUIA_String_Contents,0);
+}
+
 // about HTML
 void about(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
@@ -568,6 +576,11 @@ void error7(void) {
      set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>");
 }
 
+// Error8
+void error8(void) {
+     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>");
+}
+
 
 // urlTextObject
 Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG font) {
@@ -607,6 +620,7 @@ twitter_t* twitter_new() {
     twitter->last_dirmsgsent_timeline = 1;
     twitter->last_favs_timeline = 1;
     twitter->last_blocking_timeline = 1;
+    twitter->last_usershow_timeline = 1;
     twitter->fetch_interval = 60;
     twitter->show_interval = 5;
     twitter->alignment = 2;
@@ -1200,6 +1214,55 @@ int twitter_unnotify(twitter_t *twitter, const char *status) {
 
     return 0;
 }
+
+/*****************************************************************************/
+
+// Show a user with cURL (users/show API)
+GList* twitter_usershow_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+
+    get(STR_show, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml",
+             twitter->last_usershow_timeline);
+
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_usershow_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
 
 /*****************************************************************************/
 
@@ -2346,7 +2409,7 @@ int utf8pos(const char *str, int width) {
 
 /*****************************************************************************/
 
-// Show timeline
+// User Show timeline
 void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
     twitter_status_t *status;
     statuses = g_list_last(statuses);
@@ -2747,6 +2810,36 @@ void amitwitter_blocking_loop() {
 
 /*****************************************************************************/
 
+// User Show API
+void amitwitter_usershow() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_usershow_timeline(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
 // Shows most recent random messages (statuses/public_timeline API)
 void amitwitter_public_loop() {
 
@@ -2965,11 +3058,43 @@ int main(int argc, char *argv[]) {
           MUIA_Window_Title, "Settings",
           MUIA_Window_ID, MAKE_ID('P','R','E','F'),
 
-          WindowContents, VGroup,
+          WindowContents, VGroup,  MUIA_Register_Frame, TRUE,
+                 Child, VGroup,
+                 GroupFrameT("Fast Links Settings"),
+                    Child, HGroup,
+                       Child, Label2("Appearance"),
+                         Child, appearance  = CycleObject, MUIA_Cycle_Entries,
+                         appearances, MUIA_ObjectID, 7, End,
+
+                       Child, Label2("Label Position"),
+                         Child, labelPos = CycleObject, MUIA_Cycle_Entries,
+                         labelPoss, MUIA_ObjectID, 8, End,
+                    End,
+
+                    Child, HGroup,
+                       Child, HSpace(0),
+                       Child, Label1("Borders"),
+                       Child, borderless = CycleObject, MUIA_Cycle_Entries,
+                       borderlessSel, MUIA_ObjectID, 9, End,
+                       Child, HSpace(0),
+                       Child, Label1("Sunny"),
+                       Child, sunny = CycleObject, MUIA_Cycle_Entries,
+                       sunnySel, MUIA_ObjectID, 10, End,
+                       Child, HSpace(0),
+                       Child, Label1("Raised"),
+                       Child, raised = CycleObject, MUIA_Cycle_Entries,
+                       raisedSel, MUIA_ObjectID, 11, End,
+                       Child, HSpace(0),
+                       Child, Label1("Scaled"),
+                       Child, scaled = CycleObject, MUIA_Cycle_Entries,
+                       scaledSel, MUIA_ObjectID, 12, End,
+                       Child, HSpace(0),
+                    End,
+              End,
 
               Child, VGroup,
 
-                  Child, ColGroup(2), GroupFrameT("Account Information"),
+                  Child, ColGroup(2), GroupFrameT("Account Information Settings"),
                        Child, Label2("User Name:"),
                        Child, str_user_pref = StringObject, StringFrame, MUIA_ObjectID, 1, End,
                        Child, Label2("Password:"),
@@ -2981,7 +3106,7 @@ int main(int argc, char *argv[]) {
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
                   Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
                   Child, but_test   = MUI_MakeObject(MUIO_Button,"_Test"),
-                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"), 
+                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel / Use"),
               End,
 
               Child, VGroup, GroupFrameT("Help!"),
@@ -3098,14 +3223,14 @@ int main(int argc, char *argv[]) {
 
 /*****************************************************************************/
 
-      // The Follow/Unfollow Window
+      // The User Window
       SubWindow, win_follow = WindowObject,
-          MUIA_Window_Title, "Follow/Unfollow a User",
+          MUIA_Window_Title, "Manage Users",
           MUIA_Window_ID, MAKE_ID('F','L','L','W'),
 
           WindowContents, VGroup,
-
-              Child, HGroup, GroupFrameT("Change the Status for a User"),
+            Child, RegisterGroup(Pages),
+              Child, HGroup, GroupFrameT("Change the Following Status for a User"),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -3124,19 +3249,8 @@ int main(int argc, char *argv[]) {
                       End,
                   End,
               End,
-          End,
-      End,
 
-/*****************************************************************************/
-
-      // The Block/Unblock Window
-      SubWindow, win_block = WindowObject,
-          MUIA_Window_Title, "Block/Unblock a User",
-          MUIA_Window_ID, MAKE_ID('B','L','C','K'),
-
-          WindowContents, VGroup,
-
-              Child, HGroup, GroupFrameT("Change the Status for a User"),
+              Child, HGroup, GroupFrameT("Change the Blocking Status for a User"),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -3155,19 +3269,8 @@ int main(int argc, char *argv[]) {
                       End,
                   End,
               End,
-          End,
-      End,
 
-/*****************************************************************************/
-
-      // The Notify/Unnotify SMS Window
-      SubWindow, win_notify = WindowObject,
-          MUIA_Window_Title, "Receive/Stop SMS Notifications for a User",
-          MUIA_Window_ID, MAKE_ID('N','T','F','Y'),
-
-          WindowContents, VGroup,
-
-              Child, HGroup, GroupFrameT("Change the Status for a User"),
+              Child, HGroup, GroupFrameT("Change the SMS Notification Status for a User"),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -3186,6 +3289,28 @@ int main(int argc, char *argv[]) {
                       End,
                   End,
               End,
+
+              Child, HGroup, GroupFrameT("Show a User"),
+
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2("User:"),
+                           Child, HGroup,
+                           Child, STR_show = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!",
+                           End,
+                      End,
+                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
+                           Child, show_gad = MUI_MakeObject(MUIO_Button,"_Show User"),
+                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                      End,
+                  End,
+              End,
+
+            End,
+
           End,
       End,
 
@@ -3226,14 +3351,14 @@ int main(int argc, char *argv[]) {
 
 /*****************************************************************************/
 
-      // User Update Profile Window
+      // Update Profile Window
       SubWindow, win_userprofile = WindowObject,
           MUIA_Window_Title, "Update Your Profile",
           MUIA_Window_ID, MAKE_ID('P','R','F','L'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Update Your Profile"),
+              Child, HGroup, GroupFrameT("Update Your Twitter Website Profile"),
                   Child, VGroup,
                       Child, HGroup,
                            Child, Label2("Name:"),
@@ -3307,11 +3432,11 @@ int main(int argc, char *argv[]) {
                  Child, toolbar = TheBarObject,
                        GroupFrame, 
                        MUIA_Group_Horiz,       TRUE,
-                       MUIA_TheBar_EnableKeys, TRUE,
-                 /*    MUIA_TheBar_Borderless, TRUE,
+                       MUIA_TheBar_EnableKeys, TRUE, 
+                       MUIA_TheBar_Borderless, TRUE,
                        MUIA_TheBar_Sunny,      TRUE,
                        MUIA_TheBar_Raised,     TRUE,
-                       MUIA_TheBar_Scaled,     FALSE,  */
+                       MUIA_TheBar_Scaled,     FALSE,
                        MUIA_TheBar_Buttons,    buttons,
                        MUIA_TheBar_PicsDrawer, "PROGDIR:data/program_images",
                        MUIA_TheBar_Pics,        pics,
@@ -3399,16 +3524,22 @@ int main(int argc, char *argv[]) {
   DoMethod(STR_search,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,SEARCH);
 
+  DoMethod(STR_show,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
+    app,2,MUIM_Application_ReturnID,USERSHOW);
+
 
   // Prefs subwindow
   DoMethod(but_save,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SAVE);
+    set(but_save, MUIA_ShortHelp, (ULONG)"Save All Settings");
 
   DoMethod(but_test,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,TEST);
+    set(but_test, MUIA_ShortHelp, (ULONG)"Test User Name / Password");
 
   DoMethod(but_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCEL);
+    set(but_cancel, MUIA_ShortHelp, (ULONG)"Don't Save Current Changes");
 
   DoMethod(win_preferences,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_preferences,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3453,7 +3584,7 @@ int main(int argc, char *argv[]) {
     win_search,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
-  // Follow subwindow
+  // Manage Users subwindow
   DoMethod(clear_follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARFOLLOW);
     set(clear_follow_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
@@ -3474,7 +3605,7 @@ int main(int argc, char *argv[]) {
     win_follow,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
-  // Block subwindow
+  // Block 
   DoMethod(clear_block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARBLOCK);
     set(clear_block_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
@@ -3491,18 +3622,15 @@ int main(int argc, char *argv[]) {
     app,2,MUIM_Application_ReturnID,CANCELBLOCK);
     set(but_block_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
 
-  DoMethod(win_block,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
-    win_block,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
-
-  // Notifications SMS subwindow
+  // Notifications SMS 
   DoMethod(clear_notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARNOTIFY);
     set(clear_notify_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
 
   DoMethod(notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,NOTIFY);
-    set(notify_gad, MUIA_ShortHelp, (ULONG)"Begin receiving SMS notifications from this user");
+    set(notify_gad, MUIA_ShortHelp, (ULONG)"\33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...");
 
   DoMethod(unnotify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UNNOTIFY);
@@ -3512,8 +3640,18 @@ int main(int argc, char *argv[]) {
     app,2,MUIM_Application_ReturnID,CANCELNOTIFY);
     set(but_notify_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
 
-  DoMethod(win_notify,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
-    win_notify,3,MUIM_Set,MUIA_Window_Open,FALSE);
+  // Show Users
+  DoMethod(clear_show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CLEARSHOW);
+    set(clear_show_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
+
+  DoMethod(show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,USERSHOW);
+    set(show_gad, MUIA_ShortHelp, (ULONG)"Show Last Tweet for this User");
+
+  DoMethod(but_show_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
+    app,2,MUIM_Application_ReturnID,CANCELSHOW);
+    set(but_show_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
 
 
   // Direct Message subwindow
@@ -3536,7 +3674,7 @@ int main(int argc, char *argv[]) {
   // Update Profile subwindow
   DoMethod(update_profile_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UPDATEPROFILE);
-    set(update_profile_gad, MUIA_ShortHelp, (ULONG)"Update your profile!");
+    set(update_profile_gad, MUIA_ShortHelp, (ULONG)"Update Your Profile!");
 
   DoMethod(but_cancel_profile,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELPROFILE);
@@ -3569,7 +3707,7 @@ int main(int argc, char *argv[]) {
          ULONG sigs = 0;
          LONG result;
 
-        /*  if (TAG_USER) {
+         if (TAG_USER) {
 
             ULONG appareanceV, labelPosV, borderlessV, sunnyV, raisedV, scaledV;
 
@@ -3588,7 +3726,7 @@ int main(int argc, char *argv[]) {
                 MUIA_TheBar_Raised,     raisedV,
                 MUIA_TheBar_Scaled,     scaledV,
                 TAG_DONE);
-        }  */
+        }
 
         switch (DoMethod(app,MUIM_Application_NewInput,&sigs)) {
 
@@ -3690,6 +3828,9 @@ int main(int argc, char *argv[]) {
                 // Search window
                 case MEN_SEARCH:
                 case BTN_SEARCH:
+                     set(clear_search_gad,MUIA_Disabled,FALSE);
+                 	 set(search_gad,MUIA_Disabled,FALSE);
+                 	 set(but_search_cancel,MUIA_Disabled,FALSE);
                      set(win_search, MUIA_Window_Open, TRUE);
                      break;
 
@@ -3698,6 +3839,9 @@ int main(int argc, char *argv[]) {
                      break;
 
                 case SEARCH:
+                     set(clear_search_gad,MUIA_Disabled,TRUE);
+                 	 set(search_gad,MUIA_Disabled,TRUE);
+                 	 set(but_search_cancel,MUIA_Disabled,TRUE);
                      MUI_RequestA(app,window,0,"Search","*OK","Search not implemented yet...",NULL);
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
@@ -3706,7 +3850,7 @@ int main(int argc, char *argv[]) {
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
-                // Follow window
+                // User window
                 case MEN_FOLLOW:
                 case BTN_FOLLOW:
                      set(win_follow, MUIA_Window_Open, TRUE);
@@ -3728,11 +3872,7 @@ int main(int argc, char *argv[]) {
                      set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Block window
-                case MEN_BLOCK:
-                     set(win_block, MUIA_Window_Open, TRUE);
-                     break;
-
+                // Block
                 case CLEARBLOCK:
                      do_clear_block();
                      break;
@@ -3751,15 +3891,10 @@ int main(int argc, char *argv[]) {
                      break;
 
                 case CANCELBLOCK:
-                     set(win_block, MUIA_Window_Open, FALSE);
+                     set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Notifications SMS window
-                case MEN_NOTIFY:
-                     MUI_RequestA(app,window,0,"SMS Notifications","*OK","\33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already\nto begin receiving or to stop receiving SMS notifications\n with AmiTwitter...",NULL);
-                     set(win_notify, MUIA_Window_Open, TRUE);
-                     break;
-
+                // Notify
                 case CLEARNOTIFY:
                      do_clear_notify();
                      break;
@@ -3773,7 +3908,21 @@ int main(int argc, char *argv[]) {
                      break;
 
                 case CANCELNOTIFY:
-                     set(win_notify, MUIA_Window_Open, FALSE);
+                     set(win_follow, MUIA_Window_Open, FALSE);
+                     break;
+
+                // Show
+                case CLEARSHOW:
+                     do_clear_show();
+                     break;
+
+                case USERSHOW:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_usershow();
+                     break;
+
+                case CANCELSHOW:
+                     set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
                 // Quit the program
