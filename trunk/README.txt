@@ -21,7 +21,8 @@ Features:
     * Displays the most recent Tweet by all friends & followers (User ID)
     * Follow/Unfollow, Block/Unblock specified users
     * Receive/Stop receiving SMS messages from users
-    * Update your profile; view Favorites and users currently Blocking
+    * Update your profile; view Favorites and Users currently Blocking
+    * Display most recent Tweet for any User (whether following them or not)
     * MorphOS, OS 3.x compatible
 
 
@@ -51,7 +52,7 @@ USAGE
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
 window, be connected to the internet. Additionally, it can be started from the commandline for a more 
-verbose output (should you desire...).
+verbose output (should you desire...).  Check the FAQ menu item if you run into issues first...
 
 VERSION HISTORY
 --------------- 
@@ -119,7 +120,7 @@ THANKS
 ------
 
 Special thanks to: 
-- ShInKurO for joining the project, contributing to the codebase,
+- ShInKurO for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
 
 ABOUT/AUTHORS
