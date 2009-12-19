@@ -41,7 +41,8 @@
  ** along with this program; if not, write to the Free Software
  ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  **
- ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
+ ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on WinUAE for OS 3.x and
+ ** AmiDevCpp for MorphOS
  **
  ** This code is based heavily on xTwitter written
  ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
@@ -54,7 +55,7 @@
 // Menu Items
 
 #define MSG_FILE        "File"
-#define MSG_HOME        "Timeline"
+#define MSG_TIMELINE    "Timeline"
 #define MSG_RETWEET     "Retweets"
 #define MSG_RETWEETBYME "Retweet By Me"
 #define MSG_RETWEETTOME "Retweet To Me"
@@ -63,11 +64,7 @@
 #define MSG_RELOAD      "Reload"
 #define MSG_SEARCH      "Search"
 #define MSG_SEARCHUSER  "Find Users"
-//#define MSG_USER        "Users"
-#define MSG_FOLLOW      "Users"
-//#define MSG_SHOW        "Show Details"
-//#define MSG_BLOCK       "Block / Unblock"
-//#define MSG_NOTIFY      "Notifications"
+#define MSG_USERS       "Users"
 #define MSG_DIRMSG      "Direct Message"
 #define MSG_DIRMSGSENT  "Sent"
 #define MSG_DIRMSGRCVD  "Received"
@@ -88,7 +85,7 @@
 #define MSG_MUIPREFS    "MUI Settings"
 
 #define MSG_HELP        "Help"
-#define MSG_HELP2       "FAQs"
+#define MSG_FAQ         "FAQs"
 #define MSG_DONATE      "Donate"
 #define MSG_ABOUT       "About AmiTwitter"
 #define MSG_ABOUTMUI    "About MUI"

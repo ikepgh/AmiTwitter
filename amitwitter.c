@@ -41,7 +41,8 @@
  ** along with this program; if not, write to the Free Software
  ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  **
- ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on OS 3.x
+ ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on WinUAE for OS 3.x and
+ ** AmiDevCpp for MorphOS
  **
  ** This code is based heavily on xTwitter written
  ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
@@ -101,45 +102,27 @@
 
 ///
 
-/// Definitions ***************************************************************/
+/// Definitions and Base Structures *******************************************/
 
 // Defines
 #ifndef MAKE_ID
 #define MAKE_ID(a,b,c,d) ((ULONG) (a)<<24 | (ULONG) (b)<<16 | (ULONG) (c)<<8 | (ULONG) (d))
 #endif
 
-
-// Settings
-#define SAVE          47
-#define TEST          48
-#define CANCEL        49
-
 // Buttons
-#define HOME          50
-#define PROFILE       51
-#define REPLIES       52
-#define RELOAD        53
+#define TIMELINE      58
+#define RETWEETS      59
+#define REPLIES       60
+#define RELOAD        61
 
 // Search
-#define BTN_SEARCH    54
-#define CLEARSEARCH   55
-#define SEARCH        56
-#define CANCELSEARCH  57
-
-// Direct Message
-#define DIRECTMESSAGE 58
-#define CLEARDM       59
-#define DIRMSG        60
-#define CANCELDM      61
-
-// Tweet
-#define TWEET         62
-#define CLEAR         63
-#define SENDUPDATE    64
-#define CANCELTWEET   65
+#define BTN_SEARCH    62
+#define CLEARSEARCH   63
+#define SEARCH        64
+#define CANCELSEARCH  65
 
 // User Follow
-#define BTN_FOLLOW    66
+#define USERS         66
 #define CLEARFOLLOW   67
 #define FOLLOW        68
 #define UNFOLLOW      69
@@ -162,10 +145,28 @@
 #define USERSHOW      80
 #define CANCELSHOW    81
 
-// Update profile
-#define UPDATEPROFILE 82
-#define CANCELPROFILE 83
+// Direct Message
+#define DIRECTMESSAGE 82
+#define CLEARDM       83
+#define DIRMSG        84
+#define CANCELDM      85
 
+// Tweet
+#define TWEET         86
+#define CLEAR         87
+#define SENDUPDATE    88
+#define CANCELTWEET   89
+
+// Settings
+#define SAVE          90
+#define TEST          91
+#define CANCEL        92
+
+// Update profile
+#define UPDATEPROFILE 93
+#define CANCELPROFILE 94
+
+// Stack
 long __stack = 65536;
 
 // Base Structures
@@ -245,12 +246,12 @@ static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","
 enum {
     ADD_METHOD=1,
                         
-    MEN_FILE, MEN_HOME, MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
-    MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_FOLLOW,
+    MEN_FILE, MEN_TIMELINE, MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
+    MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_USERS,
     MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
     MEN_MISC, MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
     MEN_TOOLS, MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
-    MEN_HELP, MEN_HELP2, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
+    MEN_HELP, MEN_FAQ, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
 };
 
 #define M(type,title_id,flags,men) type, (UBYTE *)(title_id), 0, flags, 0, (APTR)(men)
@@ -263,7 +264,7 @@ static struct NewMenu MenuData1[]=
 {
 
     M( NM_TITLE,  MSG_FILE,          0,   MEN_FILE        ),
-    M( NM_ITEM,   MSG_HOME,          0,   MEN_HOME        ),
+    M( NM_ITEM,   MSG_TIMELINE,      0,   MEN_TIMELINE    ),
     M( NM_ITEM,   MSG_RETWEET,       0,   MEN_RETWEET     ),
     MX( NM_SUB,   MSG_RETWEETBYME,   0,   0, MEN_RETWEETBYME   ),
     MX( NM_SUB,   MSG_RETWEETTOME,   0,   0, MEN_RETWEETTOME   ),
@@ -273,7 +274,7 @@ static struct NewMenu MenuData1[]=
 //    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
 //    MX( NM_SUB,   MSG_SEARCH,        0,   0, MEN_SEARCH        ),
 //    MX( NM_SUB,   MSG_SEARCHUSER,    0,   0, MEN_SEARCHUSER    ),
-    M( NM_ITEM,   MSG_FOLLOW,          0,   MEN_FOLLOW        ),
+    M( NM_ITEM,   MSG_USERS,         0,   MEN_USERS     ),
     BAR,
     M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
 //    MX( NM_SUB,   MSG_DIRMSG,        0,   0, MEN_DIRMSG        ),
@@ -300,7 +301,7 @@ static struct NewMenu MenuData1[]=
     M( NM_ITEM,   MSG_MUIPREFS,      0,   MEN_MUIPREFS    ),
 
     M( NM_TITLE,  MSG_HELP,          0,   MEN_HELP        ),
-    M( NM_ITEM,   MSG_HELP2,         0,   MEN_HELP2       ),
+    M( NM_ITEM,   MSG_FAQ,           0,   MEN_FAQ         ),
     M( NM_ITEM,   MSG_DONATE,        0,   MEN_DONATE      ),
     M( NM_ITEM,   MSG_ABOUT,         0,   MEN_ABOUT       ),
     BAR,
@@ -315,7 +316,6 @@ static struct NewMenu MenuData1[]=
 ///
 
 /// TheBar buttons ************************************************************/
-
 
 Object *appearance, *labelPos, *borderless, *sunny, *raised, *scaled, *update;
 
@@ -341,14 +341,12 @@ static struct MUIS_TheBar_Button buttons[] =
 };
 
 // Buttons
-
 char *appearances[] = {"Images and Text","Images","Text",NULL};
 char *labelPoss[] = {"Bottom","Top","Right","Left",NULL};
 char *borderlessSel[]={"On", "Off",NULL};
 char *sunnySel[]={"Yes", "No",NULL};
 char *raisedSel[]={"Don't Use", "Use",NULL};
 char *scaledSel[]={"Large", "Small",NULL};
-
 
 STRPTR pics[] =
 {
@@ -496,42 +494,7 @@ void Close_Libs(void ) {
 
 /// My functions **************************************************************/
 
-// clear Tweet
-void do_clear(void) {
-    set(STR_message, MUIA_String_Contents,0);
-}
-
-// clear direct message
-void do_clear_dm(void) {
-    set(STR_directmessage, MUIA_String_Contents,0);
-}
-
-// clear search
-void do_clear_search(void) {
-    set(STR_search, MUIA_String_Contents,0);
-}
-
-// clear follow
-void do_clear_follow(void) {
-    set(STR_follow, MUIA_String_Contents,0);
-}
-
-// clear block
-void do_clear_block(void) {
-    set(STR_block, MUIA_String_Contents,0);
-}
-
-// clear notify
-void do_clear_notify(void) {
-    set(STR_notify, MUIA_String_Contents,0);
-}
-
-// clear show
-void do_clear_show(void) {
-    set(STR_show, MUIA_String_Contents,0);
-}
-
-// about HTML
+// About AmiTwitter HTML
 void about(void) {
     set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
 }
@@ -581,7 +544,6 @@ void error8(void) {
      set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>");
 }
 
-
 // urlTextObject
 Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG font) {
     return UrltextObject,
@@ -595,9 +557,9 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 
 ///
 
-/// AmiTwitter ****************************************************************/
+/// AmiTwitter Setup and Cleanup **********************************************/
 
-// New Twitter instance
+// New AmiTwitter instance
 twitter_t* twitter_new() {
 
     twitter_t *twitter;
@@ -632,16 +594,7 @@ twitter_t* twitter_new() {
 
 /*****************************************************************************/
 
-// Cleanup
-void twitter_free(twitter_t *twitter) {
-
-    free(twitter);
-    return;
-}
-
-/*****************************************************************************/
-
-// Twitter Config
+// AmiTwitter Config
 int twitter_config(twitter_t *twitter) {
 
     const char *home;
@@ -655,7 +608,63 @@ int twitter_config(twitter_t *twitter) {
 
 /*****************************************************************************/
 
-// Curl write
+// AmiTwitter Cleanup
+void twitter_free(twitter_t *twitter) {
+
+    free(twitter);
+    return;
+}
+
+/*****************************************************************************/
+
+// Free statuses
+void twitter_statuses_free(GList *statuses) {
+    GList *l = statuses;
+    twitter_status_t *status;
+    if(!statuses){
+        return;
+    }
+    do{
+        status = l->data;
+        if(!status) {
+            continue;
+        }
+        free((void*)(status->created_at));
+        free((void*)(status->id));
+        free((void*)(status->text));
+        free((void*)(status->source));
+        free((void*)(status->truncated));
+        free((void*)(status->in_reply_to_status_id));
+        free((void*)(status->in_reply_to_user_id));
+        free((void*)(status->favorited));
+        free((void*)(status->in_reply_to_screen_name));
+        free((void*)(status->retweeted_status));
+
+        if(status->user){
+            free((void*)(status->user->id));
+            free((void*)(status->user->name));
+            free((void*)(status->user->screen_name));
+            free((void*)(status->user->location));
+            free((void*)(status->user->description));
+            free((void*)(status->user->profile_image_url));
+            free((void*)(status->user->followers_count));
+            free((void*)(status->user->friends_count));
+            free((void*)(status->user->favourites_count));
+            free((void*)(status->user->statuses_count));
+            free((void*)(status->user));
+        }
+        free(status);
+    }while((l = g_list_next(l)));
+    g_list_free(statuses);
+}
+
+/*****************************************************************************/
+
+///
+
+/// AmiTwitter Curl functions *************************************************/
+
+// cURL Write
 static size_t twitter_curl_write_cb(void *ptr, size_t size, size_t nmemb, void *data) {
 
     size_t realsize = size * nmemb;
@@ -666,7 +675,18 @@ static size_t twitter_curl_write_cb(void *ptr, size_t size, size_t nmemb, void *
 
 /*****************************************************************************/
 
-// Get latest Tweets with cURL
+// cURL File
+static size_t twitter_curl_file_cb(void *ptr, size_t size, size_t nmemb, void *data) {
+
+    size_t realsize = size * nmemb;
+    fwrite(ptr, size, nmemb, (FILE*)data);
+
+    return realsize;
+}
+
+/*****************************************************************************/
+
+// Fetch with cURL
 int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
 
     CURL *curl;
@@ -722,1319 +742,125 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
 
 /*****************************************************************************/
 
-// Send a new Tweet with cURL
-int twitter_update(twitter_t *twitter, const char *status) {
+// Fetch Image with cURL
+int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
 
     CURL *curl;
     CURLcode code;
     long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    struct curl_httppost *lastptr=NULL;
-    struct curl_slist *headers=NULL;
-    GByteArray *buf;
-    char userpass[256];
+    FILE *fp;
+    int i;
+    char *esc;
+    char escaped_url[PATH_MAX];
 
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
+    fp = fopen(path, "w");
+    if(!fp) {
+        fprintf(stderr, "error: can't openfile %s\n", path);
+        error();
         return -1;
     }
-    snprintf(api_uri, PATH_MAX, "%s%s",
-             twitter->base_uri, TWITTER_API_PATH_UPDATE);
-    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
 
-    headers = curl_slist_append(headers, "Expect:");
+    curl = curl_easy_init();
+    if(!curl) {
+        fprintf(stderr, "error: curl_easy_init()\n");
+        error();
+        return -1;
+    }
 
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "status",
-                 CURLFORM_COPYCONTENTS, status,
-                 CURLFORM_END);
+    /* url escape */
+    i = strlen(url);
+    while(i-- && url[i] != '/');
 
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "source",
-                 CURLFORM_COPYCONTENTS, twitter->source,
-                 CURLFORM_END);
+    /* esc = curl_easy_escape(curl, url + i + 1, 0); */
+    /* changed to line below for curl 7.14.0 compatability */
+    esc = curl_escape(url + i + 1, 0);
 
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);   
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);   
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+    strncpy(escaped_url, url, PATH_MAX - 1);
+    strncpy(escaped_url + i + 1, esc, PATH_MAX - i);
+//  curl_free(esc);
+
+    curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_file_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)fp);
 
     code = curl_easy_perform(curl);
     if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
+        fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
+        error();
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error2();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
+        fprintf(stderr, "error respose code: %ld\n", res);
+        error();
         return res;
     }
-     else {
+    fclose(fp);
+    return 0;
+}
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Tweet was sent!");
+/*****************************************************************************/
+
+// Fetch Images
+int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
+    int ret;
+    twitter_status_t *status;
+    const char *url;
+    char name[PATH_MAX];
+    char path[PATH_MAX];
+    struct stat st;
+
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return 0;
     }
 
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-    curl_slist_free_all(headers);
+    do{
+        status = statuses->data;
+        twitter_image_name(status, name);
+        url = status->user->profile_image_url;
+        snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
+        ret = stat(path, &st);
+    //  if(ret) {
+        //  if(twitter->debug)
+            printf("fetch_image: %s\n", url);
+            twitter_fetch_image(twitter, url, path);
+    //  }
+    }while((statuses = g_list_previous(statuses)));
 
     return 0;
 }
 
 /*****************************************************************************/
 
-// Follow a user with cURL (friendships/create API)
-int twitter_follow(twitter_t *twitter, const char *status) {
+// Image Name
+int twitter_image_name(twitter_status_t *status, char *name) {
+    size_t i;
+    i = strlen(status->user->profile_image_url);
+    while(i--)
+        if(status->user->profile_image_url[i] == '/')
+            break;
+    while(i--)
+        if(status->user->profile_image_url[i] == '/')
+            break;
+    i++;
+    strncpy(name, status->user->profile_image_url + i, PATH_MAX - 1);
+    i = strlen(name);
+    while(i--)
+        if(name[i] == '/')
+         name[i] = '_';
 
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_follow, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_FOLLOW, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error4();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Following</b> that User!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
+      // added to truncate image name for displaying in HTMLtext .mcc
+         name[i] = strncpy(name, status->user->id, PATH_MAX);
 
     return 0;
 }
 
 /*****************************************************************************/
 
-// Unfollow a user with cURL (friendships/destroy API)
-int twitter_unfollow(twitter_t *twitter, const char *status) {
+///
 
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_follow, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_UNFOLLOW, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error4();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unfollowing</b> that User!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Block a user with cURL (blocks/create API)
-int twitter_block(twitter_t *twitter, const char *status) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_block, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_BLOCK, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error5();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Blocking</b> that User!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Unblocks a user with cURL (blocks/destroy API)
-int twitter_unblock(twitter_t *twitter, const char *status) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_block, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_UNBLOCK, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error5();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unblocking</b> that User!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Notifications (follow) a user with cURL (notifications/follow API)
-int twitter_notify(twitter_t *twitter, const char *status) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_notify, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_NOTIFY, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error6();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now receiving Notifications (SMS following) that User!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Notifications (leave) Unfollows a user with cURL (notifications/leave API)
-int twitter_unnotify(twitter_t *twitter, const char *status) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_notify, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_UNNOTIFY, text, ".xml");
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error6();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are no longer receiving notifications (SMS following) that User!");
-
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Show a user with cURL (users/show API)
-GList* twitter_usershow_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-
-    get(STR_show, MUIA_String_Contents, &text);
-
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml",
-             twitter->last_usershow_timeline);
-
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_usershow_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-
-/*****************************************************************************/
-
-// Update User Profile (account/update_profile API)
-int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web, const char *location, const char *bio) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    struct curl_httppost *lastptr=NULL;
-    struct curl_slist *headers=NULL;
-
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-
-    get(STR_profile_name, MUIA_String_Contents, &name);
-    get(STR_profile_web, MUIA_String_Contents, &web);
-    get(STR_profile_location, MUIA_String_Contents, &location);
-    get(STR_profile_bio, MUIA_String_Contents, &bio);
-
-    snprintf(api_uri, PATH_MAX, "%s%s",
-             twitter->base_uri, TWITTER_API_PATH_UPDATEPROFILE);
-
-    headers = curl_slist_append(headers, "Expect:"); 
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "name",
-                 CURLFORM_COPYCONTENTS, name,
-                 CURLFORM_END);
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "url",
-                 CURLFORM_COPYCONTENTS, web,
-                 CURLFORM_END);
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "location",
-                 CURLFORM_COPYCONTENTS, location,
-                 CURLFORM_END);
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "description",
-                 CURLFORM_COPYCONTENTS, bio,
-                 CURLFORM_END);
-
-//    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-
-        printf("error respose code: %ld\n", res);
-        error7();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-     else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> You have updated your profile!");
-
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-    curl_slist_free_all(headers);
-
-    return 0;
-}
-/*****************************************************************************/
-
-// Send a Direct Message with cURL
-int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    struct curl_httppost *formpost=NULL;
-    struct curl_httppost *lastptr=NULL;
-    struct curl_slist *headers=NULL;
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error2();
-        return -1;
-    }
-    snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_DIRECT_MESSAGE);
-    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    headers = curl_slist_append(headers, "Expect:");
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "screen_name",
-                 CURLFORM_COPYCONTENTS, screen_name,
-                 CURLFORM_END);
-
-    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "text",
-                 CURLFORM_COPYCONTENTS, text, 
-                 CURLFORM_END);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error2();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-        printf("error respose code: %ld\n", res);
-
-        error2();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-    else {
-
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Direct Message was sent!");
-    }
-
-    curl_easy_cleanup(curl);
-    curl_formfree(formpost);
-    curl_slist_free_all(headers);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Verify Credentials with cURL
-int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    char api_uri[PATH_MAX];
-    GByteArray *buf;
-    char userpass[256];
-
-    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
-    curl = curl_easy_init();
-    if(!curl) {
-        printf("error: curl_easy_init()\n");
-        error3();
-        return -1;
-    }
-    snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_VERIFY_CREDENTIALS);
-    if(twitter->debug >= 2)
-        printf("api_uri: %s\n", api_uri);
-
-    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error3();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-
-     // Pulls xml data
-    // curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &res);
-
-    if(res != 200) {
-        printf("error respose code: %ld\n", res);
-
-        error3();
-
-//      if(twitter->debug > 2){
-            fwrite(buf->data, 1, buf->len, stderr);
-            fprintf(stderr, "\n");
-//      }
-        return res;
-    }
-    else {
-
-       set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> Your username/password is valid!");
-    }
-
-    curl_easy_cleanup(curl);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// statuses/home_timeline API
-GList* twitter_home_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_HOME_TIMELINE,
-             twitter->last_home_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_home_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/user_timeline API
-GList* twitter_user_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_USER_TIMELINE,
-             twitter->last_user_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_user_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/mentions API
-GList* twitter_mentions(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_MENTIONS,
-             twitter->mentions);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->mentions = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/public_timeline API
-GList* twitter_public_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_PUBLIC_TIMELINE,
-             twitter->last_public_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_home_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/friends API
-GList* twitter_friends_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_FRIENDS,
-             twitter->last_friends_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_friends_timeline = atol(status->id);       
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/followers API
-GList* twitter_followers_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_FOLLOWERS,
-             twitter->last_followers_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_followers_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// blocks/blocking API
-GList* twitter_blocking_timeline(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_BLOCKING,
-             twitter->last_blocking_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_blocking_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/twitter_retweeted_by_me API
-GList* twitter_retweeted_by_me(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_RETWEETED_BY_ME,
-             twitter->last_public_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_home_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/twitter_retweeted_to_me API
-GList* twitter_retweeted_to_me(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_RETWEETED_TO_ME,
-             twitter->last_public_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_home_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// statuses/twitter_retweets_of_me API
-GList* twitter_retweets_of_me(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_RETWEETS_OF_ME,
-             twitter->last_public_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_home_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// Direct Messages/sent API *** NOT WORKING YET ***
-GList* twitter_dirmsgsent(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_DIRECT_MSGSENT,
-             twitter->last_dirmsgsent_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_dirmsgsent_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
-
-// Favorites API
-GList* twitter_favs(twitter_t *twitter) {
-
-    int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
-    xmlTextReaderPtr reader;
-    char api_uri[PATH_MAX];
-    twitter_status_t *status;
-
-    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
-             twitter->base_uri, TWITTER_API_PATH_FAVS,
-             twitter->last_favs_timeline);
-//  if(twitter->debug > 1)
-        printf("api_uri: %s\n", api_uri);
-
-    buf = g_byte_array_new();
-
-    ret = twitter_fetch(twitter, api_uri, buf);
-/*  if(ret){
-        printf("ERROR: twitter_fetch()\n");
-        return NULL;
-    } */
-
-    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
-                                NULL, NULL, 0);
-
-    timeline = twitter_parse_statuses_node(reader);
-    xmlFreeTextReader(reader);
-
-
-    g_byte_array_free (buf, TRUE);
-//  xmlMemoryDump();
-
-    if(timeline){
-        status = timeline->data;
-
-        twitter->last_favs_timeline = atol(status->id);
-    }
-    return timeline;
-}
-
-/*****************************************************************************/
+/// AmiTwitter XML Parser *****************************************************/
 
 // XML parse Statuses node
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
@@ -2187,206 +1013,6 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
 
 /*****************************************************************************/
 
-// Display in HTMLtext .mcc (timelines)
-void twitter_status_print(twitter_status_t *status) {
-                                                                                                                                  
-    FILE *outfile;
-        
-    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
-
-    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
-    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
-    printf("<p>");
-
-    fclose(stdout);
-}
-
-/*****************************************************************************/
-
-// Display in HTMLtext .mcc (friends and followers)
-void twitter_status_print_friendsfollowers(twitter_status_t *status) {
-
-    FILE *outfile;
-
-    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
-    printf("<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>",  status->id, status->text, status->created_at);
-    printf("<p>");
-
-    fclose(stdout);
-}
-
-/*****************************************************************************/
-
-// Free statuses
-void twitter_statuses_free(GList *statuses) {
-    GList *l = statuses;
-    twitter_status_t *status;
-    if(!statuses){
-        return;
-    }
-    do{
-        status = l->data;
-        if(!status) {
-            continue;
-        }
-        free((void*)(status->created_at));
-        free((void*)(status->id));
-        free((void*)(status->text));
-        free((void*)(status->source));
-        free((void*)(status->truncated));
-        free((void*)(status->in_reply_to_status_id));
-        free((void*)(status->in_reply_to_user_id));
-        free((void*)(status->favorited));
-        free((void*)(status->in_reply_to_screen_name));
-        free((void*)(status->retweeted_status));
-
-        if(status->user){
-            free((void*)(status->user->id));
-            free((void*)(status->user->name));
-            free((void*)(status->user->screen_name));
-            free((void*)(status->user->location));
-            free((void*)(status->user->description));
-            free((void*)(status->user->profile_image_url));
-            free((void*)(status->user->followers_count));
-            free((void*)(status->user->friends_count));
-            free((void*)(status->user->favourites_count));
-            free((void*)(status->user->statuses_count));
-            free((void*)(status->user));
-        }
-        free(status);
-    }while((l = g_list_next(l)));
-    g_list_free(statuses);
-}
-
-/*****************************************************************************/
-
-// Image name
-int twitter_image_name(twitter_status_t *status, char *name) {
-    size_t i;
-    i = strlen(status->user->profile_image_url);
-    while(i--)
-        if(status->user->profile_image_url[i] == '/')       
-            break;
-    while(i--)
-        if(status->user->profile_image_url[i] == '/')        
-            break;
-    i++;
-    strncpy(name, status->user->profile_image_url + i, PATH_MAX - 1);
-    i = strlen(name);
-    while(i--)
-        if(name[i] == '/')    
-         name[i] = '_';
-
-      // added to truncate image name for displaying in HTMLtext .mcc
-         name[i] = strncpy(name, status->user->id, PATH_MAX);
-         
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Fetch images
-int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
-    int ret;
-    twitter_status_t *status;
-    const char *url;
-    char name[PATH_MAX];
-    char path[PATH_MAX];
-    struct stat st;
-
-    statuses = g_list_last(statuses);
-    if(!statuses) {
-        return 0;
-    }
-
-    do{
-        status = statuses->data;
-        twitter_image_name(status, name);
-        url = status->user->profile_image_url;
-        snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
-        ret = stat(path, &st);
-    //  if(ret) {
-        //  if(twitter->debug)
-            printf("fetch_image: %s\n", url);
-            twitter_fetch_image(twitter, url, path);
-    //  }
-    }while((statuses = g_list_previous(statuses)));
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Twitter cURL File
-static size_t twitter_curl_file_cb(void *ptr, size_t size, size_t nmemb, void *data) {
-
-    size_t realsize = size * nmemb;
-    fwrite(ptr, size, nmemb, (FILE*)data);
-
-    return realsize;
-}
-
-/*****************************************************************************/
-
-// cURL Fetch image
-int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
-
-    CURL *curl;
-    CURLcode code;
-    long res;
-    FILE *fp;
-    int i;
-    char *esc;
-    char escaped_url[PATH_MAX];
-
-    fp = fopen(path, "w");
-    if(!fp) {
-        fprintf(stderr, "error: can't openfile %s\n", path);
-        error();
-        return -1;
-    }
-
-    curl = curl_easy_init();
-    if(!curl) {
-        fprintf(stderr, "error: curl_easy_init()\n");
-        error();
-        return -1;
-    }
-
-    /* url escape */
-    i = strlen(url);
-    while(i-- && url[i] != '/');
-
-    /* esc = curl_easy_escape(curl, url + i + 1, 0); */
-    /* changed to line below for curl 7.14.0 compatability */
-    esc = curl_escape(url + i + 1, 0);
-
-    strncpy(escaped_url, url, PATH_MAX - 1);
-    strncpy(escaped_url + i + 1, esc, PATH_MAX - i);
-//  curl_free(esc);
-
-    curl_easy_setopt(curl, CURLOPT_URL, escaped_url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_file_cb);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)fp);
-
-    code = curl_easy_perform(curl);
-    if(code) {
-        fprintf(stderr, "error: %s\n", curl_easy_strerror(code));
-        error();
-        return -1;
-    }
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-    if(res != 200) {
-        fprintf(stderr, "error respose code: %ld\n", res);
-        error();
-        return res;
-    }
-    fclose(fp);
-    return 0;
-}
-
-/*****************************************************************************/
-
 // UFT8
 int utf8pos(const char *str, int width) {
     int i=0;
@@ -2409,7 +1035,47 @@ int utf8pos(const char *str, int width) {
 
 /*****************************************************************************/
 
-// User Show timeline
+///
+
+/// Display in HTMLtext *******************************************************/
+
+// Display in HTMLtext .mcc (timelines)
+void twitter_status_print(twitter_status_t *status) {
+
+    FILE *outfile;
+
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
+
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
+    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf("<p>");
+
+    fclose(stdout);
+}
+
+/*****************************************************************************/
+
+// Display in HTMLtext .mcc (friends/followers/Users)
+void twitter_status_print_friendsfollowers(twitter_status_t *status) {
+
+    FILE *outfile;
+
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
+    printf("<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>",  status->id, status->text, status->created_at);
+    printf("<p>");
+
+    fclose(stdout);
+}
+
+/*****************************************************************************/
+
+///
+
+/// statuses/public_timeline
+
+/*****************************************************************************/
+
+// Show timelines (public, home, user, mentions, all the retweets)
 void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
     twitter_status_t *status;
     statuses = g_list_last(statuses);
@@ -2429,27 +1095,130 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 
 /*****************************************************************************/
 
-// Show timeline friends/followers
-void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *statuses) {
+// statuses/public_timeline API
+GList* twitter_public_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
     twitter_status_t *status;
-    statuses = g_list_last(statuses);
-    if(!statuses) {
-        return;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_PUBLIC_TIMELINE,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_home_timeline = atol(status->id);
     }
-    do{
-        status = statuses->data;
-
-     // if(twitter->debug)
-            twitter_status_print_friendsfollowers(status);
-
-    }while((statuses = g_list_previous(statuses)));
-
-        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+    return timeline;
 }
 
 /*****************************************************************************/
 
-// Get most recent Tweets (statuses/home_timeline API)
+// Shows most recent random messages (statuses/public_timeline)
+void amitwitter_public_loop() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_public_timeline(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// statuses/home_timeline
+
+// statuses/home_timeline API
+GList* twitter_home_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_HOME_TIMELINE,
+             twitter->last_home_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_home_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Get most recent Tweets (statuses/home_timeline)
 void amitwitter_loop() {
 
     int i;
@@ -2503,7 +1272,55 @@ void amitwitter_loop() {
 
 /*****************************************************************************/
 
-// Show users most recent messages (statuses/user_timeline API)
+///
+
+/// statuses/user_timeline
+
+// statuses/user_timeline API
+GList* twitter_user_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_USER_TIMELINE,
+             twitter->last_user_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_user_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Show users most recent messages (statuses/user_timeline)
 void amitwitter_user_loop() {
 
     int i;
@@ -2534,7 +1351,55 @@ void amitwitter_user_loop() {
 
 /*****************************************************************************/
 
-// Shows all mentions @Replies (statuses/mentions API)
+///
+
+/// statuses/mentions
+
+// statuses/mentions API
+GList* twitter_mentions(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_MENTIONS,
+             twitter->mentions);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->mentions = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows all mentions @Replies (statuses/mentions)
 void amitwitter_mentions_loop() {
 
     int i;
@@ -2565,7 +1430,55 @@ void amitwitter_mentions_loop() {
 
 /*****************************************************************************/
 
-// Shows retweeted by me (statuses/retweeted_by_me API)
+///
+
+/// statuses/retweeted_by_me
+
+// statuses/twitter_retweeted_by_me API
+GList* twitter_retweeted_by_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETED_BY_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_home_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows retweeted by me (statuses/retweeted_by_me)
 void amitwitter_retweeted_by_me() {
 
     int i;
@@ -2596,7 +1509,55 @@ void amitwitter_retweeted_by_me() {
 
 /*****************************************************************************/
 
-// Shows retweeted to me (statuses/retweeted_to_me API)
+///
+
+/// statuses/retweeted_to_me
+
+// statuses/twitter_retweeted_to_me API
+GList* twitter_retweeted_to_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETED_TO_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_home_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows retweeted to me (statuses/retweeted_to_me)
 void amitwitter_retweeted_to_me() {
 
     int i;
@@ -2627,7 +1588,55 @@ void amitwitter_retweeted_to_me() {
 
 /*****************************************************************************/
 
-// Shows retweets of me (statuses/retweets_of_me API)
+///
+
+/// statuses/retweets_of_me
+
+// statuses/twitter_retweets_of_me API
+GList* twitter_retweets_of_me(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_RETWEETS_OF_ME,
+             twitter->last_public_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_home_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows retweets of me (statuses/retweets_of_me)
 void amitwitter_retweets_of_me() {
 
     int i;
@@ -2658,8 +1667,186 @@ void amitwitter_retweets_of_me() {
 
 /*****************************************************************************/
 
-// Shows Direct Messages sent API   *** NOT WORKING YET ***
-void amitwitter_dirmsgsent() {
+///
+
+/// statuses/update
+
+// Send a new Tweet with cURL  statuses/update API
+int twitter_update(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    struct curl_httppost *lastptr=NULL;
+    struct curl_slist *headers=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+    snprintf(api_uri, PATH_MAX, "%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UPDATE);
+    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    headers = curl_slist_append(headers, "Expect:");
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "status",
+                 CURLFORM_COPYCONTENTS, status,
+                 CURLFORM_END);
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "source",
+                 CURLFORM_COPYCONTENTS, twitter->source,
+                 CURLFORM_END);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error2();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Tweet was sent!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+    curl_slist_free_all(headers);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Send a Tweet (statuses/update)
+void amitwitter_update(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    fprintf(stdout, "updating...");
+    fflush(stdout);
+
+    get(STR_message, MUIA_String_Contents, &text);
+
+    printf("Message is %u characters long.\n", strlen(text));
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_update(twitter, text);
+    twitter_free(twitter);
+
+    fprintf(stdout, "done\n");
+}
+
+/*****************************************************************************/
+
+///
+
+/// users/show
+
+// Show timeline friends/followers/Users
+void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *statuses) {
+    twitter_status_t *status;
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return;
+    }
+    do{
+        status = statuses->data;
+
+     // if(twitter->debug)
+            twitter_status_print_friendsfollowers(status);
+
+    }while((statuses = g_list_previous(statuses)));
+
+        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+}
+
+/*****************************************************************************/
+
+// Show a user with cURL (users/show API)
+GList* twitter_usershow_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+
+    get(STR_show, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml",
+             twitter->last_usershow_timeline);
+
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_usershow_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Show a User (users/show)
+void amitwitter_usershow() {
 
     int i;
 
@@ -2671,12 +1858,11 @@ void amitwitter_dirmsgsent() {
     twitter_config(twitter);
 
     for(i=1; i<2; i++) {
-        timeline = twitter_dirmsgsent(twitter);
+        timeline = twitter_usershow_timeline(twitter);
 //      if(twitter->debug >= 2)
             printf("timeline num: %d\n", g_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
+        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
         twitter_statuses_free(timeline);
         timeline = NULL;
 //      sleep(twitter->fetch_interval);
@@ -2689,33 +1875,50 @@ void amitwitter_dirmsgsent() {
 
 /*****************************************************************************/
 
-// Shows Favorites API  
-void amitwitter_favs() {
+///
 
-    int i;
+/// statuses/friends
 
-    twitter_t *twitter = NULL;
+// statuses/friends API
+GList* twitter_friends_timeline(twitter_t *twitter) {
 
-    GList* timeline = NULL;
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
 
-    twitter = twitter_new();
-    twitter_config(twitter);
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_FRIENDS,
+             twitter->last_friends_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
 
-    for(i=1; i<2; i++) {
-        timeline = twitter_favs(twitter);
-//      if(twitter->debug >= 2)
-            printf("timeline num: %d\n", g_list_length(timeline));
+    buf = g_byte_array_new();
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
-        timeline = NULL;
-//      sleep(twitter->fetch_interval);
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
 
-    if(i==1) break;
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_friends_timeline = atol(status->id);
     }
-
-    twitter_free(twitter);
+    return timeline;
 }
 
 /*****************************************************************************/
@@ -2750,6 +1953,54 @@ void amitwitter_friends_loop() {
 
 /*****************************************************************************/
 
+///
+
+/// statuses/followers
+
+// statuses/followers API
+GList* twitter_followers_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_FOLLOWERS,
+             twitter->last_followers_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_followers_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
 // Shows followers (statuses/followers API)
 void amitwitter_followers_loop() {
 
@@ -2780,7 +2031,1042 @@ void amitwitter_followers_loop() {
 
 /*****************************************************************************/
 
-// Shows blocking (blocks/blocking API)
+///
+
+/// direct_messages/sent
+
+// direct_messages/sent API     *** NOT WORKING YET ***
+GList* twitter_dirmsgsent(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_DIRECT_MSGSENT,
+             twitter->last_dirmsgsent_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_dirmsgsent_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows Direct Messages (direct_messages/sent)     *** NOT WORKING YET ***
+void amitwitter_dirmsgsent() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_dirmsgsent(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// direct_messages/new
+
+// direct_messages/new API Send a Direct Message with cURL
+int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    struct curl_httppost *lastptr=NULL;
+    struct curl_slist *headers=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+    snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_DIRECT_MESSAGE);
+    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    headers = curl_slist_append(headers, "Expect:");
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "screen_name",
+                 CURLFORM_COPYCONTENTS, screen_name,
+                 CURLFORM_END);
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "text",
+                 CURLFORM_COPYCONTENTS, text,
+                 CURLFORM_END);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+        printf("error respose code: %ld\n", res);
+
+        error2();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+    else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Direct Message was sent!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+    curl_slist_free_all(headers);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Direct Messages (direct_messages/new)
+void amitwitter_direct_message(const char *screen_name, const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    fprintf(stdout, "sending...");
+    fflush(stdout);
+
+    get(STR_user_id, MUIA_String_Contents, &screen_name);
+    get(STR_directmessage, MUIA_String_Contents, &text);
+
+    printf("Message is %u characters long.\n", strlen(text));
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_direct_message(twitter, screen_name, text);
+    twitter_free(twitter);
+
+    fprintf(stdout, "done\n");
+}
+
+/*****************************************************************************/
+
+///
+
+/// friendships/create
+
+// Follow a user with cURL (friendships/create API)
+int twitter_follow(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_FOLLOW, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error4();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Following</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Follow a User (friendships/create)
+void amitwitter_follow(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_follow(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// friendships/destroy
+
+// Unfollow a user with cURL (friendships/destroy API)
+int twitter_unfollow(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_follow, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UNFOLLOW, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error4();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unfollowing</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Unfollow a User (friendships/destroy)
+void amitwitter_unfollow(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_unfollow(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// account/verify_credentials
+
+// account/verify_credentials API Verify Credentials with cURL
+int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error3();
+        return -1;
+    }
+    snprintf(api_uri, PATH_MAX, "%s%s", twitter->base_uri, TWITTER_API_PATH_VERIFY_CREDENTIALS);
+    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error3();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+
+     // Pulls xml data
+    // curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &res);
+
+    if(res != 200) {
+        printf("error respose code: %ld\n", res);
+
+        error3();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+    else {
+
+       set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> Your username/password is valid!");
+    }
+
+    curl_easy_cleanup(curl);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Verify Credentials  (account/verify_credentials)
+void amitwitter_verify_credentials(const char *screen_name, const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    get(STR_user_id, MUIA_String_Contents, &screen_name);
+    get(STR_directmessage, MUIA_String_Contents, &text);
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_verify_credentials(twitter, screen_name, text);
+    twitter_free(twitter);
+
+}
+
+/*****************************************************************************/
+
+///
+
+/// account/update_profile
+
+// Update Profile (account/update_profile API)
+int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web, const char *location, const char *bio) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    struct curl_httppost *lastptr=NULL;
+    struct curl_slist *headers=NULL;
+
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_profile_name, MUIA_String_Contents, &name);
+    get(STR_profile_web, MUIA_String_Contents, &web);
+    get(STR_profile_location, MUIA_String_Contents, &location);
+    get(STR_profile_bio, MUIA_String_Contents, &bio);
+
+    snprintf(api_uri, PATH_MAX, "%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UPDATEPROFILE);
+
+    headers = curl_slist_append(headers, "Expect:");
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "name",
+                 CURLFORM_COPYCONTENTS, name,
+                 CURLFORM_END);
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "url",
+                 CURLFORM_COPYCONTENTS, web,
+                 CURLFORM_END);
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "location",
+                 CURLFORM_COPYCONTENTS, location,
+                 CURLFORM_END);
+
+    curl_formadd(&formpost, &lastptr,
+                 CURLFORM_COPYNAME, "description",
+                 CURLFORM_COPYCONTENTS, bio,
+                 CURLFORM_END);
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error7();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> You have updated your profile!");
+
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+    curl_slist_free_all(headers);
+
+    return 0;
+}
+/*****************************************************************************/
+
+// Update profile (account/update_profile)
+void amitwitter_updateprofile(const char *name, const char *web, const char *location, const char *bio) {
+
+    twitter_t *twitter = NULL;
+
+    fprintf(stdout, "updating profile...");
+    fflush(stdout);
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_updateprofile(twitter, name, web, location, bio);
+    twitter_free(twitter);
+
+    fprintf(stdout, "done\n");
+}
+
+/*****************************************************************************/
+
+///
+
+/// favorites
+
+// Favorites API
+GList* twitter_favs(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_FAVS,
+             twitter->last_favs_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_favs_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows Favorites (favorites API)
+void amitwitter_favs() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_favs(twitter);
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images(twitter, timeline);
+        amitwitter_show_timeline(twitter, timeline);
+        twitter_statuses_free(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// notifications/follow
+
+// Notifications (SMS follow) a user with cURL (notifications/follow API)
+int twitter_notify(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_notify, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_NOTIFY, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error6();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now receiving Notifications (SMS following) that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Notifications follow a User with SMS (notifications/follow API)
+void amitwitter_notify(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_notify(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// notifications/leave
+
+// Notifications (SMS leave) Unfollows a user with cURL (notifications/leave API)
+int twitter_unnotify(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_notify, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UNNOTIFY, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error6();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are no longer receiving notifications (SMS following) that User!");
+
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Notifications unfollow a User with SMS (notifications/leave)
+void amitwitter_unnotify(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_unnotify(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// blocks/create
+
+// Block a user with cURL (blocks/create API)
+int twitter_block(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_block, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_BLOCK, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error5();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Blocking</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Block a User (blocks/create)
+void amitwitter_block(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_block(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// blocks/destroy
+
+// Unblocks a user with cURL (blocks/destroy API)
+int twitter_unblock(twitter_t *twitter, const char *status) {
+
+    CURL *curl;
+    CURLcode code;
+    long res;
+    char api_uri[PATH_MAX];
+    struct curl_httppost *formpost=NULL;
+    GByteArray *buf;
+    char userpass[256];
+
+    snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
+    buf = g_byte_array_new();
+    curl = curl_easy_init();
+
+    if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+    get(STR_block, MUIA_String_Contents, &text);
+
+    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+             twitter->base_uri, TWITTER_API_PATH_UNBLOCK, text, ".xml");
+
+//    if(twitter->debug >= 2)
+        printf("api_uri: %s\n", api_uri);
+
+    curl_easy_setopt(curl, CURLOPT_URL, api_uri);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)buf);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error2();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error5();
+
+//      if(twitter->debug > 2){
+            fwrite(buf->data, 1, buf->len, stderr);
+            fprintf(stderr, "\n");
+//      }
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unblocking</b> that User!");
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Unblock a User (blocks/destroy)
+void amitwitter_unblock(const char *text) {
+
+    twitter_t *twitter = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+    twitter_unblock(twitter, text);
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
+/// blocks/blocking
+
+// blocks/blocking API
+GList* twitter_blocking_timeline(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_status_t *status;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_BLOCKING,
+             twitter->last_blocking_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        status = timeline->data;
+
+        twitter->last_blocking_timeline = atol(status->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows blocking (blocks/blocking)
 void amitwitter_blocking_loop() {
 
     int i;
@@ -2806,225 +3092,6 @@ void amitwitter_blocking_loop() {
     }
 
     twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// User Show API
-void amitwitter_usershow() {
-
-    int i;
-
-    twitter_t *twitter = NULL;
-
-    GList* timeline = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-
-    for(i=1; i<2; i++) {
-        timeline = twitter_usershow_timeline(twitter);
-//      if(twitter->debug >= 2)
-            printf("timeline num: %d\n", g_list_length(timeline));
-
-        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
-        twitter_statuses_free(timeline);
-        timeline = NULL;
-//      sleep(twitter->fetch_interval);
-
-    if(i==1) break;
-    }
-
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Shows most recent random messages (statuses/public_timeline API)
-void amitwitter_public_loop() {
-
-    int i;
-
-    twitter_t *twitter = NULL;
-
-    GList* timeline = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-
-    for(i=1; i<2; i++) {
-        timeline = twitter_public_timeline(twitter);
-//      if(twitter->debug >= 2)
-            printf("timeline num: %d\n", g_list_length(timeline));
-
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
-        timeline = NULL;
-//      sleep(twitter->fetch_interval);
-
-    if(i==1) break;
-    }
-
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Send a Tweet
-void amitwitter_update(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    fprintf(stdout, "updating...");
-    fflush(stdout);
-
-    get(STR_message, MUIA_String_Contents, &text);
-
-    printf("Message is %u characters long.\n", strlen(text));
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_update(twitter, text);
-    twitter_free(twitter);
-
-    fprintf(stdout, "done\n");
-}
-
-/*****************************************************************************/
-
-// Follow a User (friendships/create API)
-void amitwitter_follow(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_follow(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Unfollow a User (friendships/destroy API)
-void amitwitter_unfollow(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_unfollow(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Block a User (blocks/create API)
-void amitwitter_block(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_block(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Unblock a User (blocks/destroy API)
-void amitwitter_unblock(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_unblock(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Notifications follow a User with SMS (notifications/follow API)
-void amitwitter_notify(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_notify(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Notifications unfollow a User with SMS (notifications/leave API)
-void amitwitter_unnotify(const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_unnotify(twitter, text);
-    twitter_free(twitter);
-}
-
-/*****************************************************************************/
-
-// Direct Messages
-void amitwitter_direct_message(const char *screen_name, const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    fprintf(stdout, "sending...");
-    fflush(stdout);
-   
-    get(STR_user_id, MUIA_String_Contents, &screen_name);
-    get(STR_directmessage, MUIA_String_Contents, &text);
-
-    printf("Message is %u characters long.\n", strlen(text));
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_direct_message(twitter, screen_name, text);
-    twitter_free(twitter);
-
-    fprintf(stdout, "done\n");
-}
-
-/*****************************************************************************/
-
-// Update profile
-void amitwitter_updateprofile(const char *name, const char *web, const char *location, const char *bio) {
-
-    twitter_t *twitter = NULL;
-
-    fprintf(stdout, "updating profile...");
-    fflush(stdout);
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_updateprofile(twitter, name, web, location, bio);
-    twitter_free(twitter);
-
-    fprintf(stdout, "done\n");
-}
-
-/*****************************************************************************/
-
-// Verify Credentials
-void amitwitter_verify_credentials(const char *screen_name, const char *text) {
-
-    twitter_t *twitter = NULL;
-
-    get(STR_user_id, MUIA_String_Contents, &screen_name);
-    get(STR_directmessage, MUIA_String_Contents, &text);
-
-    twitter = twitter_new();
-    twitter_config(twitter);
-    twitter_verify_credentials(twitter, screen_name, text);
-    twitter_free(twitter);
-
 }
 
 /*****************************************************************************/
@@ -3059,19 +3126,17 @@ int main(int argc, char *argv[]) {
           MUIA_Window_ID, MAKE_ID('P','R','E','F'),
 
           WindowContents, VGroup,  MUIA_Register_Frame, TRUE,
-                 Child, VGroup,
-                 GroupFrameT("Fast Links Settings"),
-                    Child, HGroup,
+              Child, VGroup, GroupFrameT("Fast Links Settings"),
+                  Child, HGroup,
                        Child, Label2("Appearance"),
-                         Child, appearance  = CycleObject, MUIA_Cycle_Entries,
+                       Child, appearance  = CycleObject, MUIA_Cycle_Entries,
                          appearances, MUIA_ObjectID, 7, End,
-
                        Child, Label2("Label Position"),
-                         Child, labelPos = CycleObject, MUIA_Cycle_Entries,
-                         labelPoss, MUIA_ObjectID, 8, End,
+                       Child, labelPos = CycleObject, MUIA_Cycle_Entries,
+                       labelPoss, MUIA_ObjectID, 8, End,
                     End,
 
-                    Child, HGroup,
+                  Child, HGroup,
                        Child, HSpace(0),
                        Child, Label1("Borders"),
                        Child, borderless = CycleObject, MUIA_Cycle_Entries,
@@ -3089,7 +3154,7 @@ int main(int argc, char *argv[]) {
                        Child, scaled = CycleObject, MUIA_Cycle_Entries,
                        scaledSel, MUIA_ObjectID, 12, End,
                        Child, HSpace(0),
-                    End,
+                  End,
               End,
 
               Child, VGroup,
@@ -3226,7 +3291,7 @@ int main(int argc, char *argv[]) {
       // The User Window
       SubWindow, win_follow = WindowObject,
           MUIA_Window_Title, "Manage Users",
-          MUIA_Window_ID, MAKE_ID('F','L','L','W'),
+          MUIA_Window_ID, MAKE_ID('U','S','E','R'),
 
           WindowContents, VGroup,
             Child, RegisterGroup(Pages),
@@ -3490,10 +3555,10 @@ int main(int argc, char *argv[]) {
 
   // Main Buttons
   DoMethod(buttons[B_TIMELINE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,HOME);
+    app,2,MUIM_Application_ReturnID,TIMELINE);
 
   DoMethod(buttons[B_RETWEETS].obj,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,MEN_RETWEETTOME);
+    app,2,MUIM_Application_ReturnID,RETWEETS);
 
   DoMethod(buttons[B_REPLIES].obj,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,REPLIES);
@@ -3505,7 +3570,7 @@ int main(int argc, char *argv[]) {
     app,2,MUIM_Application_ReturnID,BTN_SEARCH);
 
   DoMethod(buttons[B_FOLLOW].obj,MUIM_Notify,MUIA_Pressed,FALSE,
-    app,2,MUIM_Application_ReturnID,BTN_FOLLOW);
+    app,2,MUIM_Application_ReturnID,USERS);
 
   DoMethod(buttons[B_DIRECTMESSAGE].obj,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,DIRMSG);
@@ -3640,6 +3705,7 @@ int main(int argc, char *argv[]) {
     app,2,MUIM_Application_ReturnID,CANCELNOTIFY);
     set(but_notify_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
 
+
   // Show Users
   DoMethod(clear_show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARSHOW);
@@ -3647,7 +3713,7 @@ int main(int argc, char *argv[]) {
 
   DoMethod(show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,USERSHOW);
-    set(show_gad, MUIA_ShortHelp, (ULONG)"Show Last Tweet for this User");
+    set(show_gad, MUIA_ShortHelp, (ULONG)"Show latest Tweet for this User");
 
   DoMethod(but_show_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELSHOW);
@@ -3736,23 +3802,27 @@ int main(int argc, char *argv[]) {
                      break;
 
                 // Timeline
-                case HOME:
-                case MEN_HOME:
-                    remove("PROGDIR:data/temp/twitter.html");
-                    amitwitter_loop();
-                    break;
-
-                // My Tweets
-                case PROFILE:
-                case MEN_MYTWEET:
+                case TIMELINE:
+                case MEN_TIMELINE:
                      remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_user_loop();
+                     amitwitter_loop();
                      break;
 
-                // Favorites
-                case MEN_FAVS:
+                // Retweets
+                case MEN_RETWEETBYME:
                      remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_favs();
+                     amitwitter_retweeted_by_me();
+                     break;
+
+                case RETWEETS:
+                case MEN_RETWEETTOME:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_retweeted_to_me();
+                     break;
+
+                case MEN_RETWEETOFME:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_retweets_of_me();
                      break;
 
                 // @Replies
@@ -3768,64 +3838,7 @@ int main(int argc, char *argv[]) {
                      set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
                      break;
 
-                // Direct Message window
-                case DIRMSG:
-                case MEN_DIRMSG:
-                     set(win_dirmsg, MUIA_Window_Open, TRUE);
-                     break;
-
-                case CLEARDM:
-                     do_clear_dm();
-                     break;
-
-                case DIRECTMESSAGE:
-                     amitwitter_direct_message(screen_name, text);
-                     break;
-
-                case CANCELDM:
-                     set(win_dirmsg, MUIA_Window_Open, FALSE);
-                     break;
-
-                case MEN_DIRMSGSENT:
-                     remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_dirmsgsent();
-                     break;
-
-                // Update Profile
-                case MEN_USERPROFILE:
-                     MUI_RequestA(app,window,0,"Update Profile","*OK","\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!", NULL);
-                     set(win_userprofile, MUIA_Window_Open, TRUE);
-                     break;
-
-                case UPDATEPROFILE:
-                     amitwitter_updateprofile(name, web, location, bio);
-                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENV);
-                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENVARC);
-                     break;
-
-                case CANCELPROFILE:
-                     set(win_userprofile, MUIA_Window_Open, FALSE);
-                     break;
-
-                // Tweet window
-                case TWEET:
-                case MEN_TWEET:
-                     set(win_tweet, MUIA_Window_Open, TRUE);
-                     break;
-
-                case CLEAR:
-                     do_clear();
-                     break;
-
-                case SENDUPDATE:
-                     amitwitter_update(optarg);
-                     break;
-
-                case CANCELTWEET:
-                     set(win_tweet, MUIA_Window_Open, FALSE);
-                     break;
-
-                // Search window
+                // Search 
                 case MEN_SEARCH:
                 case BTN_SEARCH:
                      set(clear_search_gad,MUIA_Disabled,FALSE);
@@ -3835,7 +3848,7 @@ int main(int argc, char *argv[]) {
                      break;
 
                 case CLEARSEARCH:
-                     do_clear_search();
+                     set(STR_search, MUIA_String_Contents,0);
                      break;
 
                 case SEARCH:
@@ -3850,14 +3863,14 @@ int main(int argc, char *argv[]) {
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
-                // User window
-                case MEN_FOLLOW:
-                case BTN_FOLLOW:
+                // Users
+                case MEN_USERS:
+                case USERS:
                      set(win_follow, MUIA_Window_Open, TRUE);
                      break;
 
                 case CLEARFOLLOW:
-                     do_clear_follow();
+                     set(STR_follow, MUIA_String_Contents,0);
                      break;
 
                 case FOLLOW:
@@ -3872,9 +3885,9 @@ int main(int argc, char *argv[]) {
                      set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Block
+                // Users/Block
                 case CLEARBLOCK:
-                     do_clear_block();
+                     set(STR_block, MUIA_String_Contents,0);
                      break;
 
                 case BLOCK:
@@ -3894,9 +3907,9 @@ int main(int argc, char *argv[]) {
                      set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Notify
+                // Users/Notify
                 case CLEARNOTIFY:
-                     do_clear_notify();
+                     set(STR_notify, MUIA_String_Contents,0);
                      break;
 
                 case NOTIFY:
@@ -3911,9 +3924,9 @@ int main(int argc, char *argv[]) {
                      set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Show
+                // Users/Show
                 case CLEARSHOW:
-                     do_clear_show();
+                     set(STR_show, MUIA_String_Contents,0);
                      break;
 
                 case USERSHOW:
@@ -3925,7 +3938,60 @@ int main(int argc, char *argv[]) {
                      set(win_follow, MUIA_Window_Open, FALSE);
                      break;
 
-                // Quit the program
+                // Direct Message
+                case DIRMSG:
+                case MEN_DIRMSG:
+                     set(win_dirmsg, MUIA_Window_Open, TRUE);
+                     break;
+
+                case CLEARDM:
+                     set(STR_directmessage, MUIA_String_Contents,0);
+                     break;
+
+                case DIRECTMESSAGE:
+                     amitwitter_direct_message(screen_name, text);
+                     break;
+
+                case CANCELDM:
+                     set(win_dirmsg, MUIA_Window_Open, FALSE);
+                     break;
+
+                case MEN_DIRMSGSENT:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_dirmsgsent();
+                     break;
+
+                // Tweet
+                case TWEET:
+                case MEN_TWEET:
+                     set(win_tweet, MUIA_Window_Open, TRUE);
+                     break;
+
+                case CLEAR:
+                     set(STR_message, MUIA_String_Contents,0);
+                     break;
+
+                case SENDUPDATE:
+                     amitwitter_update(optarg);
+                     break;
+
+                case CANCELTWEET:
+                     set(win_tweet, MUIA_Window_Open, FALSE);
+                     break;
+
+                // My Tweets
+                case MEN_MYTWEET:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_user_loop();
+                     break;
+
+                // My Favorites
+                case MEN_FAVS:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_favs();
+                     break;
+
+                // Quit
                 case MEN_QUIT:
                      result=MUI_RequestA(app,0,0,"Quit","_Quit|_Cancel","\33cAre you sure you want\nto quit AmiTwitter?",0);
 
@@ -3933,29 +3999,13 @@ int main(int argc, char *argv[]) {
                            running=FALSE;
                      break;
 
-                // Retweets
-                case MEN_RETWEETBYME:
-                     remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_retweeted_by_me();
-                     break;
-
-                case MEN_RETWEETTOME:
-                     remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_retweeted_to_me();
-                     break;
-
-                case MEN_RETWEETOFME:
-                     remove("PROGDIR:data/temp/twitter.html");
-                     amitwitter_retweets_of_me();
-                     break;
-
-                // Friends
+                // My Friends
                 case MEN_FRIENDS:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_friends_loop();
                      break;
 
-                // Followers
+                // My Followers
                 case MEN_FOLLOWERS:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_followers_loop();
@@ -3973,7 +4023,7 @@ int main(int argc, char *argv[]) {
                      amitwitter_public_loop();
                      break;
 
-                // Settings window
+                // Settings
                 case MEN_PREFS:
                      set(win_preferences, MUIA_Window_Open, TRUE);
                      break;
@@ -3997,27 +4047,43 @@ int main(int argc, char *argv[]) {
                      set(win_preferences, MUIA_Window_Open, FALSE);
                      break;
 
-                // MUI prefs
+                // Update Profile
+                case MEN_USERPROFILE:
+                     MUI_RequestA(app,window,0,"Update Profile","*OK","\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!", NULL);
+                     set(win_userprofile, MUIA_Window_Open, TRUE);
+                     break;
+
+                case UPDATEPROFILE:
+                     amitwitter_updateprofile(name, web, location, bio);
+                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENV);
+                     DoMethod(app,MUIM_Application_Save,MUIV_Application_Save_ENVARC);
+                     break;
+
+                case CANCELPROFILE:
+                     set(win_userprofile, MUIA_Window_Open, FALSE);
+                     break;
+
+                // MUI Settings
                 case MEN_MUIPREFS:
                      DoMethod(app, MUIM_Application_OpenConfigWindow, 0);
                      break;
 
-                // Show FAQ HTML
-                case MEN_HELP2:
+                // FAQs
+                case MEN_FAQ:
                      help();
                      break;
 
-                // Donate window
+                // Donate
                 case MEN_DONATE:
                      set(win_donate, MUIA_Window_Open, TRUE);
                      break;
 
-                // Show about HTML
+                // About AmiTwitter
                 case MEN_ABOUT:                   
                      about();
                      break;
 
-                // MUI about
+                // About MUI
                 case MEN_ABOUTMUI:
         
                      if(!aboutwin) {
