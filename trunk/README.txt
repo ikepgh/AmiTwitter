@@ -5,7 +5,7 @@ Type:  comm/misc
 Version: 0.23 Beta 1
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
-Distribution: GPL, SourceForge
+Distribution: GPL, SourceForge only
 
 
 INTRODUCTION
@@ -41,23 +41,23 @@ will not run correctly.
 REQUIREMENTS
 -----------
 
-OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc (included in Libs/mui directory), 
-TheBar.mcc, libiconv.ixlibary (included in Libs directory), ixemul/ixnet libraries, working TCP stack, 
-gif/png/jpg/bmp datatypes, OpenURL (optional)
+OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, 
+libiconv.ixlibary (included in Libs directory), ixemul.library, ixnet.library, 
+working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional)
 
-OS4/AROS: Unknown at this time
+OS4/AROS: Unknown at this time...Please note:  the OS 3.x version crashes on OS 4.x...
 
 USAGE
 -----
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
 window, be connected to the internet. Additionally, it can be started from the commandline for a more 
-verbose output (should you desire...).  Check the FAQ menu item if you run into issues first...
+verbose output (should you desire...).  Check the FAQ menu item first if you run into issues...
 
 VERSION HISTORY
 --------------- 
-0.23 - Beta 1 Release - Fast Links button prefs can now be saved; Users controls are now tabbed; added Users/Show - can
-search by User Name and it will display the last Tweet by that User (whether you are following them or not)
+0.23 - Beta 1 Release - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
+the last Tweet by that User (whether you are following them or not); fixed minor display bug (missing </small> tag)
 0.22 - Major implementations: Blocking/Unblocking; Receive/Stop receiving SMS messages; ability to update your profile;
 view Tweets that you have marked as Favorites, also can view users currently being Blocked by you (via User ID) 
 0.21 - Can now Follow and Unfollow Users via Screen Name!
@@ -93,13 +93,13 @@ RECOMPILING
 -----------
 
 Recompiling has quite a few dependencies, hence the file size...but, hey, it
-works!  Compiled on OS 3.x (WinUAE/Cubic IDE/gcc 2.95.3-4) with the following dependencies:
+works!  Compiled on OS 3.x (WinUAE/Cubic IDE/gcc 2.95.3-4) and MorphOS (AmiDevCpp) with the following dependencies:
 
 curl 7.14.0,  libxml2-2.6.22,  zlib-1.2.3,  libdl,  glib-2.4.4,  iconv-1.12,
 gettext-0.11.2 (libintl.a),  openssl 0.9.7m (libssl.a & libcrypto.a),  pth-bin
 (pthread.a 2.0.7), libm  &  libc.
 
-Here's the string used on 3.x:
+Here's the string used on 3.x/MorphOS:
 
 gcc -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
 

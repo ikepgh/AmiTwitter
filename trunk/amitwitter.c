@@ -317,8 +317,6 @@ static struct NewMenu MenuData1[]=
 
 /// TheBar buttons ************************************************************/
 
-Object *appearance, *labelPos, *borderless, *sunny, *raised, *scaled, *update;
-
 enum {
 
     B_TIMELINE, B_RETWEETS, B_REPLIES,
@@ -339,14 +337,6 @@ static struct MUIS_TheBar_Button buttons[] =
     {7, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
     {MUIV_TheBar_End                                                                     },
 };
-
-// Buttons
-char *appearances[] = {"Images and Text","Images","Text",NULL};
-char *labelPoss[] = {"Bottom","Top","Right","Left",NULL};
-char *borderlessSel[]={"On", "Off",NULL};
-char *sunnySel[]={"Yes", "No",NULL};
-char *raisedSel[]={"Don't Use", "Use",NULL};
-char *scaledSel[]={"Large", "Small",NULL};
 
 STRPTR pics[] =
 {
@@ -1047,7 +1037,7 @@ void twitter_status_print(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
-    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s</small>",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
     fclose(stdout);
@@ -3126,37 +3116,6 @@ int main(int argc, char *argv[]) {
           MUIA_Window_ID, MAKE_ID('P','R','E','F'),
 
           WindowContents, VGroup,  MUIA_Register_Frame, TRUE,
-              Child, VGroup, GroupFrameT("Fast Links Settings"),
-                  Child, HGroup,
-                       Child, Label2("Appearance"),
-                       Child, appearance  = CycleObject, MUIA_Cycle_Entries,
-                         appearances, MUIA_ObjectID, 7, End,
-                       Child, Label2("Label Position"),
-                       Child, labelPos = CycleObject, MUIA_Cycle_Entries,
-                       labelPoss, MUIA_ObjectID, 8, End,
-                    End,
-
-                  Child, HGroup,
-                       Child, HSpace(0),
-                       Child, Label1("Borders"),
-                       Child, borderless = CycleObject, MUIA_Cycle_Entries,
-                       borderlessSel, MUIA_ObjectID, 9, End,
-                       Child, HSpace(0),
-                       Child, Label1("Sunny"),
-                       Child, sunny = CycleObject, MUIA_Cycle_Entries,
-                       sunnySel, MUIA_ObjectID, 10, End,
-                       Child, HSpace(0),
-                       Child, Label1("Raised"),
-                       Child, raised = CycleObject, MUIA_Cycle_Entries,
-                       raisedSel, MUIA_ObjectID, 11, End,
-                       Child, HSpace(0),
-                       Child, Label1("Scaled"),
-                       Child, scaled = CycleObject, MUIA_Cycle_Entries,
-                       scaledSel, MUIA_ObjectID, 12, End,
-                       Child, HSpace(0),
-                  End,
-              End,
-
               Child, VGroup,
 
                   Child, ColGroup(2), GroupFrameT("Account Information Settings"),
@@ -3772,27 +3731,6 @@ int main(int argc, char *argv[]) {
 
          ULONG sigs = 0;
          LONG result;
-
-         if (TAG_USER) {
-
-            ULONG appareanceV, labelPosV, borderlessV, sunnyV, raisedV, scaledV;
-
-            get(appearance,MUIA_Cycle_Active,&appareanceV);
-            get(labelPos,MUIA_Cycle_Active,&labelPosV);
-            get(borderless,MUIA_Cycle_Active,&borderlessV);
-            get(sunny,MUIA_Cycle_Active,&sunnyV);
-            get(raised,MUIA_Cycle_Active,&raisedV);
-            get(scaled,MUIA_Cycle_Active,&scaledV);
-
-            SetAttrs(toolbar,
-                MUIA_TheBar_ViewMode,   appareanceV,
-                MUIA_TheBar_LabelPos,   labelPosV,
-                MUIA_TheBar_Borderless, borderlessV,
-                MUIA_TheBar_Sunny,      sunnyV,
-                MUIA_TheBar_Raised,     raisedV,
-                MUIA_TheBar_Scaled,     scaledV,
-                TAG_DONE);
-        }
 
         switch (DoMethod(app,MUIM_Application_NewInput,&sigs)) {
 
