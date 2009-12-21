@@ -42,8 +42,7 @@ REQUIREMENTS
 -----------
 
 OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, 
-libiconv.ixlibary (included in Libs directory), ixemul.library, ixnet.library, 
-working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional)
+libiconv.ixlibary (included in Libs directory), working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional), ixemul.library/ixnet.library (needed by OS 3.x version only), 
 
 OS4/AROS: Unknown at this time...Please note:  the OS 3.x version crashes on OS 4.x...
 
