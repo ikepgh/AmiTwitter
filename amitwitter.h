@@ -151,7 +151,7 @@
 "<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>" \
 "<HR>" \
 "<CENTER>All I see is the message, 'Attempting to get the latest...'?</CENTER><BR>" \
-"<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'Favorites' in AmiTwitter either.</CENTER><BR>" \
+"<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>" \
 "<HR>" \
 "<CENTER>Why is the file size so large?</CENTER><BR>" \
 "<CENTER>Answer: Because AmiTwitter relies on numerous libs to work, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>" \

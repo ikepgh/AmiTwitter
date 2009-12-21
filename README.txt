@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.23 Beta 1
+Version: 0.23 Public Beta Release 1
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
 Distribution: GPL, SourceForge only
@@ -19,9 +19,9 @@ Features:
     * Downloads Public Timeline (Random Tweets just for fun...)
     * Displays the most recent Tweets that you have sent
     * Displays the most recent Tweet by all friends & followers (User ID)
-    * Follow/Unfollow, Block/Unblock specified users
-    * Receive/Stop receiving SMS messages from users
-    * Update your profile; view Favorites and Users currently Blocking
+    * Follow/Unfollow, Block/Unblock specified Users
+    * Receive/Stop receiving SMS messages from Users
+    * Update your profile; view Favorites and view Users currently Blocking
     * Display most recent Tweet for any User (whether following them or not)
     * MorphOS, OS 3.x compatible
 
@@ -29,7 +29,7 @@ Features:
 Thanks for your interest!
 AmiTwitter Open Source Team
 
-Send email/feedback to: ikepgh@yahoo.com
+Send email/feedback to: ikepgh@ezcyberspace.com
 
 INSTALLATION
 -----------
@@ -52,11 +52,11 @@ USAGE
 
 Have an established Twitter account, Enter your Twitter account username/password in the 'Settings'
 window, be connected to the internet. Additionally, it can be started from the commandline for a more 
-verbose output (should you desire...).  Check the FAQ menu item first if you run into issues...
+verbose output (should you desire...).  Check the read-me-first.html file in the Docs folder and the FAQ menu item first if you run into issues...
 
 VERSION HISTORY
 --------------- 
-0.23 - Beta 1 Release - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
+0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
 the last Tweet by that User (whether you are following them or not); fixed minor display bug (missing </small> tag)
 0.22 - Major implementations: Blocking/Unblocking; Receive/Stop receiving SMS messages; ability to update your profile;
 view Tweets that you have marked as Favorites, also can view users currently being Blocked by you (via User ID) 
@@ -126,13 +126,13 @@ Special thanks to:
 ABOUT/AUTHORS
 -------------
 
-AmiTwitter is © 2009 IKE <ikepgh@yahoo.com>
+AmiTwitter is © 2009 IKE <ikepgh@ezcyberspace.com>
 
 Look at some of my other projects and ports @
 http://www.ezcyberspace.com/programming.shtml
 
 
-AmiTwitter is based heavily on the following program:
+AmiTwitter is based on the following program:
 
 http://www.cuspy.org/xtwitter/  
  xTwitter is © 2008 Tsukasa Hamano <code@cuspy.org>

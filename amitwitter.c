@@ -3130,7 +3130,7 @@ int main(int argc, char *argv[]) {
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
                   Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
                   Child, but_test   = MUI_MakeObject(MUIO_Button,"_Test"),
-                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel / Use"),
+                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"),
               End,
 
               Child, VGroup, GroupFrameT("Help!"),
@@ -3480,7 +3480,7 @@ int main(int argc, char *argv[]) {
                        Child, ColGroup(4),
                            Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
                            Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
-                           Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@yahoo.com","Feedback",MUIV_Font_Normal),
+                           Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@ezcyberspace.com","Feedback",MUIV_Font_Normal),
                            Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
                        End,
                        Child, HSpace(0),
@@ -3555,7 +3555,7 @@ int main(int argc, char *argv[]) {
   // Prefs subwindow
   DoMethod(but_save,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SAVE);
-    set(but_save, MUIA_ShortHelp, (ULONG)"Save All Settings");
+    set(but_save, MUIA_ShortHelp, (ULONG)"Save Settings");
 
   DoMethod(but_test,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,TEST);
@@ -3972,7 +3972,7 @@ int main(int argc, char *argv[]) {
 
                      set (STR_login, MUIA_String_Contents, (int)username);
 
-                     MUI_RequestA(app,0,0,"Save","*OK","Settings Saved",NULL);
+                     MUI_RequestA(app,0,0,"Save","*OK","Settings Saved to Envarc!",NULL);
 
                      set(win_preferences, MUIA_Window_Open, FALSE);
                      break;
