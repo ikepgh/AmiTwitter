@@ -38,9 +38,9 @@
 
         "-lssl"
 
-        "-lcrypto"
-
         "-lpthread"
+
+        "-lcrypto"
 
         "-lm"
 
