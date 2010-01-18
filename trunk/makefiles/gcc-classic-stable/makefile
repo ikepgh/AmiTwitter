@@ -10,11 +10,10 @@ OBJDIR = o/gcc-classic-stable/
 
 all : $(EXE)
 
-$(OBJDIR)amitwitter.o : amitwitter.c
+$(OBJDIR)amitwitter.o : amitwitter.c amitwitter_strings.h
 	gcc $(shell gccprefs) -c -o $(OBJDIR)amitwitter.o amitwitter.c
 
 OBJS = $(OBJDIR)amitwitter.o
-
 $(EXE) : $(OBJS)
 	gcc $(OBJS) $(shell gccprefs) -o $(EXE)
 
