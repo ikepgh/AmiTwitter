@@ -1,0 +1,936 @@
+## version $VER: amitwitter.catalog 1.0 (08.01.10)
+## 0
+## français
+;
+MSG_FOLLOW
+
+; Follow/Unfollow
+;
+MSG_BLOCK
+
+; Block/Unblock
+;
+MSG_NOTIFY
+
+; Notify/Unnotify
+;
+MSG_SHOWUSER
+
+; Show User
+;
+MSG_TIMELINE
+
+; _Timeline
+;
+MSG_TIMELINE2
+
+; Get most recent Tweets (max 20)
+;
+MSG_RETWEETS
+
+; Ret_weets
+;
+MSG_RETWEETS2
+
+; Get most recent Retweets to me (max 20)
+;
+MSG_REPLIES
+
+; @_Replies
+;
+MSG_REPLIES2
+
+; Get most recent @Replies (max 20)
+;
+MSG_RELOAD
+
+; Rel_oad
+;
+MSG_RELOAD2
+
+; Reload current local file
+;
+MSG_SEARCH
+
+; _Search
+;
+MSG_SEARCH2
+
+; Search
+;
+MSG_USERS
+
+; _Users
+;
+MSG_USERS2
+
+; Manage Users
+;
+MSG_DIRMSG
+
+; _Dir Msg
+;
+MSG_DIRMSG2
+
+; Send a Direct Message
+;
+MSG_TWEET
+
+; Tw_eet
+;
+MSG_TWEET2
+
+; Send a Tweet
+;
+MSG_ERROR
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li>
+;
+MSG_ERROR2
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>
+;
+MSG_ERROR3
+
+; <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
+;
+MSG_ERROR4
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>
+;
+MSG_ERROR5
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
+;
+MSG_ERROR6
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
+;
+MSG_ERROR7
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>
+;
+MSG_ERROR8
+
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
+;
+MSG_ATTEMPTING
+
+; Attempting to get the latest...
+;
+MSG_STATS
+
+; <small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s</small>
+;
+MSG_STATS2
+
+; <b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>
+;
+MSG_SENT
+
+; Your Tweet was sent!
+;
+MSG_DIRMSGSENT
+
+; Your Direct Message was sent!
+;
+MSG_FOLLOWING
+
+; You are now <b>Following</b> that User!
+;
+MSG_UNFOLLOWING
+
+; You are now <b>Unfollowing</b> that User!
+;
+MSG_VALID
+
+; <B>Congratulations!</B> Your username/password is valid!
+;
+MSG_UPDATED
+
+; <B>Congratulations!</B> You have updated your profile!
+;
+MSG_SMSFOLLOW
+
+; You are now receiving Notifications (SMS following) that User!
+;
+MSG_SMSUNFOLLOW
+
+; You are no longer receiving notifications (SMS following) that User!
+;
+MSG_BLOCKING
+
+; You are now <b>Blocking</b> that User!
+;
+MSG_UNBLOCKING
+
+; You are now <b>Unblocking</b> that User!
+;
+MSG_SETTINGS
+
+; Settings
+;
+MSG_SETTINGS2
+
+; Account Information Settings
+;
+MSG_USERNAME
+
+; User Name:
+;
+MSG_PASSWORD
+
+; Password:
+;
+MSG_SAVE
+
+; _Save
+;
+MSG_TEST2
+
+; _Test
+;
+MSG_CANCEL
+
+; _Cancel
+;
+MSG_HELP
+
+; Help!
+;
+MSG_REGISTER
+
+; \33c\nDon't already have a User Name/Password?\nYou must register at the Twitter website first!\n
+;
+MSG_ESTABLISH
+
+; Establish An Account!
+;
+MSG_FORGOT
+
+; Forgot Your Password?
+;
+MSG_DONATE
+
+; Donate
+;
+MSG_DONATE2
+
+; \33c\nIf you find AmiTwitter useful, please consider donating.\n  You must have an active internet connection:\n
+;
+MSG_DONATE3
+
+; Donate!
+;
+MSG_SEND
+
+; Send a Tweet
+;
+MSG_SEND2
+
+; Send a Tweet
+;
+MSG_SEND3
+
+; Tweet:
+;
+MSG_SEND4
+
+; Enter your Tweet and click Update to send (max 140 characters)
+;
+MSG_CLEAR
+
+; C_lear
+;
+MSG_UPDATE
+
+; _Update
+;
+MSG_CANCEL2
+
+; _Cancel
+;
+MSG_SEARCH3
+
+; Search
+;
+MSG_SEARCH4
+
+; Search
+;
+MSG_SEARCH5
+
+; Search:
+;
+MSG_SEARCH6
+
+; Enter your search string and click Search (max 140 characters)
+;
+MSG_CLEAR2
+
+; C_lear
+;
+MSG_SEARCH7
+
+; _Search
+;
+MSG_CANCEL3
+
+; _Cancel
+;
+MSG_MANAGE
+
+; Manage Users
+;
+MSG_FOLLOW2
+
+; Change the Following Status for a User
+;
+MSG_FOLLOW3
+
+; User:
+;
+MSG_FOLLOW4
+
+; Enter the Screen Name you want to follow or unfollow...
+;
+MSG_CLEAR3
+
+; C_lear
+;
+MSG_FOLLOW5
+
+; _Follow
+;
+MSG_UNFOLLOOW
+
+; _Unfollow
+;
+MSG_CANCEL4
+
+; _Cancel
+;
+MSG_BLOCKING2
+
+; Change the Blocking Status for a User
+;
+MSG_BLOCKING3
+
+; User:
+;
+MSG_BLOCKING4
+
+; Enter the Screen Name you want to block or unblock...
+;
+MSG_CLEAR4
+
+; C_lear
+;
+MSG_BLOCKING5
+
+; _Block
+;
+MSG_UNBLOCK
+
+; U_nblock
+;
+MSG_CANCEL5
+
+; _Cancel
+;
+MSG_SMS
+
+; Change the SMS Notification Status for a User
+;
+MSG_SMS2
+
+; User:
+;
+MSG_SMS3
+
+; Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for...
+;
+MSG_CLEAR5
+
+; C_lear
+;
+MSG_RECEIVE
+
+; _Receive
+;
+MSG_STOP
+
+; _Stop
+;
+MSG_CANCEL6
+
+; _Cancel
+;
+MSG_SHOWUSER2
+
+; Show a User
+;
+MSG_SHOWUSER3
+
+; User:
+;
+MSG_SHOWUSER4
+
+; \33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!
+;
+MSG_CLEAR6
+
+; C_lear
+;
+MSG_SHOWUSER5
+
+; _Show User
+;
+MSG_CANCEL7
+
+; _Cancel
+;
+MSG_SENDDIRMSG
+
+; Send a Direct Message
+;
+MSG_SENDDIRMSG2
+
+; Send a Direct Message
+;
+MSG_RECIPIENT
+
+; Recipient:
+;
+MSG_SCREENNAME
+
+; Enter a Screen Name only
+;
+MSG_MESSAGE
+
+; Message:
+;
+MSG_MESSAGE2
+
+; Enter a message (max 140 characters)
+;
+MSG_CLEAR7
+
+; C_lear
+;
+MSG_SEND5
+
+; _Send
+;
+MSG_CANCEL8
+
+; _Cancel
+;
+MSG_UPDATEPROFILE
+
+; Update Your Profile
+;
+MSG_UPDATEPROFILE2
+
+; Update Your Twitter Website Profile
+;
+MSG_PROFNAME
+
+; Name:
+;
+MSG_PROFNAME2
+
+; \33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)
+;
+MSG_WEB
+
+; Web:
+;
+MSG_WEB2
+
+; \33cEnter your website URL\n It will be prepended with 'http://' if not present\n(Max 100 characters)
+;
+MSG_LOCATION
+
+; Location:
+;
+MSG_LOCATION2
+
+; \33cEnter your location. The contents\nare not normalized or geocoded in any way\n(Max 30 characters)
+;
+MSG_BIO
+
+; Bio:
+;
+MSG_BIO2
+
+; \33cEnter something about yourself or your description\n(Max 160 characters)
+;
+MSG_UPDATEPROFILE3
+
+; _Update Profile
+;
+MSG_CANCEL9
+
+; _Cancel
+;
+MSG_WHAT
+
+; What's Happening?
+;
+MSG_FAST
+
+; Fast Links
+;
+MSG_FEEDBACK
+
+; Feedback
+;
+MSG_DONATE4
+
+; Donate!
+;
+MSG_SAVE2
+
+; Save Settings
+;
+MSG_TEST3
+
+; Test User Name / Password
+;
+MSG_DONTSAVE
+
+; Don't Save Current Changes
+;
+MSG_CLEAR8
+
+; Clear Tweet
+;
+MSG_SEND6
+
+; Send Tweet
+;
+MSG_CANCEL10
+
+; Cancel Tweet
+;
+MSG_CLEAR9
+
+; Clear Search
+;
+MSG_SEARCH8
+
+; Search
+;
+MSG_CANCEL11
+
+; Cancel Search
+;
+MSG_CLEAR10
+
+; Clear User Name
+;
+MSG_FOLLOWUSER
+
+; Follow a User
+;
+MSG_UNFOLLOWUSER
+
+; Unfollow a User
+;
+MSG_CANCEL12
+
+; Cancel Request
+;
+MSG_CLEAR12
+
+; Clear User Name
+;
+MSG_BLOCKUSER
+
+; Block a User (Use with care!)
+;
+MSG_UNBLOCKUSER
+
+; Unblock a currently blocked User
+;
+MSG_CANCEL13
+
+; Cancel Request
+;
+MSG_CLEAR13
+
+; Clear User Name
+;
+MSG_SMSNOTE
+
+; \33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...
+;
+MSG_SMSSTOP
+
+; Stop receiving SMS notifications from this user
+;
+MSG_CANCEL14
+
+; Cancel Request
+;
+MSG_CLEAR14
+
+; Clear User Name
+;
+MSG_SHOWTWEETS
+
+; Show latest Tweet for this User
+;
+MSG_CANCEL15
+
+; Cancel Request
+;
+MSG_CLEAR15
+
+; Clear Direct Message
+;
+MSG_SENDDIRMSG3
+
+; Send Direct Message
+;
+MSG_CANCEL16
+
+; Cancel Direct Message
+;
+MSG_UPDATEPROFILE4
+
+; Update Your Profile!
+;
+MSG_CANCEL17
+
+; Cancel Update
+;
+MSG_SEARCH9
+
+; Search
+;
+MSG_OK
+
+; *OK
+;
+MSG_SEARCH10
+
+; Search not implemented yet...
+;
+MSG_BLOCK2
+
+; Block?
+;
+MSG_BLOCK3
+
+; _Block|_Cancel
+;
+MSG_BLOCK4
+
+; \33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!
+;
+MSG_QUIT
+
+; Quit
+;
+MSG_QUIT2
+
+; _Quit|_Cancel
+;
+MSG_QUIT3
+
+; \33cAre you sure you want\nto quit AmiTwitter?
+;
+MSG_SAVE3
+
+; Save
+;
+MSG_OK2
+
+; *OK
+;
+MSG_SAVED
+
+; Settings Saved to Envarc!
+;
+MSG_UPDATEPROFILE5
+
+; Update Profile
+;
+MSG_OK3
+
+; *OK
+;
+MSG_UPDATEPROFILE6
+
+; \33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!
+;
+MSG_HTML1
+
+; <TITLE>Welcome to AmiTwitter</TITLE></HEAD>
+;
+MSG_HTML2
+
+; <CENTER>Enter your User Name/Password in the Tools -> Settings dialog window to get started... </CENTER><BR>
+;
+MSG_HTML3
+
+; <CENTER>This program is released under the GNU General Public License</CENTER><BR>
+;
+MSG_HTML4
+
+; <CENTER>No warranty is expressed or implied. Use at your own risk!</CENTER>
+;
+MSG_HTML5
+
+; <CENTER>The latest source code is always available at:</CENTER><BR>
+;
+MSG_HTML6
+
+; <CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
+;
+MSG_HTML7
+
+; <CENTER>-- Thanks for your interest, The AmiTwitter Open Source Team</CENTER><BR>
+;
+MSG_HTML8
+
+; <CENTER>This program uses:</CENTER><BR>
+;
+MSG_HTML9
+
+; <TITLE>Welcome to AmiTwitter</TITLE></HEAD>
+;
+MSG_HTML10
+
+; <CENTER>What does AmiTwitter stand for?</CENTER><BR>
+;
+MSG_HTML11
+
+; <CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>
+;
+MSG_HTML12
+
+; <CENTER>What are the requirements for AmiTwitter?</CENTER><BR>
+;
+MSG_HTML13
+
+; <CENTER>Answer: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>
+;
+MSG_HTML14
+
+; <CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>
+;
+MSG_HTML15
+
+; <CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>
+;
+MSG_HTML16
+
+; <CENTER>Direct Messages don't seem to work?</CENTER><BR>
+;
+MSG_HTML17
+
+; <CENTER>Answer: Ensure you enter the recipient's Screen Name (i.e. User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>
+;
+MSG_HTML18
+
+; <CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>
+;
+MSG_HTML19
+
+; <CENTER>Answer: Follow the 'Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>
+;
+MSG_HTML20
+
+; <CENTER>Nothing happens when I click on the links at the very bottom of the main program window?</CENTER><BR>
+;
+MSG_HTML21
+
+; <CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>
+;
+MSG_HTML22
+
+; <CENTER>All I see is the message, 'Attempting to get the latest...'?</CENTER><BR>
+;
+MSG_HTML23
+
+; <CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>
+;
+MSG_HTML24
+
+; <CENTER>Why is the file size so large?</CENTER><BR>
+;
+MSG_HTML25
+
+; <CENTER>Answer: Because AmiTwitter relies on numerous libs to work, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>
+;
+MSG_HTML26
+
+; <CENTER>Why did you write AmiTwitter?</CENTER><BR>
+;
+MSG_HTML27
+
+; <CENTER>Answer: To prove it could be done!</CENTER><BR>
+;
+MSG_HTML28
+
+; <CENTER>What is AmiTwitter based on?</CENTER><BR>
+;
+MSG_HTML29
+
+; <CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>
+;
+MSG_HTML30
+
+; <CENTER>Links in the main Tweets window don't work?</CENTER><BR>
+;
+MSG_HTML31
+
+; <CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (The plan is to switch to HTMLview.mcc in the future...)</CENTER><BR>
+;
+MSG_HTML32
+
+; <CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>
+;
+MSG_HTML33
+
+; <CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>
+;
+MSG_HTML34
+
+; <CENTER>I don't know how to code, what can I do?</CENTER><BR>
+;
+MSG_HTML35
+
+; <CENTER>Consider donating.<BR>
+;
+MSG_0000
+
+; File
+;
+MSG_0001
+
+; Timeline
+;
+MSG_0002
+
+; Retweets
+;
+MSG_0003
+
+; Retweet By Me
+;
+MSG_0004
+
+; Retweet To Me
+;
+MSG_0005
+
+; Retweet Of Me
+;
+MSG_0006
+
+; @Replies
+;
+MSG_0007
+
+; Reload
+;
+MSG_0008
+
+; Search
+;
+MSG_0009
+
+; Find Users
+;
+MSG_0010
+
+; Users
+;
+MSG_0011
+
+; Direct Message
+;
+MSG_0012
+
+; Sent
+;
+MSG_0013
+
+; Received
+;
+MSG_0014
+
+; Tweet
+;
+MSG_0015
+
+; My Tweets
+;
+MSG_0016
+
+; My Favorites
+;
+MSG_0017
+
+; Quit
+;
+MSG_0018
+
+; Misc
+;
+MSG_0019
+
+; My Friends
+;
+MSG_0020
+
+; My Followers
+;
+MSG_0021
+
+; Blocking
+;
+MSG_0022
+
+; Random
+;
+MSG_0023
+
+; Tools
+;
+MSG_0024
+
+; Settings
+;
+MSG_0025
+
+; Update Profile
+;
+MSG_0026
+
+; MUI Settings
+;
+MSG_0027
+
+; Help
+;
+MSG_0028
+
+; FAQs
+;
+MSG_0029
+
+; Donate
+;
+MSG_0030
+
+; About AmiTwitter
+;
+MSG_0031
+
+; About MUI
+;
