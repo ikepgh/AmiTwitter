@@ -1,0 +1,33 @@
+# Project: AmiTwitter
+# Compiler: ppc-MorphOS
+# Compiler Type: MingW 3
+# Makefile created by wxDev-C++ 6.10.2 on 11/01/10 12:50
+
+CPP       = ppc-morphos-g++.exe
+CC        = ppc-morphos-gcc.exe
+WINDRES   = windres.exe
+OBJ       = amitwitter.o
+LINKOBJ   = amitwitter.o
+LIBS      = -L"C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib"  C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libcurl.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libxml2.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libz.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libdl.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libglib-2.0.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libiconv.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libintl.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libc.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libssl.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libcrypto.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libpthread.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libm.a C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/lib/libcurl.a  -s 
+INCS      = -I"C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
+CXXINCS   = -I"C:/CrossCompiler/AmiDevCpp/usr/local/amiga/ppc-morphos/sys-include"
+RCINCS    = --include-dir "C:/CROSSC~1/AMIDEV~1/include"
+BIN       = AmiTwitter_MOS.exe
+DEFINES   = 
+CXXFLAGS  = $(CXXINCS) $(DEFINES)  
+CFLAGS    = $(INCS) $(DEFINES) -noixemul  
+GPROF     = gprof.exe
+RM        = rm -f
+LINK      = ppc-morphos-g++.exe
+
+.PHONY: all all-before all-after clean clean-custom
+all: all-before $(BIN) all-after
+
+clean: clean-custom
+	$(RM) $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(LINK) $(LINKOBJ) -o "AmiTwitter_MOS.exe" $(LIBS)
+
+amitwitter.o: $(GLOBALDEPS) amitwitter.c
+	$(CC) -c amitwitter.c -o amitwitter.o $(CFLAGS)
