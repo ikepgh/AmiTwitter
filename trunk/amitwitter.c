@@ -1,11 +1,11 @@
 /** $Revision Header *** Header built automatically - do not edit! ***********
  **
- ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ ** © Copyright 2010 IKE <ikepgh@yahoo.com>
  **
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.23
+ ** Current revision : V 0.24
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
@@ -71,6 +72,9 @@
 #include <proto/muimaster.h>
 #include <libraries/mui.h>
 #include <libraries/gadtools.h>
+#include <libraries/locale.h>
+#include <clib/exec_protos.h>
+#include <clib/locale_protos.h>
 #if defined(__AMIGA__) && !defined(__PPC__)
 #include <clib/gadtools_protos.h>
 #endif
@@ -97,6 +101,7 @@
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
 #include "language.h"
+#include "amitwitter_strings.h"
 
 /*****************************************************************************/
 
@@ -177,6 +182,9 @@ extern struct Library *DOSBase;
 struct GfxBase *GfxBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
+
+struct Library *LocaleBase;
+struct LocaleInfo li;
 
 #ifdef __amigaos4__
 extern struct ExecIFace *IExec;    /* No need to open them! */
@@ -263,49 +271,49 @@ enum {
 static struct NewMenu MenuData1[]=
 {
 
-    M( NM_TITLE,  MSG_FILE,          0,   MEN_FILE        ),
-    M( NM_ITEM,   MSG_TIMELINE,      0,   MEN_TIMELINE    ),
-    M( NM_ITEM,   MSG_RETWEET,       0,   MEN_RETWEET     ),
-    MX( NM_SUB,   MSG_RETWEETBYME,   0,   0, MEN_RETWEETBYME   ),
-    MX( NM_SUB,   MSG_RETWEETTOME,   0,   0, MEN_RETWEETTOME   ),
-    MX( NM_SUB,   MSG_RETWEETOFME,   0,   0, MEN_RETWEETOFME   ),
-    M( NM_ITEM,   MSG_REPLIES,       0,   MEN_REPLIES     ),
-    M( NM_ITEM,   MSG_RELOAD,        0,   MEN_RELOAD      ),
-//    M( NM_ITEM,   MSG_SEARCH,        0,   MEN_SEARCH      ),
-//    MX( NM_SUB,   MSG_SEARCH,        0,   0, MEN_SEARCH        ),
-//    MX( NM_SUB,   MSG_SEARCHUSER,    0,   0, MEN_SEARCHUSER    ),
-    M( NM_ITEM,   MSG_USERS,         0,   MEN_USERS     ),
+    M( NM_TITLE,  MSG_FILEX,          0,   MEN_FILE        ),
+    M( NM_ITEM,   MSG_TIMELINEX,      0,   MEN_TIMELINE    ),
+    M( NM_ITEM,   MSG_RETWEETX,       0,   MEN_RETWEET     ),
+    MX( NM_SUB,   MSG_RETWEETBYMEX,   0,   0, MEN_RETWEETBYME   ),
+    MX( NM_SUB,   MSG_RETWEETTOMEX,   0,   0, MEN_RETWEETTOME   ),
+    MX( NM_SUB,   MSG_RETWEETOFMEX,   0,   0, MEN_RETWEETOFME   ),
+    M( NM_ITEM,   MSG_REPLIESX,       0,   MEN_REPLIES     ),
+    M( NM_ITEM,   MSG_RELOADX,        0,   MEN_RELOAD      ),
+//    M( NM_ITEM,   MSG_SEARCHX,        0,   MEN_SEARCH      ),
+//    MX( NM_SUB,   MSG_SEARCHX,        0,   0, MEN_SEARCH        ),
+//    MX( NM_SUB,   MSG_SEARCHUSERX,    0,   0, MEN_SEARCHUSER    ),
+    M( NM_ITEM,   MSG_USERSX,         0,   MEN_USERS     ),
     BAR,
-    M( NM_ITEM,   MSG_DIRMSG,        0,   MEN_DIRMSG      ),
-//    MX( NM_SUB,   MSG_DIRMSG,        0,   0, MEN_DIRMSG        ),
-//    MX( NM_SUB,   MSG_DIRMSGSENT,    0,   0, MEN_DIRMSGSENT    ),
-//    MX( NM_SUB,   MSG_DIRMSGRCVD,    0,   0, MEN_DIRMSGRCVD    ),
-    M( NM_ITEM,   MSG_TWEET,         0,   MEN_TWEET       ),
-    MX( NM_SUB,   MSG_TWEET,         0,   0, MEN_TWEET         ),
-    MX( NM_SUB,   MSG_MYTWEET,       0,   0, MEN_MYTWEET       ),
-    MX( NM_SUB,   MSG_FAVS,          0,   0, MEN_FAVS          ),
+    M( NM_ITEM,   MSG_DIRMSGX,        0,   MEN_DIRMSG      ),
+//    MX( NM_SUB,   MSG_DIRMSGX,        0,   0, MEN_DIRMSG        ),
+//    MX( NM_SUB,   MSG_DIRMSGSENTX,    0,   0, MEN_DIRMSGSENT    ),
+//    MX( NM_SUB,   MSG_DIRMSGRCVDX,    0,   0, MEN_DIRMSGRCVD    ),
+    M( NM_ITEM,   MSG_TWEETX,         0,   MEN_TWEET       ),
+    MX( NM_SUB,   MSG_TWEETX,         0,   0, MEN_TWEET         ),
+    MX( NM_SUB,   MSG_MYTWEETX,       0,   0, MEN_MYTWEET       ),
+    MX( NM_SUB,   MSG_FAVSX,          0,   0, MEN_FAVS          ),
     BAR,
-    M( NM_ITEM,   MSG_QUIT,          0,   MEN_QUIT        ),
+    M( NM_ITEM,   MSG_QUITX,          0,   MEN_QUIT        ),
 
-    M( NM_TITLE,  MSG_MISC,          0,   MEN_MISC        ),
-    M( NM_ITEM,   MSG_FRIENDS,       0,   MEN_FRIENDS     ),
-    M( NM_ITEM,   MSG_FOLLOWERS,     0,   MEN_FOLLOWERS   ),
-    M( NM_ITEM,   MSG_BLOCKING,      0,   MEN_BLOCKING    ),
+    M( NM_TITLE,  MSG_MISCX,          0,   MEN_MISC        ),
+    M( NM_ITEM,   MSG_FRIENDSX,       0,   MEN_FRIENDS     ),
+    M( NM_ITEM,   MSG_FOLLOWERSX,     0,   MEN_FOLLOWERS   ),
+    M( NM_ITEM,   MSG_BLOCKINGX,      0,   MEN_BLOCKING    ),
     BAR,
-    M( NM_ITEM,   MSG_RANDOM,        0,   MEN_RANDOM      ),
+    M( NM_ITEM,   MSG_RANDOMX,        0,   MEN_RANDOM      ),
 
-    M( NM_TITLE,  MSG_TOOLS,         0,   MEN_TOOLS       ),
-    M( NM_ITEM,   MSG_PREFS,         0,   MEN_PREFS       ),
-    M( NM_ITEM,   MSG_USERPROFILE,   0,   MEN_USERPROFILE ),
+    M( NM_TITLE,  MSG_TOOLSX,         0,   MEN_TOOLS       ),
+    M( NM_ITEM,   MSG_PREFSX,         0,   MEN_PREFS       ),
+    M( NM_ITEM,   MSG_USERPROFILEX,   0,   MEN_USERPROFILE ),
     BAR,          
-    M( NM_ITEM,   MSG_MUIPREFS,      0,   MEN_MUIPREFS    ),
+    M( NM_ITEM,   MSG_MUIPREFSX,      0,   MEN_MUIPREFS    ),
 
-    M( NM_TITLE,  MSG_HELP,          0,   MEN_HELP        ),
-    M( NM_ITEM,   MSG_FAQ,           0,   MEN_FAQ         ),
-    M( NM_ITEM,   MSG_DONATE,        0,   MEN_DONATE      ),
-    M( NM_ITEM,   MSG_ABOUT,         0,   MEN_ABOUT       ),
+    M( NM_TITLE,  MSG_HELPX,          0,   MEN_HELP        ),
+    M( NM_ITEM,   MSG_FAQX,           0,   MEN_FAQ         ),
+    M( NM_ITEM,   MSG_DONATEX,        0,   MEN_DONATE      ),
+    M( NM_ITEM,   MSG_ABOUTX,         0,   MEN_ABOUT       ),
     BAR,
-    M( NM_ITEM,   MSG_ABOUTMUI,      0,   MEN_ABOUTMUI    ),
+    M( NM_ITEM,   MSG_ABOUTMUIX,      0,   MEN_ABOUTMUI    ),
     M( NM_END,    NULL,              0,   0               ),
 
     MENU_END
@@ -450,6 +458,11 @@ BOOL Open_Libs(void ) {
         return(0);
     }
 
+    if ((LocaleBase=OpenLibrary("locale.library",38))) {
+        
+        li.li_LocaleBase = LocaleBase;
+        (STRPTR) li.li_Catalog    = OpenCatalogA(NULL,"amitwitter.catalog",NULL);
+    }
     return(1);
 }
 
@@ -472,6 +485,12 @@ void Close_Libs(void ) {
     if ( MUIMasterBase )
         CloseLibrary(MUIMasterBase);
 
+    if (LocaleBase) {
+        
+        CloseCatalog(li.li_Catalog);
+        CloseLibrary(LocaleBase);
+    }
+
     #ifdef __MORPHOS__
     if ( SocketBase )
         CloseLibrary(SocketBase);        
@@ -480,58 +499,58 @@ void Close_Libs(void ) {
 
 /*****************************************************************************/
 
-/// 
+///
 
 /// My functions **************************************************************/
 
 // About AmiTwitter HTML
 void about(void) {
-    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_INTRO);
+    set(txt_source, MUIA_HTMLtext_Contents, (int) HTML_INTRO);
 }
 
 // FAQ HTML
 void help(void) {
-    set(txt_source, MUIA_HTMLtext_Contents, (int)HTML_HELP);
+    set(txt_source, MUIA_HTMLtext_Contents, (int) HTML_HELP);
 }
 
 // Error
 void error(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR));
 }
 
 // Error2
 void error2(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li,MSG_ERROR2));
 }
 
 // Error3
 void error3(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR3));
 }
 
 // Error4
 void error4(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR4));
 }
 
 // Error5
 void error5(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR5));
 }
 
 // Error6
 void error6(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR6));
 }
 
 // Error7
 void error7(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR7));
 }
 
 // Error8
 void error8(void) {
-     set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>");
+     set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ERROR8));
 }
 
 // urlTextObject
@@ -700,8 +719,6 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
 
     curl_easy_setopt(curl, CURLOPT_URL, apiuri);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE); 
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);   
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -722,7 +739,7 @@ int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Attempting to get the latest...");
+        set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_ATTEMPTING)/*(int)"Attempting to get the latest..."*/);
     }
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
@@ -1003,28 +1020,6 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
 
 /*****************************************************************************/
 
-// UFT8
-int utf8pos(const char *str, int width) {
-    int i=0;
-    unsigned char c;
-    while(str[i] && width > 1){
-        c = (unsigned char)str[i];
-        width--;
-        if(c < 0x80){
-            i++;
-            continue;
-        }
-        width--;
-        while(c & 0x80){
-            c<<=1;
-            i++;
-        }
-    }
-    return i;
-}
-
-/*****************************************************************************/
-
 ///
 
 /// Display in HTMLtext *******************************************************/
@@ -1037,7 +1032,8 @@ void twitter_status_print(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
-    printf("<small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s</small>",status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf(GetString(&li, MSG_STATS)/*"<small>Name: %s Location: %s Following: %s Followers: %s Tweets:
+    %s</small>"*/,status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
     fclose(stdout);
@@ -1051,7 +1047,8 @@ void twitter_status_print_friendsfollowers(twitter_status_t *status) {
     FILE *outfile;
 
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
-    printf("<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>",  status->id, status->text, status->created_at);
+    printf(GetString(&li, MSG_STATS2)/*"<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br>
+    <b>Date:</b><small>  %s</small></b><br><p>"*/,  status->id, status->text, status->created_at);
     printf("<p>");
 
     fclose(stdout);
@@ -1700,8 +1697,6 @@ int twitter_update(twitter_t *twitter, const char *status) {
                  CURLFORM_END);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -1729,7 +1724,7 @@ int twitter_update(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Tweet was sent!");
+        set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_SENT)/*(int)"Your Tweet was sent!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2142,8 +2137,6 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
                  CURLFORM_END);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2171,7 +2164,7 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     }
     else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Your Direct Message was sent!");
+        set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_DIRMSGSENT)/*(int)"Your Direct Message was sent!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2240,8 +2233,6 @@ int twitter_follow(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2268,7 +2259,7 @@ int twitter_follow(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Following</b> that User!");
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_FOLLOWING)/*(int)"You are now <b>Following</b> that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2326,8 +2317,6 @@ int twitter_unfollow(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2354,7 +2343,7 @@ int twitter_unfollow(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unfollowing</b> that User!");
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_UNFOLLOWING)/*(int)"You are now <b>Unfollowing</b> that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2405,8 +2394,6 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2436,7 +2423,7 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
     }
     else {
 
-       set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> Your username/password is valid!");
+       set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_VALID)/*(int)"<B>Congratulations!</B> Your username/password is valid!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2525,8 +2512,6 @@ int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web,
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2554,8 +2539,7 @@ int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web,
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"<B>Congratulations!</B> You have updated your profile!");
-
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_UPDATED)/*(int)"<B>Congratulations!</B> You have updated your profile!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2697,8 +2681,6 @@ int twitter_notify(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2725,7 +2707,7 @@ int twitter_notify(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now receiving Notifications (SMS following) that User!");
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_SMSFOLLOW)/* (int)"You are now receiving Notifications (SMS  following) that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2783,8 +2765,6 @@ int twitter_unnotify(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2811,8 +2791,7 @@ int twitter_unnotify(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are no longer receiving notifications (SMS following) that User!");
-
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_SMSUNFOLLOW)/*(int)"You are no longer receiving notifications (SMS following) that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2870,8 +2849,6 @@ int twitter_block(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2898,7 +2875,7 @@ int twitter_block(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Blocking</b> that User!");
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_BLOCKING)/*(int)"You are now <b>Blocking</b> that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -2956,8 +2933,6 @@ int twitter_unblock(twitter_t *twitter, const char *status) {
         printf("api_uri: %s\n", api_uri);
 
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, TRUE);
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, TRUE);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, twitter_curl_write_cb);
@@ -2984,7 +2959,7 @@ int twitter_unblock(twitter_t *twitter, const char *status) {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"You are now <b>Unblocking</b> that User!");
+        set (txt_source, MUIA_HTMLtext_Contents,  (int) GetString(&li, MSG_UNBLOCKING)/*(int)"You are now <b>Unblocking</b> that User!"*/);
     }
 
     curl_easy_cleanup(curl);
@@ -3112,40 +3087,41 @@ int main(int argc, char *argv[]) {
 
       // The Preferences Window
       SubWindow, win_preferences = WindowObject,
-          MUIA_Window_Title, "Settings",
+          MUIA_Window_Title, GetString(&li, MSG_SETTINGS)/*"Settings"*/,
           MUIA_Window_ID, MAKE_ID('P','R','E','F'),
 
           WindowContents, VGroup,  MUIA_Register_Frame, TRUE,
               Child, VGroup,
 
-                  Child, ColGroup(2), GroupFrameT("Account Information Settings"),
-                       Child, Label2("User Name:"),
+                  Child, ColGroup(2), GroupFrameT(GetString(&li, MSG_SETTINGS2)/*"Account Information Settings"*/),
+                       Child, Label2(GetString(&li, MSG_USERNAME)/*"User Name:"*/),
                        Child, str_user_pref = StringObject, StringFrame, MUIA_ObjectID, 1, End,
-                       Child, Label2("Password:"),
+                       Child, Label2(GetString(&li,MSG_PASSWORD)/*"Password:"*/),
                        Child, str_pass_pref = StringObject, StringFrame,  MUIA_ObjectID, 2, MUIA_String_Secret, TRUE, End,
                   End,
 
-              End,
+              End,       
 
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
-                  Child, but_save   = MUI_MakeObject(MUIO_Button,"_Save"),   
-                  Child, but_test   = MUI_MakeObject(MUIO_Button,"_Test"),
-                  Child, but_cancel = MUI_MakeObject(MUIO_Button,"_Cancel"),
+                  Child, but_save   = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SAVE)/*"_Save"*/),
+                  Child, but_test   = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_TEST2)/*"_Test"*/),
+                  Child, but_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL)/*"_Cancel"*/),
               End,
 
-              Child, VGroup, GroupFrameT("Help!"),
+              Child, VGroup, GroupFrameT(GetString(&li, MSG_HELP)/*"Help!"*/),
 
                   MUIA_Background, MUII_GroupBack,
                   Child, TextObject, TextFrame,
                        MUIA_Background, MUII_TextBack,
-                       MUIA_Text_Contents, "\33c\nDon't already have a User Name/Password?\n  You must register at the Twitter website first!\n",
+                       MUIA_Text_Contents, GetString(&li, MSG_REGISTER)/*"\33c\nDon't already have a User Name/Password?\nYou must register at the Twitter website first!\n"*/,
                   End,
 
                   Child, HGroup,
                   Child, HSpace(0),
                   Child, ColGroup(0),
-                  Child, twittersite = urlTextObject(MUIMasterBase,"http://twitter.com/","Establish An Account!",MUIV_Font_Normal),
-                  Child, passforgot =  urlTextObject(MUIMasterBase,"http://twitter.com/account/resend_password ","Forgot Your Password?",MUIV_Font_Normal),
+                  Child, twittersite =
+                  urlTextObject(MUIMasterBase,"http://twitter.com/", GetString(&li, MSG_ESTABLISH)/*"Establish An Account!"*/,MUIV_Font_Normal),
+                  Child, passforgot =  urlTextObject(MUIMasterBase, "http://twitter.com/account/resend_password", GetString(&li, MSG_FORGOT) /*"Forgot Your Password?"*/,MUIV_Font_Normal),
                   Child, HSpace(0),
                   Child, HSpace(0),
                   End,
@@ -3159,7 +3135,7 @@ int main(int argc, char *argv[]) {
 
       // The Donate Window
       SubWindow, win_donate = WindowObject,
-          MUIA_Window_Title, "Donate",
+          MUIA_Window_Title, GetString(&li, MSG_DONATE)/*"Donate"*/,
           MUIA_Window_ID, MAKE_ID('D','N','A','T'),
 
           WindowContents, VGroup,
@@ -3169,13 +3145,13 @@ int main(int argc, char *argv[]) {
                   MUIA_Background, MUII_GroupBack,
                   Child, TextObject, TextFrame,
                        MUIA_Background, MUII_TextBack,
-                       MUIA_Text_Contents, "\33c\nIf you find AmiTwitter useful, please consider donating.\n  You must have an active internet connection:\n",
+                       MUIA_Text_Contents, GetString(&li, MSG_DONATE2) /*"\33c\nIf you find AmiTwitter useful, please consider donating.\n  You must have an active internet connection:\n"*/,
                   End,
 
                   Child, HGroup,
                   Child, HSpace(0),
                   Child, ColGroup(0),
-                  Child, donate = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
+                  Child, donate = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE3) /*"Donate!"*/,MUIV_Font_Normal),
                   Child, HSpace(0),
                   Child, HSpace(0),
                   End,
@@ -3189,26 +3165,26 @@ int main(int argc, char *argv[]) {
 
       // The Tweet Window
       SubWindow, win_tweet = WindowObject,
-          MUIA_Window_Title, "Send a Tweet",
+          MUIA_Window_Title, GetString(&li, MSG_SEND) /*"Send a Tweet"*/,
           MUIA_Window_ID, MAKE_ID('T','W','E','T'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Send a Tweet"),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SEND2) /*"Send a Tweet"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("Tweet:"),
+                           Child, Label2( GetString(&li, MSG_SEND3) /*"Tweet:"*/),
                            Child, HGroup,
                            Child, STR_message = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter your Tweet and click Update to send (max 140 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_SEND4) /*"Enter your Tweet and click Update to send (max 140 characters)"*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, sendupdate_gad = MUI_MakeObject(MUIO_Button,"_Update"),
-                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
+                           Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPDATE) /*"_Update"*/),
+                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL2) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3219,26 +3195,26 @@ int main(int argc, char *argv[]) {
 
       // The Search Window
       SubWindow, win_search = WindowObject,
-          MUIA_Window_Title, "Search",
+          MUIA_Window_Title,  GetString(&li, MSG_SEARCH3) /*"Search"*/,
           MUIA_Window_ID, MAKE_ID('S','R','C','H'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Search"),
+              Child, HGroup, GroupFrameT( GetString(&li, MSG_SEARCH4)/*"Search"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("Search:"),
+                           Child, Label2( GetString(&li, MSG_SEARCH5)/*"Search:"*/),
                            Child, HGroup,
                            Child, STR_search = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter your search string and click Search (max 140 characters)",
+                           MUIA_ShortHelp,  GetString(&li, MSG_SEARCH6) /*"Enter your search string and click Search (max 140 characters)"*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_search_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, search_gad = MUI_MakeObject(MUIO_Button,"_Search"),
-                           Child, but_search_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR2) /*"C_lear"*/),
+                           Child, search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SEARCH7)/*"_Search"*/),
+                           Child, but_search_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL3) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3249,86 +3225,86 @@ int main(int argc, char *argv[]) {
 
       // The User Window
       SubWindow, win_follow = WindowObject,
-          MUIA_Window_Title, "Manage Users",
+          MUIA_Window_Title,  GetString(&li, MSG_MANAGE) /*"Manage Users"*/,
           MUIA_Window_ID, MAKE_ID('U','S','E','R'),
 
           WindowContents, VGroup,
             Child, RegisterGroup(Pages),
-              Child, HGroup, GroupFrameT("Change the Following Status for a User"),
+              Child, HGroup, GroupFrameT( GetString(&li, MSG_FOLLOW2) /*"Change the Following Status for a User"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("User:"),
+                           Child, Label2( GetString(&li, MSG_FOLLOW3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_follow = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter the Screen Name you want to follow or unfollow...",
+                           MUIA_ShortHelp,  GetString(&li, MSG_FOLLOW4) /*"Enter the Screen Name you want to follow or unfollow..."*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_follow_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, follow_gad =  MUI_MakeObject(MUIO_Button,"_Follow"),
-                           Child, unfollow_gad = MUI_MakeObject(MUIO_Button,"_Unfollow"),                          
-                           Child, but_follow_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_follow_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR3) /*"C_lear"*/),
+                           Child, follow_gad =  MUI_MakeObject(MUIO_Button, GetString(&li, MSG_FOLLOW5) /*"_Follow"*/),
+                           Child, unfollow_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UNFOLLOOW) /*"_Unfollow"*/),
+                           Child, but_follow_cancel = MUI_MakeObject(MUIO_Button,  GetString(&li, MSG_CANCEL4) /*"_Cancel"*/),
                       End,
                   End,
               End,
 
-              Child, HGroup, GroupFrameT("Change the Blocking Status for a User"),
+              Child, HGroup, GroupFrameT( GetString(&li, MSG_BLOCKING2) /*"Change the Blocking Status for a User"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("User:"),
+                           Child, Label2(GetString(&li, MSG_BLOCKING3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_block = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter the Screen Name you want to block or unblock...",
+                           MUIA_ShortHelp, GetString(&li, MSG_BLOCKING4) /*"Enter the Screen Name you want to block or unblock..."*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_block_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, block_gad = MUI_MakeObject(MUIO_Button,"_Block"),
-                           Child, unblock_gad = MUI_MakeObject(MUIO_Button,"U_nblock"),
-                           Child, but_block_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_block_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR4) /*"C_lear"*/),
+                           Child, block_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_BLOCKING5) /*"_Block"*/),
+                           Child, unblock_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UNBLOCK) /*"U_nblock"*/),
+                           Child, but_block_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL5) /*"_Cancel"*/),
                       End,
                   End,
               End,
 
-              Child, HGroup, GroupFrameT("Change the SMS Notification Status for a User"),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SMS) /*"Change the SMS Notification Status for a User"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("User:"),
+                           Child, Label2(GetString(&li, MSG_SMS2) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_notify = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for...",
+                           MUIA_ShortHelp, GetString(&li, MSG_SMS3) /*"Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for..."*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_notify_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, notify_gad = MUI_MakeObject(MUIO_Button,"_Receive"),
-                           Child, unnotify_gad = MUI_MakeObject(MUIO_Button,"_Stop"),
-                           Child, but_notify_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR5) /*"C_lear"*/),
+                           Child, notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_RECEIVE) /*"_Receive"*/),
+                           Child, unnotify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_STOP) /*"_Stop"*/),
+                           Child, but_notify_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL6) /*"_Cancel"*/),
                       End,
                   End,
               End,
 
-              Child, HGroup, GroupFrameT("Show a User"),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SHOWUSER2) /*"Show a User"*/),
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("User:"),
+                           Child, Label2(GetString(&li, MSG_SHOWUSER3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_show = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!",
+                           MUIA_ShortHelp, GetString(&li, MSG_SHOWUSER4) /*"\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!"*/,
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, show_gad = MUI_MakeObject(MUIO_Button,"_Show User"),
-                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR6) /*"C_lear"*/),
+                           Child, show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SHOWUSER5) /*"_Show User"*/),
+                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL7) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3342,31 +3318,31 @@ int main(int argc, char *argv[]) {
 
       // The Direct Message Window
       SubWindow, win_dirmsg = WindowObject,
-          MUIA_Window_Title, "Send a Direct Message",
+          MUIA_Window_Title, GetString(&li, MSG_SENDDIRMSG) /*"Send a Direct Message"*/,
           MUIA_Window_ID, MAKE_ID('D','I','R','M'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Send a Direct Message"),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SENDDIRMSG2) /*"Send a Direct Message"*/),
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("Recipient:"),
+                           Child, Label2(GetString(&li, MSG_RECIPIENT) /*"Recipient:"*/),
                            Child, STR_user_id = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter a Screen Name only",
+                           MUIA_ShortHelp, GetString(&li, MSG_SCREENNAME) /*"Enter a Screen Name only"*/,
                       End,
   
                       Child, HGroup,
-                           Child, Label2("Message:"),
+                           Child, Label2(GetString(&li, MSG_MESSAGE) /*"Message:"*/),
                            Child, STR_directmessage = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter a message (max 140 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_MESSAGE2) /*"Enter a message (max 140 characters)"*/,
                       End,
  
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button,"C_lear"),
-                           Child, send_gad = MUI_MakeObject(MUIO_Button,"_Send"),
-                           Child, but_cancel_dm = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR7) /*"C_lear"*/),
+                           Child, send_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SEND5) /*"_Send"*/),
+                           Child, but_cancel_dm = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL8) /*"_Cancel"*/),
                      End,
                   End,
               End,
@@ -3377,44 +3353,44 @@ int main(int argc, char *argv[]) {
 
       // Update Profile Window
       SubWindow, win_userprofile = WindowObject,
-          MUIA_Window_Title, "Update Your Profile",
+          MUIA_Window_Title, GetString(&li, MSG_UPDATEPROFILE) /*"Update Your Profile"*/,
           MUIA_Window_ID, MAKE_ID('P','R','F','L'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Update Your Twitter Website Profile"),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_UPDATEPROFILE2) /*"Update Your Twitter Website Profile"*/),
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2("Name:"),
+                           Child, Label2(GetString(&li, MSG_PROFNAME) /*"Name:"*/),
                            Child, STR_profile_name = BetterStringObject, StringFrame, MUIA_ObjectID, 3,
                            MUIA_String_MaxLen, 21, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "\33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_PROFNAME2) /*"\33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)"*/,
                       End,
 
                       Child, HGroup,
-                           Child, Label2("Web:"),
+                           Child, Label2(GetString(&li, MSG_WEB) /*"Web:"*/),
                            Child, STR_profile_web = BetterStringObject, StringFrame, MUIA_ObjectID, 4,
                            MUIA_String_MaxLen, 101, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "\33cEnter your website URL\n It will be prepended with 'http://' if not present\n(Max 100 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_WEB2) /*"\33cEnter your website URL\n It will be prepended with 'http://' if not present\n(Max 100 characters)"*/,
                       End,
 
                       Child, HGroup,
-                           Child, Label2("Location:"),
+                           Child, Label2(GetString(&li, MSG_LOCATION) /*"Location:"*/),
                            Child, STR_profile_location = BetterStringObject, StringFrame, MUIA_ObjectID, 5,
                            MUIA_String_MaxLen, 31, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "\33cEnter your location. The contents\nare not normalized or geocoded in any way\n(Max 30 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_LOCATION2) /*"\33cEnter your location. The contents\nare not normalized or geocoded in any way\n(Max 30 characters)"*/,
                       End,
 
                       Child, HGroup,
-                           Child, Label2("Bio:"),
+                           Child, Label2(GetString(&li, MSG_BIO) /*"Bio:"*/),
                            Child, STR_profile_bio = BetterStringObject, StringFrame, MUIA_ObjectID, 6,
                            MUIA_String_MaxLen, 161, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "\33cEnter something about yourself or your description\n(Max 160 characters)",
+                           MUIA_ShortHelp, GetString(&li, MSG_BIO2) /*"\33cEnter something about yourself or your description\n(Max 160 characters)"*/,
                       End,
 
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,                     
-                           Child, update_profile_gad = MUI_MakeObject(MUIO_Button,"_Update Profile"),
-                           Child, but_cancel_profile = MUI_MakeObject(MUIO_Button, "_Cancel"),
+                           Child, update_profile_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPDATEPROFILE3) /*"_Update Profile"*/),
+                           Child, but_cancel_profile = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL9) /*"_Cancel"*/),
                      End,
                   End,
               End,
@@ -3443,7 +3419,7 @@ int main(int argc, char *argv[]) {
                   End,
 
                   Child, RectangleObject, MUIA_Weight, 20, End,
-                  Child, Label2("What's Happening?"),
+                  Child, Label2(GetString(&li, MSG_WHAT) /*"What's Happening?"*/),
 
                   Child, STR_login = BetterStringObject,
                        MUIA_BetterString_NoInput,
@@ -3451,7 +3427,7 @@ int main(int argc, char *argv[]) {
                   End,
               End,             
 
-              Child, VGroup, GroupFrameT("Fast Links"),
+              Child, VGroup, GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
 
                  Child, toolbar = TheBarObject,
                        GroupFrame, 
@@ -3480,8 +3456,8 @@ int main(int argc, char *argv[]) {
                        Child, ColGroup(4),
                            Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
                            Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
-                           Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@ezcyberspace.com","Feedback",MUIV_Font_Normal),
-                           Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h","Donate!",MUIV_Font_Normal),
+                           Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@ezcyberspace.com", GetString(&li, MSG_FEEDBACK) /*"Feedback"*/,MUIV_Font_Normal),
+                           Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE4) /*"Donate!"*/,MUIV_Font_Normal),
                        End,
                        Child, HSpace(0),
                   End,
@@ -3555,15 +3531,15 @@ int main(int argc, char *argv[]) {
   // Prefs subwindow
   DoMethod(but_save,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SAVE);
-    set(but_save, MUIA_ShortHelp, (ULONG)"Save Settings");
+    set(but_save, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SAVE2) /*"Save Settings"*/);
 
   DoMethod(but_test,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,TEST);
-    set(but_test, MUIA_ShortHelp, (ULONG)"Test User Name / Password");
+    set(but_test, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_TEST3) /*"Test User Name / Password"*/);
 
   DoMethod(but_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCEL);
-    set(but_cancel, MUIA_ShortHelp, (ULONG)"Don't Save Current Changes");
+    set(but_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_DONTSAVE) /*"Don't Save Current Changes"*/);
 
   DoMethod(win_preferences,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_preferences,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3577,15 +3553,15 @@ int main(int argc, char *argv[]) {
   // Send a Tweet subwindow
   DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEAR);
-    set(clear_gad, MUIA_ShortHelp, (ULONG)"Clear Tweet");
+    set(clear_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR8) /*"Clear Tweet"*/);
 
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
-    set(sendupdate_gad, MUIA_ShortHelp, (ULONG)"Send Tweet");
+    set(sendupdate_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SEND6) /*"Send Tweet"*/);
 
   DoMethod(but_cancel_tweet,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELTWEET);
-    set(but_cancel_tweet, MUIA_ShortHelp, (ULONG)"Cancel Tweet");
+    set(but_cancel_tweet, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL10) /*"Cancel Tweet"*/);
 
   DoMethod(win_tweet,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_tweet,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3594,15 +3570,15 @@ int main(int argc, char *argv[]) {
   // Search subwindow
   DoMethod(clear_search_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARSEARCH);
-    set(clear_search_gad, MUIA_ShortHelp, (ULONG)"Clear Search");
+    set(clear_search_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR9) /*"Clear Search"*/);
 
   DoMethod(search_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SEARCH);
-    set(search_gad, MUIA_ShortHelp, (ULONG)"Search");
+    set(search_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SEARCH8) /*"Search"*/);
 
   DoMethod(but_search_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELSEARCH);
-    set(but_search_cancel, MUIA_ShortHelp, (ULONG)"Cancel Search");
+    set(but_search_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL11) /*"Cancel Search"*/);
 
   DoMethod(win_search,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_search,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3611,19 +3587,19 @@ int main(int argc, char *argv[]) {
   // Manage Users subwindow
   DoMethod(clear_follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARFOLLOW);
-    set(clear_follow_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
+    set(clear_follow_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR10) /*"Clear User Name"*/);
 
   DoMethod(follow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,FOLLOW);
-    set(follow_gad, MUIA_ShortHelp, (ULONG)"Follow a User");
+    set(follow_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_FOLLOWUSER) /*"Follow a User"*/);
 
   DoMethod(unfollow_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UNFOLLOW);
-    set(unfollow_gad, MUIA_ShortHelp, (ULONG)"Unfollow a User");
+    set(unfollow_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_UNFOLLOWUSER)/*"Unfollow a User"*/);
 
   DoMethod(but_follow_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELFOLLOW);
-    set(but_follow_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
+    set(but_follow_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL12) /*"Cancel Request"*/);
 
   DoMethod(win_follow,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_follow,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3632,65 +3608,65 @@ int main(int argc, char *argv[]) {
   // Block 
   DoMethod(clear_block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARBLOCK);
-    set(clear_block_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
+    set(clear_block_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR12) /*"Clear User Name"*/);
 
   DoMethod(block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,BLOCK);
-    set(block_gad, MUIA_ShortHelp, (ULONG)"Block a User (Use with care!)");
+    set(block_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_BLOCKUSER) /*"Block a User (Use with care!)"*/);
 
   DoMethod(unblock_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UNBLOCK);
-    set(unblock_gad, MUIA_ShortHelp, (ULONG)"Unblock a currently blocked User");
+    set(unblock_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_UNBLOCKUSER) /*"Unblock a currently blocked User"*/);
 
   DoMethod(but_block_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELBLOCK);
-    set(but_block_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
+    set(but_block_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL13) /*"Cancel Request"*/);
 
 
   // Notifications SMS 
   DoMethod(clear_notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARNOTIFY);
-    set(clear_notify_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
+    set(clear_notify_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR13) /*"Clear User Name"*/);
 
   DoMethod(notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,NOTIFY);
-    set(notify_gad, MUIA_ShortHelp, (ULONG)"\33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...");
+    set(notify_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SMSNOTE) /*"\33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter..."*/);
 
   DoMethod(unnotify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UNNOTIFY);
-    set(unnotify_gad, MUIA_ShortHelp, (ULONG)"Stop receiving SMS notifications from this user");
+    set(unnotify_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SMSSTOP) /*"Stop receiving SMS notifications from this user"*/);
 
   DoMethod(but_notify_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELNOTIFY);
-    set(but_notify_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
+    set(but_notify_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL14) /*"Cancel Request"*/);
 
 
   // Show Users
   DoMethod(clear_show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARSHOW);
-    set(clear_show_gad, MUIA_ShortHelp, (ULONG)"Clear User Name");
+    set(clear_show_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR14) /*"Clear User Name"*/);
 
   DoMethod(show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,USERSHOW);
-    set(show_gad, MUIA_ShortHelp, (ULONG)"Show latest Tweet for this User");
+    set(show_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SHOWTWEETS) /*"Show latest Tweet for this User"*/);
 
   DoMethod(but_show_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELSHOW);
-    set(but_show_cancel, MUIA_ShortHelp, (ULONG)"Cancel Request");
+    set(but_show_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL15) /*"Cancel Request"*/);
 
 
   // Direct Message subwindow
   DoMethod(clear_dm_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARDM);
-    set(clear_dm_gad, MUIA_ShortHelp, (ULONG)"Clear Direct Message");
+    set(clear_dm_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR15) /*"Clear Direct Message"*/);
 
   DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
-    set(send_gad, MUIA_ShortHelp, (ULONG)"Send Direct Message");
+    set(send_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SENDDIRMSG3) /*"Send Direct Message"*/);
 
   DoMethod(but_cancel_dm,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELDM);
-    set(but_cancel_dm, MUIA_ShortHelp, (ULONG)"Cancel Direct Message");
+    set(but_cancel_dm, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL16) /*"Cancel Direct Message"*/);
 
   DoMethod(win_dirmsg,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_dirmsg,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3699,11 +3675,11 @@ int main(int argc, char *argv[]) {
   // Update Profile subwindow
   DoMethod(update_profile_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,UPDATEPROFILE);
-    set(update_profile_gad, MUIA_ShortHelp, (ULONG)"Update Your Profile!");
+    set(update_profile_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_UPDATEPROFILE4) /*"Update Your Profile!"*/);
 
   DoMethod(but_cancel_profile,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELPROFILE);
-    set(but_cancel_profile, MUIA_ShortHelp, (ULONG)"Cancel Update");
+    set(but_cancel_profile, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL17) /*"Cancel Update"*/);
 
   DoMethod(win_userprofile,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_userprofile,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -3793,7 +3769,7 @@ int main(int argc, char *argv[]) {
                      set(clear_search_gad,MUIA_Disabled,TRUE);
                  	 set(search_gad,MUIA_Disabled,TRUE);
                  	 set(but_search_cancel,MUIA_Disabled,TRUE);
-                     MUI_RequestA(app,window,0,"Search","*OK","Search not implemented yet...",NULL);
+                     MUI_RequestA(app,window,0, GetString(&li, MSG_SEARCH9)/*"Search"*/,GetString(&li, MSG_OK) /*"*OK"*/, GetString(&li, MSG_SEARCH10) /*"Search not implemented yet..."*/,NULL);
                      set(win_search, MUIA_Window_Open, FALSE);
                      break;
 
@@ -3829,7 +3805,7 @@ int main(int argc, char *argv[]) {
                      break;
 
                 case BLOCK:
-                     result=MUI_RequestA(app,0,0,"Block?","_Block|_Cancel","\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!",0);
+                     result=MUI_RequestA(app,0,0, GetString(&li, MSG_BLOCK2) /*"Block?"*/, GetString(&li, MSG_BLOCK3) /*"_Block|_Cancel"*/, GetString(&li, MSG_BLOCK4) /*"\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!"*/,0);
 
                         if(result==1)
                             amitwitter_block(optarg);
@@ -3931,7 +3907,7 @@ int main(int argc, char *argv[]) {
 
                 // Quit
                 case MEN_QUIT:
-                     result=MUI_RequestA(app,0,0,"Quit","_Quit|_Cancel","\33cAre you sure you want\nto quit AmiTwitter?",0);
+                     result=MUI_RequestA(app,0,0, GetString(&li, MSG_QUIT) /*"Quit"*/, GetString(&li, MSG_QUIT2) /*"_Quit|_Cancel"*/, GetString(&li, MSG_QUIT3) /*"\33cAre you sure you want\nto quit AmiTwitter?"*/,0);
 
                         if(result==1)
                            running=FALSE;
@@ -3972,7 +3948,7 @@ int main(int argc, char *argv[]) {
 
                      set (STR_login, MUIA_String_Contents, (int)username);
 
-                     MUI_RequestA(app,0,0,"Save","*OK","Settings Saved to Envarc!",NULL);
+                     MUI_RequestA(app,0,0, GetString(&li, MSG_SAVE3) /*"Save"*/, GetString(&li, MSG_OK2) /*"*OK"*/, GetString(&li, MSG_SAVED) /*"Settings Saved to Envarc!"*/,NULL);
 
                      set(win_preferences, MUIA_Window_Open, FALSE);
                      break;
@@ -3987,7 +3963,9 @@ int main(int argc, char *argv[]) {
 
                 // Update Profile
                 case MEN_USERPROFILE:
-                     MUI_RequestA(app,window,0,"Update Profile","*OK","\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!", NULL);
+                     MUI_RequestA(app,window,0,GetString(&li,
+                     MSG_UPDATEPROFILE6) /*"Update Profile"*/, GetString(&li,
+                     MSG_OK3) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
                      set(win_userprofile, MUIA_Window_Open, TRUE);
                      break;
 
@@ -4060,3 +4038,4 @@ int main(int argc, char *argv[]) {
 }
 
 ///
+

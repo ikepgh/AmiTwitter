@@ -5,7 +5,7 @@ Type:  comm/misc
 Version: 0.23 Public Beta Release 1
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
-Distribution: GPL, SourceForge only
+Distribution: GPL, AmiKit, SourceForge only
 
 
 INTRODUCTION
@@ -55,6 +55,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 
 VERSION HISTORY
 --------------- 
+0.24 - Began localization implementation
 0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
 the last Tweet by that User (whether you are following them or not); fixed minor display bug (missing </small> tag)
 0.22 - Major implementations: Blocking/Unblocking; Receive/Stop receiving SMS messages; ability to update your profile;
@@ -121,6 +122,8 @@ THANKS
 Special thanks to: 
 - ShInKurO for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
+
+Donators: Roschmyr
 
 ABOUT/AUTHORS
 -------------
