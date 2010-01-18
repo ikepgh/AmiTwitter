@@ -1,11 +1,11 @@
 /** $Revision Header *** Header built automatically - do not edit! ***********
  **
- ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ ** © Copyright 2010 IKE <ikepgh@yahoo.com>
  **
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.23
+ ** Current revision : V 0.24
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
@@ -54,40 +55,40 @@
 
 // Menu Items
 
-#define MSG_FILE        "File"
-#define MSG_TIMELINE    "Timeline"
-#define MSG_RETWEET     "Retweets"
-#define MSG_RETWEETBYME "Retweet By Me"
-#define MSG_RETWEETTOME "Retweet To Me"
-#define MSG_RETWEETOFME "Retweet Of Me"
-#define MSG_REPLIES     "@Replies"
-#define MSG_RELOAD      "Reload"
-#define MSG_SEARCH      "Search"
-#define MSG_SEARCHUSER  "Find Users"
-#define MSG_USERS       "Users"
-#define MSG_DIRMSG      "Direct Message"
-#define MSG_DIRMSGSENT  "Sent"
-#define MSG_DIRMSGRCVD  "Received"
-#define MSG_TWEET       "Tweet"
-#define MSG_MYTWEET     "My Tweets"
-#define MSG_FAVS        "My Favorites"
-#define MSG_QUIT        "Quit"
+#define MSG_FILEX        "File"
+#define MSG_TIMELINEX    "Timeline"
+#define MSG_RETWEETX     "Retweets"
+#define MSG_RETWEETBYMEX "Retweet By Me"
+#define MSG_RETWEETTOMEX "Retweet To Me"
+#define MSG_RETWEETOFMEX "Retweet Of Me"
+#define MSG_REPLIESX     "@Replies"
+#define MSG_RELOADX      "Reload"
+#define MSG_SEARCHX      "Search"
+#define MSG_SEARCHUSERX  "Find Users"
+#define MSG_USERSX       "Users"
+#define MSG_DIRMSGX      "Direct Message"
+#define MSG_DIRMSGSENTX  "Sent"
+#define MSG_DIRMSGRCVDX  "Received"
+#define MSG_TWEETX       "Tweet"
+#define MSG_MYTWEETX     "My Tweets"
+#define MSG_FAVSX        "My Favorites"
+#define MSG_QUITX        "Quit"
 
-#define MSG_MISC        "Misc"
-#define MSG_FRIENDS     "My Friends"
-#define MSG_FOLLOWERS   "My Followers"
-#define MSG_BLOCKING    "Blocking"
-#define MSG_RANDOM      "Random"
+#define MSG_MISCX        "Misc"
+#define MSG_FRIENDSX     "My Friends"
+#define MSG_FOLLOWERSX   "My Followers"
+#define MSG_BLOCKINGX    "Blocking"
+#define MSG_RANDOMX      "Random"
 
-#define MSG_TOOLS       "Tools"
-#define MSG_PREFS       "Settings"
-#define MSG_USERPROFILE "Update Profile"
-#define MSG_MUIPREFS    "MUI Settings"
+#define MSG_TOOLSX       "Tools"
+#define MSG_PREFSX       "Settings"
+#define MSG_USERPROFILEX "Update Profile"
+#define MSG_MUIPREFSX    "MUI Settings"
 
-#define MSG_HELP        "Help"
-#define MSG_FAQ         "FAQs"
-#define MSG_DONATE      "Donate"
-#define MSG_ABOUT       "About AmiTwitter"
-#define MSG_ABOUTMUI    "About MUI"
+#define MSG_HELPX        "Help"
+#define MSG_FAQX         "FAQs"
+#define MSG_DONATEX      "Donate"
+#define MSG_ABOUTX       "About AmiTwitter"
+#define MSG_ABOUTMUIX    "About MUI"
 
 /******************************************************************************/

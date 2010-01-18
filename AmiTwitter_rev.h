@@ -1,11 +1,11 @@
 /** $Revision Header *** Header built automatically - do not edit! ***********
  **
- ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ ** © Copyright 2010 IKE <ikepgh@yahoo.com>
  **
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.23
+ ** Current revision : V 0.24
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
@@ -26,10 +27,10 @@
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	23
-#define DATE		"18.12.09"
-#define VERS		"AmiTwitter 0.23"
-#define VSTRING		"AmiTwitter 0.23 (18.12.09)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.23 (18.12.09)\r\n"
+#define REVISION	24
+#define DATE		"09.01.10"
+#define VERS		"AmiTwitter 0.24"
+#define VSTRING		"AmiTwitter 0.24 (09.01.10)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.24 (09.01.10)\r\n"
 #define AUTHOR		"IKE"
 #define PROJECT		"AmiTwitter"

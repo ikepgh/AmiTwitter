@@ -256,6 +256,9 @@ all: all-before $(BIN) all-after
 
 
 clean: clean-custom
+	$(RM) $(OBJ)
+
+cleanall: clean-custom2
 	$(RM) $(OBJ) $(BIN)
 
 strip: $(BIN)
@@ -274,6 +277,5 @@ endif
 $(BIN): $(OBJ)
 	$(LINK) $(LDFLAGS) $(OBJ) -o $(BIN) $(LIBS)
 
-amitwitter.o:  amitwitter.c amitwitter.h
+amitwitter.o:  amitwitter.c amitwitter.h amitwitter_strings.h
 	$(CC) -c amitwitter.c -o amitwitter.o $(CFLAGS)
-

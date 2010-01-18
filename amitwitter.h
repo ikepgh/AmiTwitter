@@ -1,11 +1,11 @@
 /** $Revision Header *** Header built automatically - do not edit! ***********
  **
- ** © Copyright 2009 IKE <ikepgh@yahoo.com>
+ ** © Copyright 2010 IKE <ikepgh@yahoo.com>
  **
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.23
+ ** Current revision : V 0.24
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
  ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
