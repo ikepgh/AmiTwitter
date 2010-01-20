@@ -1,6 +1,6 @@
 ## Version $VER: amitwitter.catalog 0.24 (14.01.2010)
 ## Codeset 0
-## Languages english deutsch
+## LANGUAGES english deutsch 2
 ## SimpleCatConfig CharsPerLine 200
 ;
 ; Source descriptor
@@ -36,7 +36,7 @@ Empfange die letzten Tweets (max. 20)
 ;
 MSG_RETWEETS (/1/)
 Ret_weets
-
+Ret_weets
 ;
 MSG_RETWEETS2 (/1/)
 Get most recent Retweets to me (max 20)
@@ -84,7 +84,7 @@ Direktnachricht senden
 ;
 MSG_TWEET (/1/)
 Tw_eet
-
+Tw_eet
 ;
 MSG_TWEET2 (/1/)
 Send a Tweet
@@ -95,42 +95,32 @@ MSG_ERROR (/1/)
 <B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li>
 ;
 MSG_ERROR2 (/1/)
-<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient \
-Screen Name for direct messages)?</li>
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie Text \
-eingegeben (und/oder einen korrekten Empfänger-Screennamen für direkte Nachrichten)?</li>
+<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie Text eingegeben (und/oder einen korrekten Empfänger-Screennamen für direkte Nachrichten)?</li>
 ;
 MSG_ERROR3 (/1/)
 <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
 <B>Hmm... Ein Fehler ist aufgetreten!</B><p>Sind Benutzername/Kennwort richtig gesetzt?
 ;
 MSG_ERROR4 (/1/)
-<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
-correctly?</li><li>Are you already following (or unfollowing) that User?</li>
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li><li>Sind Sie bereits ein Follower (oder Nicht-Follower) dieses Benutzers?</li>
+<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li><li>Sind Sie bereits ein Follower (oder Nicht-Follower) dieses Benutzers?</li>
 ;
 MSG_ERROR5 (/1/)
-<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
-correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
+<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
 <B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar
 ;
 MSG_ERROR6 (/1/)
-<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
-correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li><li>Empfangen Sie schon SMS-Benachrichtigungen für diesen Benutzer (oder haben den Empfang gestoppt)?</li>
+<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li><li>Empfangen Sie schon SMS-Benachrichtigungen für diesen Benutzer (oder haben den Empfang gestoppt)?</li>
 ;
 MSG_ERROR7 (/1/)
-<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any \
-updates!</li>
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Sie <b>*MÜSSEN*</b> \
-einen Namen angeben, um Aktualisierungen vorzunehmen!</li>
+<B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Sie <b>*MÜSSEN*</b> einen Namen angeben, um Aktualisierungen vorzunehmen!</li>
 ;
 MSG_ERROR8 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li>
 ;
 MSG_ATTEMPTING (/1/)
 Attempting to get the latest...
@@ -142,7 +132,7 @@ MSG_STATS (/1/)
 ;
 MSG_STATS2 (/1/)
 <b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>
-<b> Benutzer-ID:</b> %s<br><b> Letzter Tweet:</b> %s<br> <b>Datum:</b><small> %s</small></b><br><p>
+<b>Benutzer-ID:</b> %s<br><b> Letzter Tweet:</b> %s<br> <b>Datum:</b><small> %s</small></b><br><p>
 ;
 MSG_SENT (/1/)
 Your Tweet was sent!
@@ -250,7 +240,7 @@ Einen Tweet senden
 ;
 MSG_SEND3 (/1/)
 Tweet:
-
+Tweet:
 ;
 MSG_SEND4 (/1/)
 Enter your Tweet and click Update to send (max 140 characters)
@@ -454,17 +444,15 @@ Ihr Twitter-Webseitenprofil aktualisieren
 ;
 MSG_PROFNAME (/1/)
 Name:
-
+Name:
 ;
 MSG_PROFNAME2 (/1/)
-\33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name \
-or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)
-\33cDieses Feld ist derzeit erforderlich, um Aktualisierungen\n an Ihrem Profil vorzunehmen. \n Dies ist, was auf der Twitter-Webseite\n angezeigt wird. Das kann jeder beliebige Text sein\n und hat \
-keinen Einfluß auf Ihren derzeitigen\n Screennamen, Ihre Benutzer-ID oder was auch immer...\nFür viele Benutzer ist das der Realname\n (max. 20 Zeichen)
+\33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)
+\33cDieses Feld ist derzeit erforderlich, um Aktualisierungen\n an Ihrem Profil vorzunehmen. \n Dies ist, was auf der Twitter-Webseite\n angezeigt wird. Das kann jeder beliebige Text sein\n und hat keinen Einfluß auf Ihren derzeitigen\n Screennamen, Ihre Benutzer-ID oder was auch immer...\nFür viele Benutzer ist das der Realname\n (max. 20 Zeichen)
 ;
 MSG_WEB (/1/)
 Web:
-
+Web:
 ;
 MSG_WEB2 (/1/)
 \33cEnter your website URL\n It will be prepended with 'http://' if not present\n(Max 100 characters)
@@ -480,7 +468,7 @@ MSG_LOCATION2 (/1/)
 ;
 MSG_BIO (/1/)
 Bio:
-
+Bio:
 ;
 MSG_BIO2 (/1/)
 \33cEnter something about yourself or your description\n(Max 160 characters)
@@ -500,11 +488,11 @@ Was läuft?
 ;
 MSG_FAST (/1/)
 Fast Links
-
+Fast Links
 ;
 MSG_FEEDBACK (/1/)
 Feedback
-
+Feedback
 ;
 MSG_DONATE4 (/1/)
 Donate!
@@ -584,8 +572,7 @@ Benutzernamen löschen
 ;
 MSG_SMSNOTE (/1/)
 \33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...
-\33cBitte beachten: Sie müssen zuerst Ihre Mobilfunknummer\nauf der Twitter-Webseite (unter 'Settings/Mobile')\nangeben, wenn Sie es noch nicht getan haben,\num SMS-Benachrichtigungen mit\nAmiTwitter \
-zu empfangen...
+\33cBitte beachten: Sie müssen zuerst Ihre Mobilfunknummer\nauf der Twitter-Webseite (unter 'Settings/Mobile')\nangeben, wenn Sie es noch nicht getan haben,\num SMS-Benachrichtigungen mit\nAmiTwitter zu empfangen...
 ;
 MSG_SMSSTOP (/1/)
 Stop receiving SMS notifications from this user
@@ -633,7 +620,7 @@ Suchen
 ;
 MSG_OK (/1/)
 *OK
-
+*OK
 ;
 MSG_SEARCH10 (/1/)
 Search not implemented yet...
@@ -648,10 +635,8 @@ _Block|_Cancel
 _Blockieren|_Abbrechen
 ;
 MSG_BLOCK4 (/1/)
-\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\n\
-wont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!
-\33cSind Sie sicher, daß Sie diesen Benutzer blockieren wollen?\n\nwenn sie jemand blockieren, kann Ihnen\nderjenige nicht mehr folgen oder Nachrichten senden.\n Wenn Ihr Konto öffentlich ist,\n\
-kann derjenige ihn immer noch sehen,\naber er wird nicht mehr als Ihr Verfolger aufgelistet und Sie nicht mehr als seiner.\n\nWenn Sie einen Spammer blockieren, dann danke!
+\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!
+\33cSind Sie sicher, daß Sie diesen Benutzer blockieren wollen?\n\nwenn sie jemand blockieren, kann Ihnen\nderjenige nicht mehr folgen oder Nachrichten senden.\n Wenn Ihr Konto öffentlich ist,\nkann derjenige ihn immer noch sehen,\naber er wird nicht mehr als Ihr Verfolger aufgelistet und Sie nicht mehr als seiner.\n\nWenn Sie einen Spammer blockieren, dann danke!
 ;
 MSG_QUIT (/1/)
 Quit
@@ -671,7 +656,7 @@ Speichern
 ;
 MSG_OK2 (/1/)
 *OK
-
+*OK
 ;
 MSG_SAVED (/1/)
 Settings Saved to Envarc!
@@ -683,15 +668,11 @@ Profil aktualisieren
 ;
 MSG_OK3 (/1/)
 *OK
-
+*OK
 ;
 MSG_UPDATEPROFILE6 (/1/)
-\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., \
-you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit \
-more user friendly in the future!\nPlease see the bubble help for more info for each field!
-\33cBitte beachten:\n\nDerzeit müssen sie *IMMER* einen 'Namen' angeben,\ndie anderen Felder sind optional, doch wenn Sie sie \nleer lassen, werden damit Ihre aktuellen\n Profilfelder auf der \
-Twitter-Seite überschrieben   (d.h. Sie sollten alle Felder ausfüllen, wenn Sie sie \nauf Ihrer Twitter-Seite angezeigt bekommen wollen!\nWenn Sie sie nicht angezeigt bekommen wollen, lassen Sie sie \
-leer\n(außer 'Name' natürlich)...\n\nIch gestalte das in Zukunft hoffentlich benutzerfreundlicher!\nBitte schauen Sie in die Sprechblasenhilfe für weitere Informationen zu jedem Feld!
+\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!
+\33cBitte beachten:\n\nDerzeit müssen sie *IMMER* einen 'Namen' angeben,\ndie anderen Felder sind optional, doch wenn Sie sie \nleer lassen, werden damit Ihre aktuellen\n Profilfelder auf der Twitter-Seite überschrieben   (d.h. Sie sollten alle Felder ausfüllen, wenn Sie sie \nauf Ihrer Twitter-Seite angezeigt bekommen wollen!\nWenn Sie sie nicht angezeigt bekommen wollen, lassen Sie sie leer\n(außer 'Name' natürlich)...\n\nIch gestalte das in Zukunft hoffentlich benutzerfreundlicher!\nBitte schauen Sie in die Sprechblasenhilfe für weitere Informationen zu jedem Feld!
 ;
 MSG_HTML1 (/1/)
 <TITLE>Welcome to AmiTwitter</TITLE></HEAD>
@@ -715,7 +696,7 @@ MSG_HTML5 (/1/)
 ;
 MSG_HTML6 (/1/)
 <CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
-
+<CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
 ;
 MSG_HTML7 (/1/)
 <CENTER>-- Thanks for your interest, The AmiTwitter Open Source Team</CENTER><BR>
@@ -750,10 +731,8 @@ MSG_HTML14 (/1/)
 <CENTER>AmiTwitter läd keine Tweets herunter oder sendet sie nicht?</CENTER><BR>
 ;
 MSG_HTML15 (/1/)
-<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people (for \
-<I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>
-<CENTER>Antwort: Sind Sie mit dem Internet verbunden, haben Sie Ihren Twitter-Benutzernamen/Kennwort im Fenster Werkzeuge -> Einstellungen eingetragen und sie gespeichert? Folgen Sie bereits einigen \
-Menschen (siehe <l>Zeitleiste</l>) und haben Sie einige Tweets gesendet (siehe <l>Meine Tweets</l>?</CENTER><BR>
+<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people (for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>
+<CENTER>Antwort: Sind Sie mit dem Internet verbunden, haben Sie Ihren Twitter-Benutzernamen/Kennwort im Fenster Werkzeuge -> Einstellungen eingetragen und sie gespeichert? Folgen Sie bereits einigen Menschen (siehe <l>Zeitleiste</l>) und haben Sie einige Tweets gesendet (siehe <l>Meine Tweets</l>?</CENTER><BR>
 ;
 MSG_HTML16 (/1/)
 <CENTER>Direct Messages don't seem to work?</CENTER><BR>
@@ -784,10 +763,8 @@ MSG_HTML22 (/1/)
 <CENTER>Alles, was ich sehe, ist die Nachricht 'Versuche die neuesten...'!</CENTER><BR>
 ;
 MSG_HTML23 (/1/)
-<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up \
-under 'My Favorites' in AmiTwitter either.</CENTER><BR>
-<CENTER>Antwort: Der wahrscheinlichste Grund ist, daß Sie nichts in Ihrer Zeitleiste haben. Beispielsweise haben Sie noch keine Elemente auf der Twitter-Seite 'favorisiert', und deshalb werden sie \
-unter 'Meine Favoriten' in AmiTwitter auch nicht angezeigt.</CENTER><BR>
+<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>
+<CENTER>Antwort: Der wahrscheinlichste Grund ist, daß Sie nichts in Ihrer Zeitleiste haben. Beispielsweise haben Sie noch keine Elemente auf der Twitter-Seite 'favorisiert', und deshalb werden sie unter 'Meine Favoriten' in AmiTwitter auch nicht angezeigt.</CENTER><BR>
 ;
 MSG_HTML24 (/1/)
 <CENTER>Why is the file size so large?</CENTER><BR>
@@ -826,10 +803,8 @@ MSG_HTML32 (/1/)
 <CENTER>Was sind die Pläne für AmiTwitter in der Zukunft?</CENTER><BR>
 ;
 MSG_HTML33 (/1/)
-<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some \
-developers joining the project at SourceForge would be nice...<BR>
-<CENTER>Antwort: Zuerst mehr über die Twitter-API zu lernen, aber das hängt sehr von den Rückmeldungen ab, die ich erhalte. Ebenso portieren auf andere Systeme (d.h. OS 4.x und AROS), und eine aktive \
-Quellcodebasis mit einigen Entwicklern, die dem Projekt bei SourceForge beitreten, wäre schön.</CENTER><BR>
+<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>
+<CENTER>Antwort: Zuerst mehr über die Twitter-API zu lernen, aber das hängt sehr von den Rückmeldungen ab, die ich erhalte. Ebenso portieren auf andere Systeme (d.h. OS 4.x und AROS), und eine aktive Quellcodebasis mit einigen Entwicklern, die dem Projekt bei SourceForge beitreten, wäre schön.</CENTER><BR>
 ;
 MSG_HTML34 (/1/)
 <CENTER>I don't know how to code, what can I do?</CENTER><BR>
@@ -849,7 +824,7 @@ Zeitleiste
 ;
 MSG_0002 (/1/)
 Retweets
-
+Retweets
 ;
 MSG_0003 (/1/)
 Retweet By Me
@@ -861,7 +836,7 @@ Retweets an mich
 ;
 MSG_0005 (/1/)
 Retweet Of Me
-
+Retweet auf mich
 ;
 MSG_0006 (/1/)
 @Replies
@@ -897,7 +872,7 @@ Empfangen
 ;
 MSG_0014 (/1/)
 Tweet
-
+Tweet
 ;
 MSG_0015 (/1/)
 My Tweets
@@ -925,7 +900,7 @@ Meine Verfolger
 ;
 MSG_0021 (/1/)
 Blocking
-
+Blockieren
 ;
 MSG_0022 (/1/)
 Random
@@ -953,7 +928,7 @@ Hilfe
 ;
 MSG_0028 (/1/)
 FAQs
-
+FAQs
 ;
 MSG_0029 (/1/)
 Donate
