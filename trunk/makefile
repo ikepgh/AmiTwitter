@@ -97,13 +97,13 @@ BIN	   = AmiTwitter_MOS
 
 ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
-			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
+			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -noixemul -Wall \
 
-  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
 else
   CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
-			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall
-  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -noixemul -Wall
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
 endif
 
 LIBS	=
@@ -200,7 +200,7 @@ else # <~vbcc>
     STRIP = ppc-morphos-strip
     LIBS = -ldebug
       ifeq ($(debug),)
-        CFLAGS = -I./include -I../include  -s -O1 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
+        CFLAGS = -I./include -I../include  -s -O1 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -noixemul -Wall
         LDFLAGS =
         LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
       else
@@ -217,7 +217,8 @@ else # <~vbcc>
       STRIP = strip
       ifeq ($(debug),)
         CFLAGS = -I./include -I../include -s -m68020-60 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
-        LDFLAGS = 
+
+        LDFLAGS =
         LIBS   = -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
       else
         CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
