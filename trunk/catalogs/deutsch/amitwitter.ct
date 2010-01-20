@@ -8,7 +8,7 @@
 ; program to the international community). Strings from this file
 ; will be used when there's no appropriate translation or the
 ; catalog file does not containg given string.
-; 
+;
 MSG_FOLLOW
 Folgen/Nicht folgen
 ; Follow/Unfollow
@@ -47,7 +47,7 @@ MSG_REPLIES
 ;
 MSG_REPLIES2
 Empfange die letzten @Antworten (max. 20)
-; Get most recent @Replies (max 20)›
+; Get most recent @Replies (max 20)
 ;
 MSG_RELOAD
 Neu _laden
@@ -94,8 +94,7 @@ MSG_ERROR
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li>
 ;
 MSG_ERROR2
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie Text \
-eingegeben (und/oder einen korrekten Empfänger-Screennamen für direkte Nachrichten)?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie Text eingegeben (und/oder einen korrekten Empfänger-Screennamen für direkte Nachrichten)?</li>
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>
 ;
 MSG_ERROR3
@@ -103,8 +102,7 @@ MSG_ERROR3
 ; <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
 ;
 MSG_ERROR4
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li><li>Sind Sie bereits ein Follower (oder Nicht-Follower) dieses Benutzers?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li><li>Sind Sie bereits ein Follower (oder Nicht-Follower) dieses Benutzers?</li>
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>
 ;
 MSG_ERROR5
@@ -112,18 +110,15 @@ MSG_ERROR5
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
 ;
 MSG_ERROR6
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li><li>Empfangen Sie schon SMS-Benachrichtigungen für diesen Benutzer (oder haben den Empfang gestoppt)?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li><li>Empfangen Sie schon SMS-Benachrichtigungen für diesen Benutzer (oder haben den Empfang gestoppt)?</li>
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
 ;
 MSG_ERROR7
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Sie <b>*MÜSSEN*</b> \
-einen Namen angeben, um Aktualisierungen vorzunehmen!</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Sie <b>*MÜSSEN*</b> einen Namen angeben, um Aktualisierungen vorzunehmen!</li>
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>
 ;
 MSG_ERROR8
-<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den \
-Screennamen korrekt eingegeben?</li>
+<B>Hmm... Ein Fehler ist aufgetreten!</B><p>Mögliche Gründe:<ul><li>Keine Internetverbindung</li><li>Twitter-Seite nicht verfügbar</li><li>Benutzername/Kennwort verkehrt</li><li>Haben Sie den Screennamen korrekt eingegeben?</li>
 ; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
 ;
 MSG_ATTEMPTING
@@ -496,7 +491,7 @@ MSG_FAST
 ; Fast Links
 ;
 MSG_FEEDBACK
-
+Feedback
 ; Feedback
 ;
 MSG_DONATE4
@@ -625,7 +620,7 @@ Suchen
 ; Search
 ;
 MSG_OK
-
+*OK
 ; *OK
 ;
 MSG_SEARCH10
@@ -662,7 +657,7 @@ Speichern
 ; Save
 ;
 MSG_OK2
-
+*OK
 ; *OK
 ;
 MSG_SAVED
@@ -674,7 +669,7 @@ Profil aktualisieren
 ; Update Profile
 ;
 MSG_OK3
-
+*OK
 ; *OK
 ;
 MSG_UPDATEPROFILE6
