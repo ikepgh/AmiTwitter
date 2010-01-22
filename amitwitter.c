@@ -3427,7 +3427,7 @@ int main(int argc, char *argv[]) {
                   End,
               End,             
 
-              Child, VGroup, GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
+              Child, VGroup, GroupFrame, //GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
 
                  Child, toolbar = TheBarObject,
                        GroupFrame, 
@@ -3964,7 +3964,7 @@ int main(int argc, char *argv[]) {
                 // Update Profile
                 case MEN_USERPROFILE:
                      MUI_RequestA(app,window,0,GetString(&li,
-                     MSG_UPDATEPROFILE6) /*"Update Profile"*/, GetString(&li,
+                     MSG_UPDATEPROFILE5) /*"Update Profile"*/, GetString(&li,
                      MSG_OK3) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
                      set(win_userprofile, MUIA_Window_Open, TRUE);
                      break;
