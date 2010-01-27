@@ -1299,7 +1299,7 @@ STRPTR  builtIn;
 #define LocaleBase li->li_LocaleBase
 
     if (LocaleBase)
-        return(STRPTR)(GetCatalogStr(li->li_Catalog,stringNum,builtIn)); //added (STRPTR)
+        return(GetCatalogStr(li->li_Catalog,stringNum,builtIn));
 #undef LocaleBase
 
     return(builtIn);
