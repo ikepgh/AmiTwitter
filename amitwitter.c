@@ -78,9 +78,7 @@
 #if defined(__AMIGA__) && !defined(__PPC__)
 #include <clib/gadtools_protos.h>
 #endif
-#if defined (__MORPHOS__)
 #include <proto/exec.h>
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -100,7 +98,6 @@
 // Amitwitter
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
-#include "language.h"
 #include "amitwitter_strings.h"
 
 /*****************************************************************************/
@@ -185,6 +182,7 @@ struct Library *MUIMasterBase;
 
 struct Library *LocaleBase;
 struct LocaleInfo li;
+struct NewMenu *nm;
 
 #ifdef __amigaos4__
 extern struct ExecIFace *IExec;    /* No need to open them! */
@@ -245,6 +243,8 @@ const char *name,  *web,  *location,  *bio;
 // Users tabs
 static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","Show User",NULL };
 
+//static UBYTE *Pages[] = { (UBYTE *)MSG_FOLLOW, (UBYTE *)MSG_BLOCK, (UBYTE *)MSG_NOTIFY, (UBYTE *)MSG_SHOWUSER, NULL };
+
 /*****************************************************************************/
 
 ///
@@ -254,69 +254,61 @@ static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","
 enum {
     ADD_METHOD=1,
                         
-    MEN_FILE, MEN_TIMELINE, MEN_RETWEET, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
+    MEN_TIMELINE, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
     MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_USERS,
     MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
-    MEN_MISC, MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
-    MEN_TOOLS, MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
-    MEN_HELP, MEN_FAQ, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
+    MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
+    MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
+    MEN_FAQ, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
 };
 
-#define M(type,title_id,flags,men) type, (UBYTE *)(title_id), 0, flags, 0, (APTR)(men)
-#define MX(type,title_id,flags,ex,mid) type,   (UBYTE *)(title_id), 0, flags, ex,(APTR)(mid)
-#define BAR    NM_ITEM, NM_BARLABEL, NULL, 0, 0, NULL
-#define MENU_END  NM_END, NULL, NULL, 0, 0, NULL
+static struct NewMenu Menu[]= {
 
-// Menu structure
-static struct NewMenu MenuData1[]=
-{
+    { NM_TITLE,  (STRPTR)MSG_0000,       0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0001,      "T",  0, 0, (APTR)MEN_TIMELINE    },
+    { NM_ITEM,   (STRPTR)MSG_0002,       0,   0, 0, (APTR)0               },
+    { NM_SUB,    (STRPTR)MSG_0003,      "V",  0, 0, (APTR)MEN_RETWEETBYME },
+    { NM_SUB,    (STRPTR)MSG_0004,      "W",  0, 0, (APTR)MEN_RETWEETTOME },
+    { NM_SUB,    (STRPTR)MSG_0005,      "X",  0, 0, (APTR)MEN_RETWEETOFME },
+    { NM_ITEM,   (STRPTR)MSG_0006,      "R",  0, 0, (APTR)MEN_REPLIES     },
+    { NM_ITEM,   (STRPTR)MSG_0007,      "O",  0, 0, (APTR)MEN_RELOAD      },
+    { NM_ITEM,   (STRPTR)MSG_0008,       0,   0, 0, (APTR)0               },
+    { NM_SUB,    (STRPTR)MSG_0008,      "S",  0, 0, (APTR)MEN_SEARCH      },
+//  { NM_SUB,    (STRPTR)MSG_0009,       0,   0, 0, (APTR)MEN_SEARCHUSER  },
+    { NM_ITEM,   (STRPTR)MSG_0010,      "U",  0, 0, (APTR)MEN_USERS       },
+    { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0011,       0,   0, 0, (APTR)0               },
+    { NM_SUB,    (STRPTR)MSG_0011,      "D",  0, 0, (APTR)MEN_DIRMSG      },
+//  { NM_SUB,    (STRPTR)MSG_0012,       0,   0, 0, (APTR)MEN_DIRMSGSENT  },
+//  { NM_SUB,    (STRPTR)MSG_0013,       0,   0, 0, (APTR)MEN_DIRMSGRCVD  },
+    { NM_ITEM,   (STRPTR)MSG_0014,       0,   0, 0, (APTR)0               },
+    { NM_SUB,    (STRPTR)MSG_0014,      "E",  0, 0, (APTR)MEN_TWEET       },
+    { NM_SUB,    (STRPTR)MSG_0015,      "M",  0, 0, (APTR)MEN_MYTWEET     },
+    { NM_SUB,    (STRPTR)MSG_0016,      "F",  0, 0, (APTR)MEN_FAVS        },
+    { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0017,      "Q",  0, 0, (APTR)MEN_QUIT        },
 
-    M( NM_TITLE,  MSG_FILEX,          0,   MEN_FILE        ),
-    M( NM_ITEM,   MSG_TIMELINEX,      0,   MEN_TIMELINE    ),
-    M( NM_ITEM,   MSG_RETWEETX,       0,   MEN_RETWEET     ),
-    MX( NM_SUB,   MSG_RETWEETBYMEX,   0,   0, MEN_RETWEETBYME   ),
-    MX( NM_SUB,   MSG_RETWEETTOMEX,   0,   0, MEN_RETWEETTOME   ),
-    MX( NM_SUB,   MSG_RETWEETOFMEX,   0,   0, MEN_RETWEETOFME   ),
-    M( NM_ITEM,   MSG_REPLIESX,       0,   MEN_REPLIES     ),
-    M( NM_ITEM,   MSG_RELOADX,        0,   MEN_RELOAD      ),
-//    M( NM_ITEM,   MSG_SEARCHX,        0,   MEN_SEARCH      ),
-//    MX( NM_SUB,   MSG_SEARCHX,        0,   0, MEN_SEARCH        ),
-//    MX( NM_SUB,   MSG_SEARCHUSERX,    0,   0, MEN_SEARCHUSER    ),
-    M( NM_ITEM,   MSG_USERSX,         0,   MEN_USERS     ),
-    BAR,
-    M( NM_ITEM,   MSG_DIRMSGX,        0,   MEN_DIRMSG      ),
-//    MX( NM_SUB,   MSG_DIRMSGX,        0,   0, MEN_DIRMSG        ),
-//    MX( NM_SUB,   MSG_DIRMSGSENTX,    0,   0, MEN_DIRMSGSENT    ),
-//    MX( NM_SUB,   MSG_DIRMSGRCVDX,    0,   0, MEN_DIRMSGRCVD    ),
-    M( NM_ITEM,   MSG_TWEETX,         0,   MEN_TWEET       ),
-    MX( NM_SUB,   MSG_TWEETX,         0,   0, MEN_TWEET         ),
-    MX( NM_SUB,   MSG_MYTWEETX,       0,   0, MEN_MYTWEET       ),
-    MX( NM_SUB,   MSG_FAVSX,          0,   0, MEN_FAVS          ),
-    BAR,
-    M( NM_ITEM,   MSG_QUITX,          0,   MEN_QUIT        ),
+    { NM_TITLE,  (STRPTR)MSG_0018,       0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0019,      "I",  0, 0, (APTR)MEN_FRIENDS     },
+    { NM_ITEM,   (STRPTR)MSG_0020,      "L",  0, 0, (APTR)MEN_FOLLOWERS   },
+    { NM_ITEM,   (STRPTR)MSG_0021,      "B",  0, 0, (APTR)MEN_BLOCKING    },
+    { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0022,      "N",  0, 0, (APTR)MEN_RANDOM      },
 
-    M( NM_TITLE,  MSG_MISCX,          0,   MEN_MISC        ),
-    M( NM_ITEM,   MSG_FRIENDSX,       0,   MEN_FRIENDS     ),
-    M( NM_ITEM,   MSG_FOLLOWERSX,     0,   MEN_FOLLOWERS   ),
-    M( NM_ITEM,   MSG_BLOCKINGX,      0,   MEN_BLOCKING    ),
-    BAR,
-    M( NM_ITEM,   MSG_RANDOMX,        0,   MEN_RANDOM      ),
+    { NM_TITLE,  (STRPTR)MSG_0023,       0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0024,      "1",  0, 0, (APTR)MEN_PREFS       },
+    { NM_ITEM,   (STRPTR)MSG_0025,      "2",  0, 0, (APTR)MEN_USERPROFILE },
+    { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0026,      "3",  0, 0, (APTR)MEN_MUIPREFS    },
 
-    M( NM_TITLE,  MSG_TOOLSX,         0,   MEN_TOOLS       ),
-    M( NM_ITEM,   MSG_PREFSX,         0,   MEN_PREFS       ),
-    M( NM_ITEM,   MSG_USERPROFILEX,   0,   MEN_USERPROFILE ),
-    BAR,          
-    M( NM_ITEM,   MSG_MUIPREFSX,      0,   MEN_MUIPREFS    ),
+    { NM_TITLE,  (STRPTR)MSG_0027,       0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0028,      "?",  0, 0, (APTR)MEN_FAQ         },
+    { NM_ITEM,   (STRPTR)MSG_0029,      "$",  0, 0, (APTR)MEN_DONATE      },
+    { NM_ITEM,   (STRPTR)MSG_0030,      "A",  0, 0, (APTR)MEN_ABOUT       },
+    { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
+    { NM_ITEM,   (STRPTR)MSG_0031,      "Z",  0, 0, (APTR)MEN_ABOUTMUI    },
+    { NM_END,    (STRPTR)NULL,               0,   0, 0, (APTR)0               },
 
-    M( NM_TITLE,  MSG_HELPX,          0,   MEN_HELP        ),
-    M( NM_ITEM,   MSG_FAQX,           0,   MEN_FAQ         ),
-    M( NM_ITEM,   MSG_DONATEX,        0,   MEN_DONATE      ),
-    M( NM_ITEM,   MSG_ABOUTX,         0,   MEN_ABOUT       ),
-    BAR,
-    M( NM_ITEM,   MSG_ABOUTMUIX,      0,   MEN_ABOUTMUI    ),
-    M( NM_END,    NULL,              0,   0               ),
-
-    MENU_END
 };
 
 /*****************************************************************************/
@@ -335,15 +327,15 @@ enum {
 
 static struct MUIS_TheBar_Button buttons[] =
 {
-    {0, B_TIMELINE,      "_Timeline",       "Get most recent Tweets (max 20)"         ,0 },
-    {1, B_RETWEETS,      "Ret_weets",       "Get most recent Retweets to me (max 20)" ,0 },
-    {2, B_REPLIES,       "@_Replies",       "Get most recent @Replies (max 20)"       ,0 },
-    {3, B_RELOAD,        "Rel_oad",         "Reload current local file"               ,0 },
-    {4, B_SEARCH,        "_Search",         "Search"                                  ,0 },
-    {5, B_FOLLOW,        "_Users",          "Manage Users"                            ,0 },
-    {6, B_DIRECTMESSAGE, "_Dir Msg",        "Send a Direct Message"                   ,0 },
-    {7, B_TWEET,         "Tw_eet",          "Send a Tweet"                            ,0 },
-    {MUIV_TheBar_End                                                                     },
+    {0, B_TIMELINE,      (STRPTR)MSG_TIMELINE,   (STRPTR)MSG_TIMELINE2  ,0, 0, NULL, NULL },
+    {1, B_RETWEETS,      (STRPTR)MSG_RETWEETS,   (STRPTR)MSG_RETWEETS2  ,0, 0, NULL, NULL },
+    {2, B_REPLIES,       (STRPTR)MSG_REPLIES ,   (STRPTR)MSG_REPLIES2   ,0, 0, NULL, NULL },
+    {3, B_RELOAD,        (STRPTR)MSG_RELOAD  ,   (STRPTR)MSG_RELOAD2    ,0, 0, NULL, NULL },
+    {4, B_SEARCH,        (STRPTR)MSG_SEARCH  ,   (STRPTR)MSG_SEARCH2    ,0, 0, NULL, NULL },
+    {5, B_FOLLOW,        (STRPTR)MSG_USERS   ,   (STRPTR)MSG_USERS2     ,0, 0, NULL, NULL },
+    {6, B_DIRECTMESSAGE, (STRPTR)MSG_DIRMSG  ,   (STRPTR)MSG_DIRMSG2    ,0, 0, NULL, NULL },
+    {7, B_TWEET,         (STRPTR)MSG_TWEET   ,   (STRPTR)MSG_TWEET2     ,0, 0, NULL, NULL },
+    {MUIV_TheBar_End,   0,NULL,NULL,0, 0, NULL, NULL                                      },
 };
 
 STRPTR pics[] =
@@ -458,10 +450,23 @@ BOOL Open_Libs(void ) {
         return(0);
     }
 
-    if ((LocaleBase=OpenLibrary("locale.library",38))) {
-        
+    if ((LocaleBase = OpenLibrary("locale.library",38))) {
+
         li.li_LocaleBase = LocaleBase;
-        (STRPTR) li.li_Catalog    = OpenCatalogA(NULL,"amitwitter.catalog",NULL);
+        if ((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
+
+            struct CatCompArrayType *cca;
+            int                     cnt;
+
+            for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
+                 cnt>=0;
+                 cnt--, cca--)
+            {
+                STRPTR s;
+
+                if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str))) cca->cca_Str = s;
+            }
+        }
     }
     return(1);
 }
@@ -561,6 +566,41 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
         MUIA_Urltext_Url,   url,
     End;
 }
+
+// localization functions
+int getString(ULONG id) {
+
+    struct CatCompArrayType *cca;
+    int                     cnt;
+
+    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
+         cnt>=0;
+         cnt--, cca--) if (cca->cca_ID==id) return (int)cca->cca_Str;
+
+    return (int)"";
+}
+
+void localizeNewMenu(struct NewMenu *nm) {
+
+    for ( ; nm->nm_Type!=NM_END; nm++)
+        if (nm->nm_Label!=NM_BARLABEL)
+            nm->nm_Label = (STRPTR)getString((ULONG)nm->nm_Label);
+}
+
+void localizeTheBar(struct MUIS_TheBar_Button *button) {
+
+    for ( ; button->img!=MUIV_TheBar_End; button++)
+    {
+        if (button->text) button->text = (STRPTR)getString((ULONG)button->text);
+        if (button->help) button->help = (STRPTR)getString((ULONG)button->help);
+    }
+}
+
+/* void localizeStrings(UBYTE **s) {
+
+    for (; *s; s++) *s = (STRPTR)getString((ULONG)*s);
+    } */
+
 
 /*****************************************************************************/
 
@@ -3075,6 +3115,10 @@ int main(int argc, char *argv[]) {
     return(0);
   }
 
+  localizeNewMenu(Menu);
+  localizeTheBar(buttons);
+//localizeStrings(Pages);
+
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
       MUIA_Application_Version , "$VER: "VSTRING"",
@@ -3403,7 +3447,7 @@ int main(int argc, char *argv[]) {
       SubWindow, window = WindowObject,
           MUIA_Window_Title, "AmiTwitter",
           MUIA_Window_ID , MAKE_ID('W','T','M','F'),
-          MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,MenuData1,0),
+          MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,Menu,0),
 
           WindowContents, VGroup,
 
