@@ -76,7 +76,8 @@ Benutzer verwalten
 ;
 MSG_DIRMSG (/1/)
 _Dir Msg
-_Nachrichten anzeigen
+_Dir Msg
+;_Nachrichten anzeigen
 ;
 MSG_DIRMSG2 (/1/)
 Send a Direct Message
