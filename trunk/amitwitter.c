@@ -243,7 +243,15 @@ const char *name,  *web,  *location,  *bio;
 // Users tabs
 static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","Show User",NULL };
 
-//static UBYTE *Pages[] = { (UBYTE *)MSG_FOLLOW, (UBYTE *)MSG_BLOCK, (UBYTE *)MSG_NOTIFY, (UBYTE *)MSG_SHOWUSER, NULL };
+/*static STRPTR Pages[] = {
+
+     (STRPTR)MSG_FOLLOW_STR,
+     (STRPTR)MSG_FOLLOW,
+     (STRPTR)MSG_BLOCK,
+     (STRPTR)MSG_NOTIFY,
+     (STRPTR)MSG_SHOWUSER,
+      NULL,
+     };  */
 
 /*****************************************************************************/
 
@@ -568,39 +576,38 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 }
 
 // localization functions
-int getString(ULONG id) {
+STRPTR getString(ULONG id) {
 
     struct CatCompArrayType *cca;
     int                     cnt;
 
     for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
          cnt>=0;
-         cnt--, cca--) if (cca->cca_ID==id) return (int)cca->cca_Str;
+         cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;  
 
-    return (int)"";
+    return "";  
 }
 
 void localizeNewMenu(struct NewMenu *nm) {
 
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
-            nm->nm_Label = (STRPTR)getString((ULONG)nm->nm_Label);
+            nm->nm_Label = getString((ULONG)nm->nm_Label);
 }
 
 void localizeTheBar(struct MUIS_TheBar_Button *button) {
 
     for ( ; button->img!=MUIV_TheBar_End; button++)
     {
-        if (button->text) button->text = (STRPTR)getString((ULONG)button->text);
-        if (button->help) button->help = (STRPTR)getString((ULONG)button->help);
+        if (button->text) button->text = getString((ULONG)button->text);
+        if (button->help) button->help = getString((ULONG)button->help);
     }
 }
 
-/* void localizeStrings(UBYTE **s) {
+/* void localizeStrings(STRPTR *s) {
 
-    for (; *s; s++) *s = (STRPTR)getString((ULONG)*s);
+    for (; *s; s++) *s = getString((ULONG)*s);
     } */
-
 
 /*****************************************************************************/
 
@@ -3114,10 +3121,9 @@ int main(int argc, char *argv[]) {
     printf("Cannot open libs\n");
     return(0);
   }
-
+//localizeStrings(Pages);
   localizeNewMenu(Menu);
   localizeTheBar(buttons);
-//localizeStrings(Pages);
 
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
@@ -3474,7 +3480,7 @@ int main(int argc, char *argv[]) {
               Child, VGroup, GroupFrame, //GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
 
                  Child, toolbar = TheBarObject,
-                       GroupFrame, 
+                       GroupFrame, MUIA_Group_SameSize, FALSE,
                        MUIA_Group_Horiz,       TRUE,
                        MUIA_TheBar_EnableKeys, TRUE, 
                        MUIA_TheBar_Borderless, TRUE,
@@ -4008,8 +4014,7 @@ int main(int argc, char *argv[]) {
                 // Update Profile
                 case MEN_USERPROFILE:
                      MUI_RequestA(app,window,0,GetString(&li,
-                     MSG_UPDATEPROFILE5) /*"Update Profile"*/, GetString(&li,
-                     MSG_OK3) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
+                     MSG_UPDATEPROFILE5) /*"Update Profile"*/, GetString(&li, MSG_OK3) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
                      set(win_userprofile, MUIA_Window_Open, TRUE);
                      break;
 
