@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.23 Public Beta Release 1
+Version: 0.2x Public Beta Release 1
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
 Distribution: GPL, AmiKit, SourceForge only
@@ -55,6 +55,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 
 VERSION HISTORY
 --------------- 
+0.25 - Menu's, tabs & TheBar are now localized 
 0.24 - Began localization implementation
 0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
 the last Tweet by that User (whether you are following them or not); fixed minor display bug (missing </small> tag)

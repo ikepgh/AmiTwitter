@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.24
+ ** Current revision : V 0.25
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
@@ -123,56 +124,6 @@
 "<HR>" \
 "<CENTER><IMG SRC = PROGDIR:data/program_images/curl.gif>&nbsp;</CENTER><BR>" \
 "<HR>" \
-"</FONT></BODY></HTML>"
-
-/******************************************************************************/
-
-// HTML Help/FAQ Message
-#define HTML_HELP \
-"<HTML><HEAD><BODY>" \
-"<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
-"<FONT COLOR=#000000><CENTER><B>FAQs </B></CENTER><BR>" \
-"<HR>" \
-"<CENTER>What does AmiTwitter stand for?</CENTER><BR>" \
-"<CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>" \
-"<HR>" \
-"<CENTER>What are the requirements for AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>" \
-"<HR>"\
-"<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>" \
-"<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>" \
-"<HR>" \
-"<CENTER>Direct Messages don't seem to work?</CENTER><BR>" \
-"<CENTER>Answer: Ensure you enter the recipient's Screen Name (i.e. User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>" \
-"<HR>" \
-"<CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>" \
-"<CENTER>Answer: Follow the 'Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>" \
-"<HR>" \
-"<CENTER>Nothing happens when I click on the links at the very bottom of the main program window?</CENTER><BR>" \
-"<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>" \
-"<HR>" \
-"<CENTER>All I see is the message, 'Attempting to get the latest...'?</CENTER><BR>" \
-"<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>" \
-"<HR>" \
-"<CENTER>Why is the file size so large?</CENTER><BR>" \
-"<CENTER>Answer: Because AmiTwitter relies on numerous libs to work, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>" \
-"<HR>" \
-"<CENTER>Why did you write AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: To prove it could be done!</CENTER><BR>" \
-"<HR>" \
-"<CENTER>What is AmiTwitter based on?</CENTER><BR>" \
-"<CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>" \
-"<HR>" \
-"<CENTER>Links in the main Tweets window don't work?</CENTER><BR>" \
-"<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (The plan is to switch to HTMLview.mcc in the future...)</CENTER><BR>" \
-"<HR>" \
-"<CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>" \
-"<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>" \
-"<HR>" \
-"<CENTER>I don't know how to code, what can I do?</CENTER><BR>" \
-"<CENTER>Consider donating.<BR>" \
-"<HR>" \
-"<BR>" \
 "</FONT></BODY></HTML>"
 
 /******************************************************************************/

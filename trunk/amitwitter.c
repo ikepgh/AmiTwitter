@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.24
+ ** Current revision : V 0.25
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
  ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
@@ -513,7 +514,7 @@ void about(void) {
 
 // FAQ HTML
 void help(void) {
-    set(txt_source, MUIA_HTMLtext_Contents, (int) HTML_HELP);
+    set(txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/html/faq.html");
 }
 
 // Error
@@ -3151,7 +3152,7 @@ int main(int argc, char *argv[]) {
                   Child, but_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL)/*"_Cancel"*/),
               End,
 
-              Child, VGroup, GroupFrameT(GetString(&li, MSG_HELP)/*"Help!"*/),
+              Child, VGroup, GroupFrameT(GetString(&li, MSG_0027)/*"Help"*/),
 
                   MUIA_Background, MUII_GroupBack,
                   Child, TextObject, TextFrame,
@@ -3194,7 +3195,7 @@ int main(int argc, char *argv[]) {
                   Child, HGroup,
                   Child, HSpace(0),
                   Child, ColGroup(0),
-                  Child, donate = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE3) /*"Donate!"*/,MUIV_Font_Normal),
+                  Child, donate = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE) /*"Donate"*/,MUIV_Font_Normal),
                   Child, HSpace(0),
                   Child, HSpace(0),
                   End,
@@ -3208,12 +3209,12 @@ int main(int argc, char *argv[]) {
 
       // The Tweet Window
       SubWindow, win_tweet = WindowObject,
-          MUIA_Window_Title, GetString(&li, MSG_SEND) /*"Send a Tweet"*/,
+          MUIA_Window_Title, GetString(&li, MSG_TWEET2) /*"Send a Tweet"*/,
           MUIA_Window_ID, MAKE_ID('T','W','E','T'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT(GetString(&li, MSG_SEND2) /*"Send a Tweet"*/),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_TWEET2) /*"Send a Tweet"*/),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -3227,7 +3228,7 @@ int main(int argc, char *argv[]) {
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                            Child, clear_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPDATE) /*"_Update"*/),
-                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL2) /*"_Cancel"*/),
+                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3238,12 +3239,12 @@ int main(int argc, char *argv[]) {
 
       // The Search Window
       SubWindow, win_search = WindowObject,
-          MUIA_Window_Title,  GetString(&li, MSG_SEARCH3) /*"Search"*/,
+          MUIA_Window_Title,  GetString(&li, MSG_SEARCH2) /*"Search"*/,
           MUIA_Window_ID, MAKE_ID('S','R','C','H'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT( GetString(&li, MSG_SEARCH4)/*"Search"*/),
+              Child, HGroup, GroupFrameT( GetString(&li, MSG_SEARCH2)/*"Search"*/),
 
                   Child, VGroup,
                       Child, HGroup,
@@ -3255,9 +3256,9 @@ int main(int argc, char *argv[]) {
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR2) /*"C_lear"*/),
-                           Child, search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SEARCH7)/*"_Search"*/),
-                           Child, but_search_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL3) /*"_Cancel"*/),
+                           Child, clear_search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
+                           Child, search_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SEARCH)/*"_Search"*/),
+                           Child, but_search_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3285,10 +3286,10 @@ int main(int argc, char *argv[]) {
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_follow_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR3) /*"C_lear"*/),
+                           Child, clear_follow_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, follow_gad =  MUI_MakeObject(MUIO_Button, GetString(&li, MSG_FOLLOW5) /*"_Follow"*/),
                            Child, unfollow_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UNFOLLOOW) /*"_Unfollow"*/),
-                           Child, but_follow_cancel = MUI_MakeObject(MUIO_Button,  GetString(&li, MSG_CANCEL4) /*"_Cancel"*/),
+                           Child, but_follow_cancel = MUI_MakeObject(MUIO_Button,  GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3297,7 +3298,7 @@ int main(int argc, char *argv[]) {
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2(GetString(&li, MSG_BLOCKING3) /*"User:"*/),
+                           Child, Label2(GetString(&li, MSG_FOLLOW3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_block = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
@@ -3305,10 +3306,10 @@ int main(int argc, char *argv[]) {
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_block_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR4) /*"C_lear"*/),
+                           Child, clear_block_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, block_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_BLOCKING5) /*"_Block"*/),
                            Child, unblock_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UNBLOCK) /*"U_nblock"*/),
-                           Child, but_block_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL5) /*"_Cancel"*/),
+                           Child, but_block_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3317,7 +3318,7 @@ int main(int argc, char *argv[]) {
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2(GetString(&li, MSG_SMS2) /*"User:"*/),
+                           Child, Label2(GetString(&li, MSG_FOLLOW3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_notify = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
@@ -3325,10 +3326,10 @@ int main(int argc, char *argv[]) {
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR5) /*"C_lear"*/),
+                           Child, clear_notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_RECEIVE) /*"_Receive"*/),
                            Child, unnotify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_STOP) /*"_Stop"*/),
-                           Child, but_notify_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL6) /*"_Cancel"*/),
+                           Child, but_notify_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3337,7 +3338,7 @@ int main(int argc, char *argv[]) {
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, Label2(GetString(&li, MSG_SHOWUSER3) /*"User:"*/),
+                           Child, Label2(GetString(&li, MSG_FOLLOW3) /*"User:"*/),
                            Child, HGroup,
                            Child, STR_show = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
@@ -3345,9 +3346,9 @@ int main(int argc, char *argv[]) {
                            End,
                       End,
                       Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR6) /*"C_lear"*/),
+                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SHOWUSER5) /*"_Show User"*/),
-                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL7) /*"_Cancel"*/),
+                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
@@ -3366,7 +3367,7 @@ int main(int argc, char *argv[]) {
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT(GetString(&li, MSG_SENDDIRMSG2) /*"Send a Direct Message"*/),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SENDDIRMSG) /*"Send a Direct Message"*/),
                   Child, VGroup,
                       Child, HGroup,
                            Child, Label2(GetString(&li, MSG_RECIPIENT) /*"Recipient:"*/),
@@ -3383,9 +3384,9 @@ int main(int argc, char *argv[]) {
                       End,
  
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR7) /*"C_lear"*/),
+                           Child, clear_dm_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
                            Child, send_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SEND5) /*"_Send"*/),
-                           Child, but_cancel_dm = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL8) /*"_Cancel"*/),
+                           Child, but_cancel_dm = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                      End,
                   End,
               End,
@@ -3433,7 +3434,7 @@ int main(int argc, char *argv[]) {
 
                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,                     
                            Child, update_profile_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPDATEPROFILE3) /*"_Update Profile"*/),
-                           Child, but_cancel_profile = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL9) /*"_Cancel"*/),
+                           Child, but_cancel_profile = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                      End,
                   End,
               End,
@@ -3500,7 +3501,7 @@ int main(int argc, char *argv[]) {
                            Child, urltxtlink  = urlTextObject(MUIMasterBase,"http://twitter.com","Twitter",MUIV_Font_Normal),
                            Child, urltxtlink2 = urlTextObject(MUIMasterBase,"https://sourceforge.net/projects/amitwitter/","AmiTwitter SourceForge",MUIV_Font_Normal),
                            Child, mailtxtlink = urlTextObject(MUIMasterBase,"mailto:ikepgh@ezcyberspace.com", GetString(&li, MSG_FEEDBACK) /*"Feedback"*/,MUIV_Font_Normal),
-                           Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE4) /*"Donate!"*/,MUIV_Font_Normal),
+                           Child, urltxtlink3 = urlTextObject(MUIMasterBase,"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8981293h", GetString(&li, MSG_DONATE) /*"Donate"*/,MUIV_Font_Normal),
                        End,
                        Child, HSpace(0),
                   End,
@@ -3617,7 +3618,7 @@ int main(int argc, char *argv[]) {
 
   DoMethod(search_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SEARCH);
-    set(search_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SEARCH8) /*"Search"*/);
+    set(search_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SEARCH2) /*"Search"*/);
 
   DoMethod(but_search_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELSEARCH);
@@ -3651,7 +3652,7 @@ int main(int argc, char *argv[]) {
   // Block 
   DoMethod(clear_block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARBLOCK);
-    set(clear_block_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR12) /*"Clear User Name"*/);
+    set(clear_block_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR10) /*"Clear User Name"*/);
 
   DoMethod(block_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,BLOCK);
@@ -3663,13 +3664,13 @@ int main(int argc, char *argv[]) {
 
   DoMethod(but_block_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELBLOCK);
-    set(but_block_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL13) /*"Cancel Request"*/);
+    set(but_block_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL12) /*"Cancel Request"*/);
 
 
   // Notifications SMS 
   DoMethod(clear_notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARNOTIFY);
-    set(clear_notify_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR13) /*"Clear User Name"*/);
+    set(clear_notify_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR10) /*"Clear User Name"*/);
 
   DoMethod(notify_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,NOTIFY);
@@ -3681,13 +3682,13 @@ int main(int argc, char *argv[]) {
 
   DoMethod(but_notify_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELNOTIFY);
-    set(but_notify_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL14) /*"Cancel Request"*/);
+    set(but_notify_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL12) /*"Cancel Request"*/);
 
 
   // Show Users
   DoMethod(clear_show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEARSHOW);
-    set(clear_show_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR14) /*"Clear User Name"*/);
+    set(clear_show_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR10) /*"Clear User Name"*/);
 
   DoMethod(show_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,USERSHOW);
@@ -3695,7 +3696,7 @@ int main(int argc, char *argv[]) {
 
   DoMethod(but_show_cancel,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELSHOW);
-    set(but_show_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL15) /*"Cancel Request"*/);
+    set(but_show_cancel, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL12) /*"Cancel Request"*/);
 
 
   // Direct Message subwindow
@@ -3705,7 +3706,7 @@ int main(int argc, char *argv[]) {
 
   DoMethod(send_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
-    set(send_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SENDDIRMSG3) /*"Send Direct Message"*/);
+    set(send_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_DIRMSG2) /*"Send Direct Message"*/);
 
   DoMethod(but_cancel_dm,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELDM);
@@ -3950,7 +3951,7 @@ int main(int argc, char *argv[]) {
 
                 // Quit
                 case MEN_QUIT:
-                     result=MUI_RequestA(app,0,0, GetString(&li, MSG_QUIT) /*"Quit"*/, GetString(&li, MSG_QUIT2) /*"_Quit|_Cancel"*/, GetString(&li, MSG_QUIT3) /*"\33cAre you sure you want\nto quit AmiTwitter?"*/,0);
+                     result=MUI_RequestA(app,0,0, GetString(&li, MSG_0017) /*"Quit"*/, GetString(&li, MSG_QUIT2) /*"_Quit|_Cancel"*/, GetString(&li, MSG_QUIT3) /*"\33cAre you sure you want\nto quit AmiTwitter?"*/,0);
 
                         if(result==1)
                            running=FALSE;
@@ -3991,7 +3992,7 @@ int main(int argc, char *argv[]) {
 
                      set (STR_login, MUIA_String_Contents, (int)username);
 
-                     MUI_RequestA(app,0,0, GetString(&li, MSG_SAVE3) /*"Save"*/, GetString(&li, MSG_OK2) /*"*OK"*/, GetString(&li, MSG_SAVED) /*"Settings Saved to Envarc!"*/,NULL);
+                     MUI_RequestA(app,0,0, GetString(&li, MSG_SAVE3) /*"Save"*/, GetString(&li, MSG_OK) /*"*OK"*/, GetString(&li, MSG_SAVED) /*"Settings Saved to Envarc!"*/,NULL);
 
                      set(win_preferences, MUIA_Window_Open, FALSE);
                      break;
@@ -4007,7 +4008,7 @@ int main(int argc, char *argv[]) {
                 // Update Profile
                 case MEN_USERPROFILE:
                      MUI_RequestA(app,window,0,GetString(&li,
-                     MSG_UPDATEPROFILE5) /*"Update Profile"*/, GetString(&li, MSG_OK3) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
+                     MSG_UPDATEPROFILE5) /*"Update Profile"*/, GetString(&li, MSG_OK) /*"*OK"*/, GetString(&li, MSG_UPDATEPROFILE6) /*"\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"*/, NULL);
                      set(win_userprofile, MUIA_Window_Open, TRUE);
                      break;
 
