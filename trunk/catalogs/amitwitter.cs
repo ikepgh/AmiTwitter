@@ -1,4 +1,4 @@
-## Version $VER: amitwitter.catalog 0.24 (14.01.2010)
+## Version $VER: amitwitter.catalog 0.25 (28.01.2010)
 ## Codeset 0
 ## LANGUAGES english deutsch français 3
 ## SimpleCatConfig CharsPerLine 200
@@ -92,7 +92,7 @@ Gérer les utilisateurs
 ;
 MSG_DIRMSG (/1/)
 _Dir Msg
-_Dir Msg
+_Direktnachricht
 Mess _Dir
 ;
 MSG_DIRMSG2 (/1/)
@@ -250,10 +250,10 @@ _Cancel
 _Abbrechen
 _Annuler
 ;
-MSG_HELP (/1/)
-Help!
-Hilfe!
-Aide !
+MSG_HELP (//)
+;
+;
+;
 ;
 MSG_REGISTER (/1/)
 \33c\nDon't already have a User Name/Password?\n  You must register at the Twitter website first!\n
@@ -280,20 +280,20 @@ MSG_DONATE2 (/1/)
 \33c\nWenn Sie AmiTwitter nützlich finden, denken Sie bitte über eine Spende nach.\n  Sie benötigen eine aktive Internetverbindung:\n
 \33c\nSi vous trouvez AmiTwitter utile, merci de faire un don.\n  Une connexion Internet active doit être disponible :\n
 ;
-MSG_DONATE3 (/1/)
-Donate!
-Spenden!
-Faire un don !
+MSG_DONATE3 (//)
 ;
-MSG_SEND (/1/)
-Send a Tweet
-Einen Tweet senden
-Envoyer un Tweet
 ;
-MSG_SEND2 (/1/)
-Send a Tweet
-Einen Tweet senden
-Envoyer un Tweet
+;
+;
+MSG_SEND (//)
+;
+;
+;
+;
+MSG_SEND2 (//)
+;
+;
+;
 ;
 MSG_SEND3 (/1/)
 Tweet:
@@ -315,20 +315,20 @@ _Update
 _Aktualisieren
 _Mettre à jour
 ;
-MSG_CANCEL2 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL2 (//)
 ;
-MSG_SEARCH3 (/1/)
-Search
-Suchen
-Rechercher
 ;
-MSG_SEARCH4 (/1/)
-Search
-Suchen
-Rechercher
+;
+;
+MSG_SEARCH3 (//)
+;
+;
+;
+;
+MSG_SEARCH4 (//)
+;
+;
+;
 ;
 MSG_SEARCH5 (/1/)
 Search:
@@ -340,20 +340,20 @@ Enter your search string and click Search (max 140 characters)
 Geben Sie Ihren Suchtext ein und klicken auf <b>Suchen</b> (max. 140 Zeichen)
 Tapez votre recherche et cliquez sur Rechercher (140 caratères maxi)
 ;
-MSG_CLEAR2 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR2 (//)
 ;
-MSG_SEARCH7 (/1/)
-_Search
-_Suchen
-_Rechercher
 ;
-MSG_CANCEL3 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+;
+;
+MSG_SEARCH7 (//)
+;
+;
+;
+;
+MSG_CANCEL3 (//)
+;
+;
+;
 ;
 MSG_MANAGE (/1/)
 Manage Users
@@ -375,10 +375,10 @@ Enter the Screen Name you want to follow or unfollow...
 Geben Sie den Screennamen ein, dem Sie (nicht mehr) folgen möchten...
 Entrez le pseudo de l'utilisateur que vous désirez suivre ou ne plus suivre...
 ;
-MSG_CLEAR3 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR3 (//)
+;
+;
+;
 ;
 MSG_FOLLOW5 (/1/)
 _Follow
@@ -390,30 +390,30 @@ _Unfollow
 _Nicht folgen
 _Ne plus suivre
 ;
-MSG_CANCEL4 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL4 (//)
+;
+;
+;
 ;
 MSG_BLOCKING2 (/1/)
 Change the Blocking Status for a User
 Den Blockieren-Status für einen Benutzer ändern
 Changer le statut de blocage d'un utilisateur
 ;
-MSG_BLOCKING3 (/1/)
-User:
-Benutzer:
-Utilisateur :
+MSG_BLOCKING3 (//)
+;
+;
+;
 ;
 MSG_BLOCKING4 (/1/)
 Enter the Screen Name you want to block or unblock...
 Geben Sie den Screennamen ein, den Sie (nicht mehr) blockieren wollen...
 Entrez le pseudo que vous désirez bloquer ou débloquer...
 ;
-MSG_CLEAR4 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR4 (//)
+;
+;
+;
 ;
 MSG_BLOCKING5 (/1/)
 _Block
@@ -425,30 +425,30 @@ U_nblock
 _Nicht blockieren
 _Débloquer
 ;
-MSG_CANCEL5 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL5 (//)
+;
+;
+;
 ;
 MSG_SMS (/1/)
 Change the SMS Notification Status for a User
 Den SMS-Benachrichtigungsstatus für einen Benutzer ändern
 Changer le statut de notification SMS d'un utilisateur
 ;
-MSG_SMS2 (/1/)
-User:
-Benutzer:
-Utilisateur :
+MSG_SMS2 (//)
+;
+;
+;
 ;
 MSG_SMS3 (/1/)
 Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for...
 Geben Sie den Screennamen ein, für den Sie SMS-Benachrichtigungen empfangen oder nicht mehr empfangen wollen...
 Entrez le pseudo de l'utilisateur dont\nvous désirez aussi recevoir\n ou stopper la notification SMS.
 ;
-MSG_CLEAR5 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR5 (//)
+;
+;
+;
 ;
 MSG_RECEIVE (/1/)
 _Receive
@@ -460,50 +460,50 @@ _Stop
 _Stop
 _Stopper
 ;
-MSG_CANCEL6 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL6 (//)
+;
+;
+;
 ;
 MSG_SHOWUSER2 (/1/)
 Show a User
 Benutzer anzeigen
 Afficher un utilisateur
 ;
-MSG_SHOWUSER3 (/1/)
-User:
-Benutzer:
-Utilisateur :
+MSG_SHOWUSER3 (//)
+;
+;
+;
 ;
 MSG_SHOWUSER4 (/1/)
 \33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!
 \33cGeben Sie den Screennamen ein des Benutzers ein, den Sie anzeigen wollen.\nSie brauchen ihnen nicht folgen,\n um ihre letzten Tweets zu sehen!
 \33cEntrez le pseudo de l'utilisateur que vous désirez afficher.\nIl n'est pas nécessaire de le suivre\npour afficher ses Tweets !
 ;
-MSG_CLEAR6 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR6 (//)
+;
+;
+;
 ;
 MSG_SHOWUSER5 (/1/)
 _Show User
 Benutzer _anzeigen
 _Montrer utilisateur
 ;
-MSG_CANCEL7 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL7 (//)
 ;
-MSG_SENDDIRMSG (/1/)
-Send a Direct Message
-Eine Direktnachricht senden
-Envoyer un Message Direct
 ;
-MSG_SENDDIRMSG2 (/1/)
-Send a Direct Message
-Eine Direktnachricht senden
-Envoyer un Message Direct
+;
+;
+MSG_SENDDIRMSG (//)
+;
+;
+;
+;
+MSG_SENDDIRMSG2 (//)
+;
+;
+;
 ;
 MSG_RECIPIENT (/1/)
 Recipient:
@@ -525,20 +525,20 @@ Enter a message (max 140 characters)
 Geben Sie eine Nachricht ein (max. 140 Zeichen)
 Tapez votre message (140 caractères maxi)
 ;
-MSG_CLEAR7 (/1/)
-C_lear
-L_öschen
-_Effacer
+MSG_CLEAR7 (//)
+;
+;
+;
 ;
 MSG_SEND5 (/1/)
 _Send
 _Senden
 _Envoyer
 ;
-MSG_CANCEL8 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL8 (//)
+;
+;
+;
 ;
 MSG_UPDATEPROFILE (/1/)
 Update Your Profile
@@ -577,7 +577,7 @@ Localisation :
 ;
 MSG_LOCATION2 (/1/)
 \33cEnter your location. The contents\nare not normalized or geocoded in any way\n(Max 30 characters)
-\33cGeben Sie Ihren Ort ein. DEr Inhalt wird nicht\nnormalisiert oder in irgendeiner\nWeise geokodiert\n (max. 30 Zeichen)
+\33cGeben Sie Ihren Ort ein. Der Inhalt wird nicht\nnormalisiert oder in irgendeiner\nWeise geokodiert\n (max. 30 Zeichen)
 \33cEntrez votre localisation.\nLes informations ne sont ni normalisée\nni geocodée (20 caractères maxi)
 ;
 MSG_BIO (/1/)
@@ -595,30 +595,30 @@ _Update Profile
 Profil akt_ualisieren
 _Mise à jour du profil
 ;
-MSG_CANCEL9 (/1/)
-_Cancel
-_Abbrechen
-_Annuler
+MSG_CANCEL9 (//)
+;
+;
+;
 ;
 MSG_WHAT (/1/)
 What's Happening?
 Was läuft?
 Quoi de neuf ?
 ;
-MSG_FAST (/1/)
-Fast Links
-Fast Links
-Liens raccourcis
+MSG_FAST (//)
+;
+;
+;
 ;
 MSG_FEEDBACK (/1/)
 Feedback
 Feedback
 Retour
 ;
-MSG_DONATE4 (/1/)
-Donate!
-Spenden!
-Faire un don !
+MSG_DONATE4 (//)
+;
+;
+;
 ;
 MSG_SAVE2 (/1/)
 Save Settings
@@ -655,10 +655,10 @@ Clear Search
 Suche löschen
 Effacer la recherche
 ;
-MSG_SEARCH8 (/1/)
-Search
-Suchen
-Rechercher
+MSG_SEARCH8 (//)
+;
+;
+;
 ;
 MSG_CANCEL11 (/1/)
 Cancel Search
@@ -685,10 +685,10 @@ Cancel Request
 Anfrage abbrechen
 Annuler la requête
 ;
-MSG_CLEAR12 (/1/)
-Clear User Name
-Benutzernamen löschen
-Effacer le nom d'utilisateur
+MSG_CLEAR12 (//)
+;
+;
+;
 ;
 MSG_BLOCKUSER (/1/)
 Block a User (Use with care!)
@@ -700,15 +700,15 @@ Unblock a currently blocked User
 Einen derzeit geblockten Benutzer nicht mehr blockieren
 Débloquer un utilisateur
 ;
-MSG_CANCEL13 (/1/)
-Cancel Request
-Anfrage abbrechen
-Annuler la requête
+MSG_CANCEL13 (//)
 ;
-MSG_CLEAR13 (/1/)
-Clear User Name
-Benutzernamen löschen
-Effacer le nom d'utilisateur
+;
+;
+;
+MSG_CLEAR13 (//)
+;
+;
+;
 ;
 MSG_SMSNOTE (/1/)
 \33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...
@@ -720,35 +720,35 @@ Stop receiving SMS notifications from this user
 SMS-Benachrichtigung für diesen Benutzer stoppen
 Stopper la notification SMS de cet utilisateur
 ;
-MSG_CANCEL14 (/1/)
-Cancel Request
-Anfrage abbrechen
-Annuler la requête
+MSG_CANCEL14 (//)
 ;
-MSG_CLEAR14 (/1/)
-Clear User Name
-Benutzernamen löschen
-Effacer le nom d'utilisateur
+;
+;
+;
+MSG_CLEAR14 (//)
+;
+;
+;
 ;
 MSG_SHOWTWEETS (/1/)
 Show latest Tweet for this User
 Letzten Tweet dieses Benutzers anzeigen
 Afficher le dernier Tweet de cet utilisateur
 ;
-MSG_CANCEL15 (/1/)
-Cancel Request
-Anfrage abbrechen
-Annuler la requête
+MSG_CANCEL15 (//)
+;
+;
+;
 ;
 MSG_CLEAR15 (/1/)
 Clear Direct Message
 Direktnachricht löschen
 Effacer le Message Direct
 ;
-MSG_SENDDIRMSG3 (/1/)
-Send Direct Message
-Direktnachricht senden
-Envoyer le Message Direct
+MSG_SENDDIRMSG3 (//)
+;
+;
+;
 ;
 MSG_CANCEL16 (/1/)
 Cancel Direct Message
@@ -795,10 +795,10 @@ MSG_BLOCK4 (/1/)
 \33cSind Sie sicher, daß Sie diesen Benutzer blockieren wollen?\n\nwenn sie jemand blockieren, kann Ihnen\nderjenige nicht mehr folgen oder Nachrichten senden.\n Wenn Ihr Konto öffentlich ist,\nkann derjenige ihn immer noch sehen,\naber er wird nicht mehr als Ihr Verfolger aufgelistet und Sie nicht mehr als seiner.\n\nWenn Sie einen Spammer blockieren, dann danke!
 \33cVoulez-vous réellement bloquer cet utilisateur ?\nSi vous bloquez quelqu'un, il lui sera impossible\nde vous suivre ni de vous envoyer un message.\nSi votre compte est public, il lui sera possible\nde l'afficher mais ne fera plus partie\nde la liste de vos suiveurs.\nSi vous bloquez un spameur, alors merci !
 ;
-MSG_QUIT (/1/)
-Quit
-Beenden
-Quitter
+MSG_QUIT (//)
+;
+;
+;
 ;
 MSG_QUIT2 (/1/)
 _Quit|_Cancel
@@ -815,10 +815,10 @@ Save
 Speichern
 Sauver
 ;
-MSG_OK2 (/1/)
-*OK
-*OK
-*Ok
+MSG_OK2 (//)
+;
+;
+;
 ;
 MSG_SAVED (/1/)
 Settings Saved to Envarc!
@@ -830,190 +830,190 @@ Update Profile
 Profil aktualisieren
 Mise à jour du profil
 ;
-MSG_OK3 (/1/)
-*OK
-*OK
-*Ok
+MSG_OK3 (//)
+;
+;
+;
 ;
 MSG_UPDATEPROFILE6 (/1/)
 \33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!
 \33cBitte beachten:\n\nDerzeit müssen sie *IMMER* einen 'Namen' angeben,\ndie anderen Felder sind optional, doch wenn Sie sie \nleer lassen, werden damit Ihre aktuellen\n Profilfelder auf der Twitter-Seite überschrieben   (d.h. Sie sollten alle Felder ausfüllen, wenn Sie sie \nauf Ihrer Twitter-Seite angezeigt bekommen wollen!\nWenn Sie sie nicht angezeigt bekommen wollen, lassen Sie sie leer\n(außer 'Name' natürlich)...\n\nIch gestalte das in Zukunft hoffentlich benutzerfreundlicher!\nBitte schauen Sie in die Sprechblasenhilfe für weitere Informationen zu jedem Feld!
 \33cAttention\n\nActuellement, vous devez *TOUJOURS* spécifier un 'Nom',\nles autres champs sont optionnels mais si ils sont laissés vides,\nils remplaceront le profil actuellement en ligne.\nRemplissez les informations que vous désirez voir affichées sur votre page Twitter.\nChaque champ possède une bulle d'aide pour plus d'informations.
 ;
-MSG_HTML1 (/1/)
-<TITLE>Welcome to AmiTwitter</TITLE></HEAD>
-<TITLE>Willkommen bei AmiTwitter</TITLE></HEAD>
-<TITLE>Bienvenue sur AmiTwitter</TITLE></HEAD>
+MSG_HTML1 (//)
 ;
-MSG_HTML2 (/1/)
-<CENTER>Enter your User Name/Password in the Tools -> Settings dialog window to get started... </CENTER><BR>
-<CENTER>Geben Sie Ihren Benutzernamen/Kennwort in den Dialog unter Werkzeuge -> Einstellungen ein, um zu beginnen...</CENTER><BR>
-<CENTER>Entrez votre identifiant dans la fenêtre Outils -> Préférences pour commencer.</CENTER><BR>
 ;
-MSG_HTML3 (/1/)
-<CENTER>This program is released under the GNU General Public License</CENTER><BR>
-<CENTER>Dieses Programm wurde unter der GNU General Public License veröffentlicht</CENTER><BR>
-<CENTER>Ce programme utilise la license publique GNU</CENTER><BR>
 ;
-MSG_HTML4 (/1/)
-<CENTER>No warranty is expressed or implied. Use at your own risk!</CENTER>
-<CENTER>Es wird keine Garantie gegeben. Benutzung auf eigenes Risiko!</CENTER>
-<CENTER>Auncune garantie n'est fournie, vous utilisez ce programme à vos risques et périls !</CENTER>
 ;
-MSG_HTML5 (/1/)
-<CENTER>The latest source code is always available at:</CENTER><BR>
-<CENTER>Der aktuellste Quellcode ist immer verfügbar bei:>/CENTER><BR>
-<CENTER>Le code source est disponible à l'adresse suivante :</CENTER><BR>
+MSG_HTML2 (//)
 ;
-MSG_HTML6 (/1/)
-<CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
-<CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
-<CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>
 ;
-MSG_HTML7 (/1/)
-<CENTER>-- Thanks for your interest, The AmiTwitter Open Source Team</CENTER><BR>
-<CENTER>-- Danke für Ihr Interesse, das AmiTwitter Open Source Team</CENTER><BR>
-<CENTER>-- Merci de votre intérêt, l'équipe Open Source de AmiTwitter</CENTER><BR>
 ;
-MSG_HTML8 (/1/)
-<CENTER>This program uses:</CENTER><BR>
-<CENTER>Dieses Pogramm verwendet:</CENTER><BR>
-<CENTER>Ce programme utilise :</CENTER><BR>
 ;
-MSG_HTML9 (/1/)
-<TITLE>Welcome to AmiTwitter</TITLE></HEAD>
-<TITLE>Willkommen bei AmiTwitter</TITLE></HEAD>
-<TITLE>Bienvenue sur AmiTwitter</TITLE></HEAD>
+MSG_HTML3 (//)
 ;
-MSG_HTML10 (/1/)
-<CENTER>What does AmiTwitter stand for?</CENTER><BR>
-<CENTER>Wofür steht AmiTwitter?</CENTER><BR>
-<CENTER>Qu'est-ce que signifie AmiTwitter ?</CENTER><BR>
 ;
-MSG_HTML11 (/1/)
-<CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>
-<CENTER>Antwort: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>
-<CENTER>Réponse : <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>
 ;
-MSG_HTML12 (/1/)
-<CENTER>What are the requirements for AmiTwitter?</CENTER><BR>
-<CENTER>Was sind die Anforderungen an AmiTwitter?</CENTER><BR>
-<CENTER>Quelles sont les composantes requises par AmiTwitter ?</CENTER><BR>
 ;
-MSG_HTML13 (/1/)
-<CENTER>Answer: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>
-<CENTER>Antwort: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary. OpenURL ist optional. </CENTER><BR>
-<CENTER>Réponse : MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL est optionnel.</CENTER><BR>
+MSG_HTML4 (//)
 ;
-MSG_HTML14 (/1/)
-<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>
-<CENTER>AmiTwitter läd keine Tweets herunter oder sendet sie nicht?</CENTER><BR>
-<CENTER>AmiTwitter ne télécharge ni n'envoie de Tweets ?</CENTER><BR>
 ;
-MSG_HTML15 (/1/)
-<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people (for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>
-<CENTER>Antwort: Sind Sie mit dem Internet verbunden, haben Sie Ihren Twitter-Benutzernamen/Kennwort im Fenster Werkzeuge -> Einstellungen eingetragen und sie gespeichert? Folgen Sie bereits einigen Menschen (siehe <l>Zeitleiste</l>) und haben Sie einige Tweets gesendet (siehe <l>Meine Tweets</l>?</CENTER><BR>
-<CENTER>Réponse : êtes-vous connecté à Internet ? Avez vous spécifié et sauvé un identifiant dans la fenêtre Outils -> Préférences ? Suivez-vous actuellement des utilisateurs pour que votre <I>Ligne de temps</I> fonctionne ? Et avez-vous envoyé quelques Tweets pour que <I>Mes Tweets</I> fonctionne ?</CENTER><BR>
 ;
-MSG_HTML16 (/1/)
-<CENTER>Direct Messages don't seem to work?</CENTER><BR>
-<CENTER>Direktnachricht scheint nicht zu funktionieren?</CENTER>
-<CENTER>Les Messages Directs (DM) ne semblent pas fonctionner ?</CENTER><BR>
 ;
-MSG_HTML17 (/1/)
-<CENTER>Answer: Ensure you enter the recipient's Screen Name (i.e. User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>
-<CENTER>Antwort: Stellen Sie sicher, daß Sie den Empfänger-Screennamen (d.h. Benutzernamen) korrekt eingeben, derzeit werden keine Benutzer-IDs akzeptiert.</CENTER><BR>
-<CENTER>Réponse : vérifiez que vous avez saisi correctement le pseudo du destinataire, les numéros d'ID d'utilisateur ne sont pas acceptés.</CENTER><BR>
+MSG_HTML5 (//)
 ;
-MSG_HTML18 (/1/)
-<CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>
-<CENTER>Mir gefällt AmiTwitter, wie spende ich?</CENTER><BR>
-<CENTER>J'apprécie AmiTwitter, comment puis-je faire un don ?</CENTER><BR>
 ;
-MSG_HTML19 (/1/)
-<CENTER>Answer: Follow the 'Donate!' link to the PayPal website that opens in your favorite web browser.</CENTER><BR>
-<CENTER>Antwort: Folgen Sie dem 'Spenden!'-Verweis zur PayPal-Seite, die sich in Ihrem favorisierten Webbrowser öffnet.</CENTER><BR>
-<CENTER>Réponse : suivez le lien 'Faire un don !' vers le site Paypal qui s'ouvrira dans votre navigateur favori</CENTER><BR>
 ;
-MSG_HTML20 (/1/)
-<CENTER>Nothing happens when I click on the links at the very bottom of the main program window?</CENTER><BR>
-<CENTER>Nichts passiert, wenn ich auf die Links am Fuß des Hauptprogrammfensters klicke!</CENTER><BR>
-<CENTER>Rien ne se passe lorsque je clique sur les liens en bas de la fenêtre principale ?</CENTER><BR>
 ;
-MSG_HTML21 (/1/)
-<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>
-<CENTER>Antwort: Stellen Sie sicher, daß OpenURL richtig installiert und konfiguriert ist.</CENTER><BR>
-<CENTER>Réponse : vérifiez que OpenURL est correctement installé et paramétré.</CENTER><BR>
+MSG_HTML6 (//)
 ;
-MSG_HTML22 (/1/)
-<CENTER>All I see is the message, 'Attempting to get the latest...'?</CENTER><BR>
-<CENTER>Alles, was ich sehe, ist die Nachricht 'Versuche die neuesten...'!</CENTER><BR>
-<CENTER>Tout ce que j'obtiens est le message 'Réception du plus récent...' ?</CENTER><BR>
 ;
-MSG_HTML23 (/1/)
-<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>
-<CENTER>Antwort: Der wahrscheinlichste Grund ist, daß Sie nichts in Ihrer Zeitleiste haben. Beispielsweise haben Sie noch keine Elemente auf der Twitter-Seite 'favorisiert', und deshalb werden sie unter 'Meine Favoriten' in AmiTwitter auch nicht angezeigt.</CENTER><BR>
-<CENTER>Réponse: la raison la plus probable est que vous n'avez rien dans ce temps particulier. Par exemple, vous n'avez jamais 'favoris' aucun article sur le site de Twitter, et par conséquent, ils ne seront pas visibles sous la rubrique «Mes Favoris» dans AmiTwitter non plus.</CENTER><BR>
 ;
-MSG_HTML24 (/1/)
-<CENTER>Why is the file size so large?</CENTER><BR>
-<CENTER>Warum ist die Datei so groß?</CENTER<BR>
-<CENTER>Pourquoi la taille de fichier est aussi importante ?</CENTER><BR>
 ;
-MSG_HTML25 (/1/)
-<CENTER>Answer: Because AmiTwitter relies on numerous libs to work directly compiled into the binary, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>
-<CENTER>Antwort: Weil AmiTwitter auf zahlreichen Bibliotheken basiert, die in das Programm einkompiliert sind, namentlich: cURL, SSL, xml2, glib etc...</CENTER><BR>
-<CENTER>Réponse: Parce que AmiTwitter s'appuie sur de nombreuses librairies de travailler directement compilé dans le binaire, à savoir: cURL, SSL, xml2, glib, etc ...</CENTER> <BR>
+MSG_HTML7 (//)
 ;
-MSG_HTML26 (/1/)
-<CENTER>Why did you write AmiTwitter?</CENTER><BR>
-<CENTER>Warum haben Sie AmiTwitter geschrieben?</CENTER><BR>
-<CENTER>Pourquoi avez-vous développé AmiTwitter</CENTER><BR>
 ;
-MSG_HTML27 (/1/)
-<CENTER>Answer: To prove it could be done!</CENTER><BR>
-<CENTER>Antwort: Um zu zeigen, daß es geht!</CENTER><BR>
-<CENTER>Réponse : pour prouver que cela pouvait être fait !</CENTER><BR>
 ;
-MSG_HTML28 (/1/)
-<CENTER>What is AmiTwitter based on?</CENTER><BR>
-<CENTER>Worauf basiert AmiTwitter?</CENTER><BR>
-<CENTER>A partir de quoi a été développé AmiTwitter ?</CENTER><BR>
 ;
-MSG_HTML29 (/1/)
-<CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>
-<CENTER>Antwort: xTwitter von Tsukasa Hamano.</CENTER><BR>
-<CENTER>Réponse : xTwitter de Tsukasa Hamano</CENTER><BR>
+MSG_HTML8 (//)
 ;
-MSG_HTML30 (/1/)
-<CENTER>Links in the main Tweets window don't work?</CENTER><BR>
-<CENTER>Verweise im Hauptfenster funktionieren nicht?</CENTER><BR>
-<CENTER>Les liens dans la fenêtre de Tweets principale ne fonctionnent pas ?</CENTER><BR>
 ;
-MSG_HTML31 (/1/)
-<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (The plan is to switch to HTMLview.mcc in the future...)</CENTER><BR>
-<CENTER>Antwort: Dies ist kein Webbrowser. Außerdem ist das eine Beschränkung von HTMLtext.mcc, das derzeit verwendet wird. (Geplant ist, in Zukunft auf HTMLview.mcc umzustellen).</CENTER><BR>
-<CENTER>Réponse : ce n'est pas un navigateur web ! C'est également une limitation de HTMLtext.mcc, il est prévu d'utiliser HTMLview.mcc dans le futur.</CENTER><BR>
 ;
-MSG_HTML32 (/1/)
-<CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>
-<CENTER>Was sind die Pläne für AmiTwitter in der Zukunft?</CENTER><BR>
-<CENTER>Quels sont les évolutions prévues pour AmiTwitter ?</CENTER><BR>
 ;
-MSG_HTML33 (/1/)
-<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...</CENTER><BR>
-<CENTER>Antwort: Zuerst mehr über die Twitter-API zu lernen, aber das hängt sehr von den Rückmeldungen ab, die ich erhalte. Ebenso portieren auf andere Systeme (d.h. OS 4.x und AROS), und eine aktive Quellcodebasis mit einigen Entwicklern, die dem Projekt bei SourceForge beitreten, wäre schön.</CENTER><BR>
-<CENTER>Réponse: D'abord, en savoir plus de l'API de Twitter, mais elle dépend beaucoup sur les commentaires que je reçois. En outre, les ports à d'autres systèmes (par exemple OS 4.x et AROS) et une base active de code source avec quelques développeurs se joindre au projet sur SourceForge serait bien ...</CENTER><BR>
+MSG_HTML9 (//)
 ;
-MSG_HTML34 (/1/)
-<CENTER>I don't know how to code, what can I do?</CENTER><BR>
-<CENTER>Ich weiß nicht, wie man programmiert, was kann ich tun?>/CENTER><BR>
-<CENTER>Je ne sais pas programmer, comment puis-je aider ?</CENTER><BR>
 ;
-MSG_HTML35 (/1/)
-<CENTER>Consider donating.</CENTER><BR>
-<CENTER>Ziehen Sie in Erwägung zu spenden.</CENTER><BR>
-<CENTER>Pensez à faire un don.</CENTER><BR>
+;
+;
+MSG_HTML10 (//)
+;
+;
+;
+;
+MSG_HTML11 (//)
+;
+;
+;
+;
+MSG_HTML12 (//)
+;
+;
+;
+;
+MSG_HTML13 (//)
+;
+;
+;
+;
+MSG_HTML14 (//)
+;
+;
+;
+;
+MSG_HTML15 (//)
+;
+;
+;
+;
+MSG_HTML16 (//)
+;
+;
+;
+;
+MSG_HTML17 (//)
+;
+;
+;
+;
+MSG_HTML18 (//)
+;
+;
+;
+;
+MSG_HTML19 (//)
+;
+;
+;
+;
+MSG_HTML20 (//)
+;
+;
+;
+;
+MSG_HTML21 (//)
+;
+;
+;
+;
+MSG_HTML22 (//)
+;
+;
+;
+;
+MSG_HTML23 (//)
+;
+;
+;
+;
+MSG_HTML24 (//)
+;
+;
+;
+;
+MSG_HTML25 (//)
+;
+;
+;
+;
+MSG_HTML26 (//)
+;
+;
+;
+;
+MSG_HTML27 (//)
+;
+;
+;
+;
+MSG_HTML28 (//)
+;
+;
+;
+;
+MSG_HTML29 (//)
+;
+;
+;
+;
+MSG_HTML30 (//)
+;
+;
+;
+;
+MSG_HTML31 (//)
+;
+;
+;
+;
+MSG_HTML32 (//)
+;
+;
+;
+;
+MSG_HTML33 (//)
+;
+;
+;
+;
+MSG_HTML34 (//)
+;
+;
+;
+;
+MSG_HTML35 (//)
+;
+;
+;
 ;
 MSG_0000 (/1/)
 File
@@ -1023,7 +1023,7 @@ Fichier
 MSG_0001 (/1/)
 Timeline
 Zeitleiste
-Ligne de _temps
+Ligne de temps
 ;
 MSG_0002 (/1/)
 Retweets
