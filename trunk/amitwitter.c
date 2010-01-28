@@ -241,17 +241,7 @@ const char *screen_name, *text;
 const char *name,  *web,  *location,  *bio;
 
 // Users tabs
-static char *Pages[]   = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","Show User",NULL };
-
-/*static STRPTR Pages[] = {
-
-     (STRPTR)MSG_FOLLOW_STR,
-     (STRPTR)MSG_FOLLOW,
-     (STRPTR)MSG_BLOCK,
-     (STRPTR)MSG_NOTIFY,
-     (STRPTR)MSG_SHOWUSER,
-      NULL,
-     };  */
+//static char *Pages[] = { "Follow/Unfollow","Block/Unblock","Notify/Unnotify","Show User",NULL };
 
 /*****************************************************************************/
 
@@ -603,11 +593,6 @@ void localizeTheBar(struct MUIS_TheBar_Button *button) {
         if (button->help) button->help = getString((ULONG)button->help);
     }
 }
-
-/* void localizeStrings(STRPTR *s) {
-
-    for (; *s; s++) *s = getString((ULONG)*s);
-    } */
 
 /*****************************************************************************/
 
@@ -3116,14 +3101,22 @@ int main(int argc, char *argv[]) {
 
   APTR app;
 
+  static char *Pages[6];
+
   if ( ! Open_Libs() ) {
 
     printf("Cannot open libs\n");
     return(0);
   }
-//localizeStrings(Pages);
+
   localizeNewMenu(Menu);
   localizeTheBar(buttons);
+
+  Pages[0] = GetString(&li, MSG_FOLLOW),
+  Pages[1] = GetString(&li, MSG_BLOCK),
+  Pages[2] = GetString(&li, MSG_NOTIFY),
+  Pages[3] = GetString(&li, MSG_SHOWUSER),
+  Pages[4] = NULL,
 
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
