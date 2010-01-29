@@ -3362,12 +3362,12 @@ int main(int argc, char *argv[]) {
 
       // The Direct Message Window
       SubWindow, win_dirmsg = WindowObject,
-          MUIA_Window_Title, GetString(&li, MSG_SENDDIRMSG) /*"Send a Direct Message"*/,
+          MUIA_Window_Title, GetString(&li, MSG_DIRMSG2) /*"Send a Direct Message"*/,
           MUIA_Window_ID, MAKE_ID('D','I','R','M'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT(GetString(&li, MSG_SENDDIRMSG) /*"Send a Direct Message"*/),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_DIRMSG2) /*"Send a Direct Message"*/),
                   Child, VGroup,
                       Child, HGroup,
                            Child, Label2(GetString(&li, MSG_RECIPIENT) /*"Recipient:"*/),
