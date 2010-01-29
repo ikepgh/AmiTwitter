@@ -222,7 +222,7 @@ struct Library *SocketBase = NULL;
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
 *STR_directmessage, *STR_login, *STR_search, *STR_follow, *STR_block,
 *STR_notify, *STR_profile_name, *STR_profile_web, *STR_profile_location,
-*STR_profile_bio, *STR_show;
+*STR_profile_bio, *STR_show, *STR_twitLength, *STR_dirmsgLength;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
@@ -3104,6 +3104,10 @@ int main(int argc, char *argv[]) {
 
   static char *Pages[6];
 
+  char *twitContents, *dirmsgContents;
+  char twitLength[512], dirmsgLength[512];
+  enum { TYPING_TWIT, TYPING_DIRMSG=1 };
+
   if ( ! Open_Libs() ) {
 
     printf("Cannot open libs\n");
@@ -3217,6 +3221,12 @@ int main(int argc, char *argv[]) {
               Child, HGroup, GroupFrameT(GetString(&li, MSG_TWEET2) /*"Send a Tweet"*/),
 
                   Child, VGroup,
+                      Child, HGroup,
+                           Child, HSpace(2),
+                           Child, STR_twitLength = BetterStringObject, MUIA_String_Contents, "140",
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns, 4,
+                           MUIA_String_MaxLen, 4, MUIA_CycleChain, FALSE, End,     
+                      End,
                       Child, HGroup,
                            Child, Label2( GetString(&li, MSG_SEND3) /*"Tweet:"*/),
                            Child, HGroup,
@@ -3374,6 +3384,13 @@ int main(int argc, char *argv[]) {
                            Child, STR_user_id = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
                            MUIA_ShortHelp, GetString(&li, MSG_SCREENNAME) /*"Enter a Screen Name only"*/,
+                      End,
+
+                      Child, HGroup,
+                           Child, HSpace(2),
+                           Child, STR_dirmsgLength = BetterStringObject, MUIA_String_Contents, "140",
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns, 4,
+                           MUIA_String_MaxLen, 4, MUIA_CycleChain, FALSE, End,
                       End,
   
                       Child, HGroup,
@@ -3728,6 +3745,12 @@ int main(int argc, char *argv[]) {
   DoMethod(win_userprofile,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_userprofile,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
+  // Tweet / Direct Message character countdown
+  DoMethod((Object*)STR_message,MUIM_Notify,MUIA_String_Contents,
+  MUIV_EveryTime,(Object*)app, 2, MUIM_Application_ReturnID,TYPING_TWIT);
+
+  DoMethod((Object*)STR_directmessage,MUIM_Notify,MUIA_String_Contents,
+  MUIV_EveryTime,(Object*)app, 2, MUIM_Application_ReturnID,TYPING_DIRMSG);
 
   // Get User Name/Password
   get(str_user_pref, MUIA_String_Contents, &username);
@@ -3757,6 +3780,43 @@ int main(int argc, char *argv[]) {
               // Quit program
                 case MUIV_Application_ReturnID_Quit:
                      running = FALSE;
+                     break;
+
+                // Tweet character countdown
+                case TYPING_TWIT:
+                     get(STR_message, MUIA_String_Contents, &twitContents);
+
+                     if(twitContents) {
+
+                          sprintf(twitLength,"%d", 140-strlen(twitContents) ); 
+
+                          set(STR_twitLength, MUIA_String_Contents, (int)twitLength);
+
+                          if( strlen(twitContents) > 140) {
+
+                               twitContents[140]='\0'; //chop off all characters after character 140
+
+                               set(STR_message, MUIA_String_Contents, (int)twitContents);
+                          }
+                     }
+                     break;
+
+                // Dir Msg character countdown
+                case TYPING_DIRMSG:
+                     get(STR_directmessage, MUIA_String_Contents, &dirmsgContents);
+
+                     if(dirmsgContents) {
+
+                          sprintf(dirmsgLength,"%d", 140-strlen(dirmsgContents) );  
+
+                          set(STR_dirmsgLength, MUIA_String_Contents, (int)dirmsgLength);
+
+                          if( strlen(dirmsgContents) > 140) {
+                               dirmsgContents[140]='\0'; 
+
+                               set(STR_directmessage, MUIA_String_Contents, (int)dirmsgContents);
+                          }
+                     }
                      break;
 
                 // Timeline
