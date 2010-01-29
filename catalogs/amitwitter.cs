@@ -92,7 +92,7 @@ Gérer les utilisateurs
 ;
 MSG_DIRMSG (/1/)
 _Dir Msg
-_Direktnachricht
+_Direktnachr.
 Mess _Dir
 ;
 MSG_DIRMSG2 (/1/)
@@ -302,7 +302,7 @@ Tweet :
 ;
 MSG_SEND4 (/1/)
 Enter your Tweet and click Update to send (max 140 characters)
-Geben Sie Ihren Tweet ein und klicken <b>Update</b> zum Abschicken (max. 140 Zeichen)
+Geben Sie Ihren Tweet ein und klicken Aktualisieren zum Abschicken (max. 140 Zeichen)
 Tapez votre Tweet et cliquez sur Mettre à jour pour l'envoyer (140 caractères maxi)
 ;
 MSG_CLEAR (/1/)
