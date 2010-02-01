@@ -3117,10 +3117,10 @@ int main(int argc, char *argv[]) {
   localizeNewMenu(Menu);
   localizeTheBar(buttons);
 
-  Pages[0] = GetString(&li, MSG_FOLLOW),
-  Pages[1] = GetString(&li, MSG_BLOCK),
-  Pages[2] = GetString(&li, MSG_NOTIFY),
-  Pages[3] = GetString(&li, MSG_SHOWUSER),
+  Pages[0] = GetString(&li, MSG_SHOWUSER),
+  Pages[1] = GetString(&li, MSG_FOLLOW),
+  Pages[2] = GetString(&li, MSG_BLOCK),
+  Pages[3] = GetString(&li, MSG_NOTIFY),
   Pages[4] = NULL,
 
   app = ApplicationObject,
@@ -3284,6 +3284,25 @@ int main(int argc, char *argv[]) {
 
           WindowContents, VGroup,
             Child, RegisterGroup(Pages),
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_SHOWUSER2) /*"Show a User"*/),
+
+                  Child, VGroup,
+                      Child, HGroup,
+                           Child, Label2(GetString(&li, MSG_FOLLOW3) /*"User:"*/),
+                           Child, HGroup,
+                           Child, STR_show = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, GetString(&li, MSG_SHOWUSER4) /*"\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!"*/,
+                           End,
+                      End,
+                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
+                           Child, show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SHOWUSER5) /*"_Show User"*/),
+                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
+                      End,
+                  End,
+              End,
+
               Child, HGroup, GroupFrameT( GetString(&li, MSG_FOLLOW2) /*"Change the Following Status for a User"*/),
 
                   Child, VGroup,
@@ -3340,25 +3359,6 @@ int main(int argc, char *argv[]) {
                            Child, notify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_RECEIVE) /*"_Receive"*/),
                            Child, unnotify_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_STOP) /*"_Stop"*/),
                            Child, but_notify_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
-                      End,
-                  End,
-              End,
-
-              Child, HGroup, GroupFrameT(GetString(&li, MSG_SHOWUSER2) /*"Show a User"*/),
-
-                  Child, VGroup,
-                      Child, HGroup,
-                           Child, Label2(GetString(&li, MSG_FOLLOW3) /*"User:"*/),
-                           Child, HGroup,
-                           Child, STR_show = BetterStringObject, StringFrame,
-                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, GetString(&li, MSG_SHOWUSER4) /*"\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!"*/,
-                           End,
-                      End,
-                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR) /*"C_lear"*/),
-                           Child, show_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SHOWUSER5) /*"_Show User"*/),
-                           Child, but_show_cancel = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL) /*"_Cancel"*/),
                       End,
                   End,
               End,
