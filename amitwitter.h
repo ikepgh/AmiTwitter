@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.25
+ ** Current revision : V 0.26
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
@@ -94,8 +95,6 @@
 
 #define TWITTER_API_PATH_USER_SHOW          "/users/show/"
 
-
-
 /******************************************************************************/
 
 // HTML Introduction/About Message
@@ -145,6 +144,7 @@ typedef struct {
     unsigned long last_followers_timeline;
     unsigned long last_public_timeline; 
     unsigned long last_dirmsgsent_timeline;
+    unsigned long last_dirmsgrcvd_timeline;
     unsigned long last_favs_timeline;
     unsigned long last_blocking_timeline;
     unsigned long last_usershow_timeline;
@@ -168,10 +168,8 @@ typedef struct {
     const char *followers_count;   
     const char *friends_count;     
     const char *favourites_count;
-    const char *statuses_count;    
+    const char *statuses_count;
 }twitter_user_t;
-
-/******************************************************************************/
 
 // Status structure
 typedef struct {
@@ -187,6 +185,66 @@ typedef struct {
     const char *retweeted_status;        
     const twitter_user_t *user;
 }twitter_status_t;
+
+/******************************************************************************/
+
+// Recipient structure
+typedef struct {
+    const char *created_at;
+    const char *id;
+    const char *name;
+    const char *screen_name;
+    const char *location;
+    const char *description;
+    const char *profile_image_url;
+    const char *followers_count;
+    const char *friends_count;
+    const char *favourites_count;
+    const char *statuses_count;
+    const char *recipient;
+}twitter_recipient_t;
+
+// Direct Message Recipient structure
+typedef struct {
+    const char *created_at;
+    const char *id;
+    const char *sender_id;
+    const char *text;
+    const char *recipient_id;
+    const char *sender_screen_name;
+    const char *recipient_screen_name;
+    const twitter_recipient_t *recipient;
+}twitter_direct_message_t;
+
+/******************************************************************************/
+
+// Sender structure
+typedef struct {
+    const char *created_at;
+    const char *id;
+    const char *name;
+    const char *screen_name;
+    const char *location;
+    const char *description;
+    const char *profile_image_url;
+    const char *followers_count;
+    const char *friends_count;
+    const char *favourites_count;
+    const char *statuses_count;
+    const char *sender;
+}twitter_sender_t;
+
+// Direct Message Sender structure
+typedef struct {
+    const char *created_at;
+    const char *id;
+    const char *sender_id;
+    const char *text;
+    const char *recipient_id;
+    const char *sender_screen_name;
+    const char *recipient_screen_name;
+    const twitter_sender_t *sender;
+}twitter_direct_message_rcvd_t;
 
 /******************************************************************************/
 
@@ -221,17 +279,33 @@ GList* twitter_retweeted_to_me(twitter_t *twitter);
 GList* twitter_retweets_of_me(twitter_t *twitter);
 
 GList* twitter_dirmsgsent(twitter_t *twitter);
+GList* twitter_dirmsgrcvd(twitter_t *twitter);
 
 GList* twitter_favs(twitter_t *twitter);
 
 GList* twitter_parse_statuses_node(xmlTextReaderPtr reader);
+GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader);
+GList* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader); 
+
 twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader);
+twitter_recipient_t* twitter_parse_recipient_node(xmlTextReaderPtr reader);  
+twitter_sender_t* twitter_parse_sender_node(xmlTextReaderPtr reader); 
+
 twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader);
+twitter_direct_message_t* twitter_parse_status_node_dirmsg(xmlTextReaderPtr reader); 
+twitter_direct_message_rcvd_t* twitter_parse_status_node_dirmsgrcvd(xmlTextReaderPtr reader); 
 
 void twitter_statuses_free(GList *statuses);
-void twitter_status_print(twitter_status_t *status);
+void twitter_statuses_free_dirmsg(GList *statuses);
+void twitter_statuses_free_dirmsgrcvd(GList *statuses);
 
-int twitter_fetch_images(twitter_t *twitter, GList *statuses);
+void twitter_status_print(twitter_status_t *status);
+void twitter_status_print_dirmsg(twitter_direct_message_t *direct_message);
+void twitter_status_print_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message);
+
 int twitter_fetch_image(twitter_t *twitter, const char *url, char* path);
+int twitter_fetch_images(twitter_t *twitter, GList *statuses);
+int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses);
+int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, GList *statuses);
 
 /******************************************************************************/

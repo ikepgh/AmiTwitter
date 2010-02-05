@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.25
+ ** Current revision : V 0.26
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
  ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
@@ -278,8 +279,8 @@ static struct NewMenu Menu[]= {
     { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
     { NM_ITEM,   (STRPTR)MSG_0011,       0,   0, 0, (APTR)0               },
     { NM_SUB,    (STRPTR)MSG_0011,      "D",  0, 0, (APTR)MEN_DIRMSG      },
-//  { NM_SUB,    (STRPTR)MSG_0012,       0,   0, 0, (APTR)MEN_DIRMSGSENT  },
-//  { NM_SUB,    (STRPTR)MSG_0013,       0,   0, 0, (APTR)MEN_DIRMSGRCVD  },
+    { NM_SUB,    (STRPTR)MSG_0012,      "G",  0, 0, (APTR)MEN_DIRMSGSENT  },
+    { NM_SUB,    (STRPTR)MSG_0013,      "C",  0, 0, (APTR)MEN_DIRMSGRCVD  },
     { NM_ITEM,   (STRPTR)MSG_0014,       0,   0, 0, (APTR)0               },
     { NM_SUB,    (STRPTR)MSG_0014,      "E",  0, 0, (APTR)MEN_TWEET       },
     { NM_SUB,    (STRPTR)MSG_0015,      "M",  0, 0, (APTR)MEN_MYTWEET     },
@@ -622,6 +623,7 @@ twitter_t* twitter_new() {
     twitter->last_followers_timeline = 1;
     twitter->last_public_timeline = 1; 
     twitter->last_dirmsgsent_timeline = 1;
+    twitter->last_dirmsgrcvd_timeline = 1;
     twitter->last_favs_timeline = 1;
     twitter->last_blocking_timeline = 1;
     twitter->last_usershow_timeline = 1;
@@ -659,7 +661,7 @@ void twitter_free(twitter_t *twitter) {
 
 /*****************************************************************************/
 
-// Free statuses
+// Free User
 void twitter_statuses_free(GList *statuses) {
     GList *l = statuses;
     twitter_status_t *status;
@@ -696,6 +698,88 @@ void twitter_statuses_free(GList *statuses) {
             free((void*)(status->user));
         }
         free(status);
+    }while((l = g_list_next(l)));
+    g_list_free(statuses);
+}
+
+/*****************************************************************************/
+
+// Free Recipient
+void twitter_statuses_free_dirmsg(GList *statuses) {
+    GList *l = statuses;
+    twitter_direct_message_t *direct_message;
+    if(!statuses){
+        return;
+    }
+    do{
+        direct_message = l->data;
+        if(!direct_message) {
+            continue;
+        }
+        free((void*)(direct_message->id));
+        free((void*)(direct_message->sender_id));
+        free((void*)(direct_message->text));
+        free((void*)(direct_message->recipient_id));
+        free((void*)(direct_message->created_at));
+        free((void*)(direct_message->sender_screen_name));
+        free((void*)(direct_message->recipient_screen_name));
+
+        if(direct_message->recipient){
+            free((void*)(direct_message->recipient->id));
+            free((void*)(direct_message->recipient->created_at));
+            free((void*)(direct_message->recipient->name));
+            free((void*)(direct_message->recipient->screen_name));
+            free((void*)(direct_message->recipient->location));
+            free((void*)(direct_message->recipient->description));
+            free((void*)(direct_message->recipient->profile_image_url));
+            free((void*)(direct_message->recipient->followers_count));
+            free((void*)(direct_message->recipient->friends_count));
+            free((void*)(direct_message->recipient->favourites_count));
+            free((void*)(direct_message->recipient->statuses_count));
+            free((void*)(direct_message->recipient));
+        }
+        free(direct_message);
+    }while((l = g_list_next(l)));
+    g_list_free(statuses);
+}
+
+/*****************************************************************************/
+
+// Free Sender
+void twitter_statuses_free_dirmsgrcvd(GList *statuses) {
+    GList *l = statuses;
+    twitter_direct_message_rcvd_t *direct_message;
+    if(!statuses){
+        return;
+    }
+    do{
+        direct_message = l->data;
+        if(!direct_message) {
+            continue;
+        }
+        free((void*)(direct_message->id));
+        free((void*)(direct_message->sender_id));
+        free((void*)(direct_message->text));
+        free((void*)(direct_message->recipient_id));
+        free((void*)(direct_message->created_at));
+        free((void*)(direct_message->sender_screen_name));
+        free((void*)(direct_message->recipient_screen_name));
+
+        if(direct_message->sender){
+            free((void*)(direct_message->sender->id));
+            free((void*)(direct_message->sender->created_at));
+            free((void*)(direct_message->sender->name));
+            free((void*)(direct_message->sender->screen_name));
+            free((void*)(direct_message->sender->location));
+            free((void*)(direct_message->sender->description));
+            free((void*)(direct_message->sender->profile_image_url));
+            free((void*)(direct_message->sender->followers_count));
+            free((void*)(direct_message->sender->friends_count));
+            free((void*)(direct_message->sender->favourites_count));
+            free((void*)(direct_message->sender->statuses_count));
+            free((void*)(direct_message->sender));
+        }
+        free(direct_message);
     }while((l = g_list_next(l)));
     g_list_free(statuses);
 }
@@ -873,6 +957,70 @@ int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
 
 /*****************************************************************************/
 
+// Fetch Recipient Images
+int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses) {
+    int ret;
+    twitter_direct_message_t *direct_message;
+    const char *url;
+    char name[PATH_MAX];
+    char path[PATH_MAX];
+    struct stat st;
+
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return 0;
+    }
+
+    do{
+        direct_message = statuses->data;
+        twitter_image_name_dirmsg(direct_message, name);
+        url = direct_message->recipient->profile_image_url;
+        snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
+        ret = stat(path, &st);
+    //  if(ret) {
+        //  if(twitter->debug)
+            printf("fetch_image: %s\n", url);
+            twitter_fetch_image(twitter, url, path);
+    //  }
+    }while((statuses = g_list_previous(statuses)));
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Fetch Sender Images
+int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
+    int ret;
+    twitter_direct_message_rcvd_t *direct_message;
+    const char *url;
+    char name[PATH_MAX];
+    char path[PATH_MAX];
+    struct stat st;
+
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return 0;
+    }
+
+    do{
+        direct_message = statuses->data;
+        twitter_image_name_dirmsgrcvd(direct_message, name);
+        url = direct_message->sender->profile_image_url;
+        snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
+        ret = stat(path, &st);
+    //  if(ret) {
+        //  if(twitter->debug)
+            printf("fetch_image: %s\n", url);
+            twitter_fetch_image(twitter, url, path);
+    //  }
+    }while((statuses = g_list_previous(statuses)));
+
+    return 0;
+}
+
+/*****************************************************************************/
+
 // Image Name
 int twitter_image_name(twitter_status_t *status, char *name) {
     size_t i;
@@ -898,6 +1046,56 @@ int twitter_image_name(twitter_status_t *status, char *name) {
 
 /*****************************************************************************/
 
+// Image Name - Recipient
+int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *name) {
+    size_t i;
+    i = strlen(direct_message->recipient->profile_image_url);
+    while(i--)
+        if(direct_message->recipient->profile_image_url[i] == '/')
+            break;
+    while(i--)
+        if(direct_message->recipient->profile_image_url[i] == '/')
+            break;
+    i++;
+    strncpy(name, direct_message->recipient->profile_image_url + i, PATH_MAX - 1);
+    i = strlen(name);
+    while(i--)
+        if(name[i] == '/')
+         name[i] = '_';
+
+      // added to truncate image name for displaying in HTMLtext .mcc
+         name[i] = strncpy(name, direct_message->recipient->id, PATH_MAX);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
+// Image Name - Sender
+int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message, char *name) {
+    size_t i;
+    i = strlen(direct_message->sender->profile_image_url);
+    while(i--)
+        if(direct_message->sender->profile_image_url[i] == '/')
+            break;
+    while(i--)
+        if(direct_message->sender->profile_image_url[i] == '/')
+            break;
+    i++;
+    strncpy(name, direct_message->sender->profile_image_url + i, PATH_MAX - 1);
+    i = strlen(name);
+    while(i--)
+        if(name[i] == '/')
+         name[i] = '_';
+
+      // added to truncate image name for displaying in HTMLtext .mcc
+         name[i] = strncpy(name, direct_message->sender->id, PATH_MAX);
+
+    return 0;
+}
+
+/*****************************************************************************/
+
 ///
 
 /// AmiTwitter XML Parser *****************************************************/
@@ -916,11 +1114,66 @@ GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
         type = xmlTextReaderNodeType(reader);
         if(type == XML_READER_TYPE_ELEMENT) {
             name = xmlTextReaderName(reader);
-            if(!xmlStrcmp(name, (xmlChar *)"status" /*statuses" || "direct-messages"*/)) {
-            //added es" || "direct-messages"
+            if(!xmlStrcmp(name, (xmlChar *)"status")) {
                 status = twitter_parse_status_node(reader);
                 if(status) {
                     statuses = g_list_append(statuses, status);
+                }
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return statuses;
+}
+
+/*****************************************************************************/
+
+// Parse Direct Messages Recipient
+GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader) {
+
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    GList* statuses = NULL;
+    twitter_direct_message_t *direct_message;
+
+    do {
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if(type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"direct-messages")) {
+                direct_message = twitter_parse_status_node_dirmsg(reader);
+                if(direct_message) {
+                    statuses = g_list_append(statuses, direct_message);
+                }
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return statuses;
+}
+
+/*****************************************************************************/
+
+// Parse Direct Messages Sender
+GList* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader) {
+
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    GList* statuses = NULL;
+    twitter_direct_message_rcvd_t *direct_message;
+
+    do {
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if(type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"direct-messages")) {
+                direct_message = twitter_parse_status_node_dirmsgrcvd(reader);
+                if(direct_message) {
+                    statuses = g_list_append(statuses, direct_message);
                 }
             }
             xmlFree(name);
@@ -974,14 +1227,14 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
                 status->in_reply_to_screen_name = (const char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"retweeted_status")) {
                 ret = xmlTextReaderRead(reader);
-                status->retweeted_status = (const char *)xmlTextReaderValue(reader);
+                status->retweeted_status = (const char *)xmlTextReaderValue(reader);            
             }else if (!xmlStrcmp(name, (xmlChar *)"user")) {
                 status->user = twitter_parse_user_node(reader);
             }
             xmlFree(name);
         } else if (type == XML_READER_TYPE_END_ELEMENT) {
             name = xmlTextReaderName(reader);
-            if (!xmlStrcmp(name, (xmlChar *)"status" /*|| "direct_message"*/)) {
+            if (!xmlStrcmp(name, (xmlChar *)"status")) {
                 xmlFree(name);
                 break;
             }
@@ -989,6 +1242,112 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
         }
     }while(ret == 1);
     return status;
+}
+
+/*****************************************************************************/
+
+// Parse Direct Messages - Recipient
+twitter_direct_message_t* twitter_parse_status_node_dirmsg(xmlTextReaderPtr reader) {
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    twitter_direct_message_t *direct_message;
+    direct_message = (twitter_direct_message_t *)malloc(sizeof(twitter_direct_message_t));
+    memset(direct_message, 0, sizeof(twitter_direct_message_t));
+
+    do{
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if (type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if (!xmlStrcmp(name, (xmlChar *)"created_at")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->created_at = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"sender_id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->sender_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->text = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"recipient_id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->recipient_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"sender_screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->sender_screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"recipient_screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->recipient_screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"recipient")) {
+                direct_message->recipient = twitter_parse_recipient_node(reader);
+            }
+            xmlFree(name);
+        } else if (type == XML_READER_TYPE_END_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if (!xmlStrcmp(name, (xmlChar *)"direct_message")) {
+                xmlFree(name);
+                break;
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return direct_message;
+}
+
+/*****************************************************************************/
+
+// Parse Direct Messages - Sender
+twitter_direct_message_rcvd_t* twitter_parse_status_node_dirmsgrcvd(xmlTextReaderPtr reader) {
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    twitter_direct_message_rcvd_t *direct_message;
+    direct_message = (twitter_direct_message_rcvd_t *)malloc(sizeof(twitter_direct_message_rcvd_t));
+    memset(direct_message, 0, sizeof(twitter_direct_message_rcvd_t));
+
+    do{
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if (type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if (!xmlStrcmp(name, (xmlChar *)"created_at")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->created_at = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"sender_id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->sender_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->text = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"recipient_id")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->recipient_id = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"sender_screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->sender_screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"recipient_screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                direct_message->recipient_screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if (!xmlStrcmp(name, (xmlChar *)"sender")) {
+                direct_message->sender = twitter_parse_sender_node(reader);
+            }
+            xmlFree(name);
+        } else if (type == XML_READER_TYPE_END_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if (!xmlStrcmp(name, (xmlChar *)"direct_message")) {
+                xmlFree(name);
+                break;
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return direct_message;
 }
 
 /*****************************************************************************/
@@ -1041,7 +1400,7 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
             xmlFree(name);
         }else if(type == XML_READER_TYPE_END_ELEMENT) {
             name = xmlTextReaderName(reader);
-            if(!xmlStrcmp(name, (xmlChar *)"user" /*|| "sender"*/)) {
+            if(!xmlStrcmp(name, (xmlChar *)"user")) {
                 xmlFree(name);
                 break;
             }
@@ -1049,6 +1408,132 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
         }
     }while(ret == 1);
     return user;
+}
+
+/*****************************************************************************/
+
+// Recipient node
+twitter_recipient_t* twitter_parse_recipient_node(xmlTextReaderPtr reader) {
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    twitter_recipient_t *recipient;
+
+    recipient = (twitter_recipient_t *)malloc(sizeof(twitter_recipient_t));
+    memset(recipient, 0, sizeof(twitter_recipient_t));
+    do{
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if (type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"id")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->id = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"created_at")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->created_at = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->name = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->location = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->description = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->profile_image_url = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->followers_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->friends_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->favourites_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
+                ret = xmlTextReaderRead(reader);
+                recipient->statuses_count = (const char *)xmlTextReaderValue(reader);
+            }
+            xmlFree(name);
+        }else if(type == XML_READER_TYPE_END_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"recipient")) {
+                xmlFree(name);
+                break;
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return recipient;
+}
+
+/*****************************************************************************/
+
+// Sender node
+twitter_sender_t* twitter_parse_sender_node(xmlTextReaderPtr reader) {
+    int ret;
+    xmlElementType type;
+    xmlChar *name;
+    twitter_sender_t *sender;
+
+    sender = (twitter_sender_t *)malloc(sizeof(twitter_sender_t));
+    memset(sender, 0, sizeof(twitter_sender_t));
+    do{
+        ret = xmlTextReaderRead(reader);
+        type = xmlTextReaderNodeType(reader);
+        if (type == XML_READER_TYPE_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"id")) {
+                ret = xmlTextReaderRead(reader);
+                sender->id = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"created_at")) {
+                ret = xmlTextReaderRead(reader);
+                sender->created_at = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
+                ret = xmlTextReaderRead(reader);
+                sender->name = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
+                ret = xmlTextReaderRead(reader);
+                sender->screen_name = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
+                ret = xmlTextReaderRead(reader);
+                sender->location = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
+                ret = xmlTextReaderRead(reader);
+                sender->description = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
+                ret = xmlTextReaderRead(reader);
+                sender->profile_image_url = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
+                ret = xmlTextReaderRead(reader);
+                sender->followers_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
+                ret = xmlTextReaderRead(reader);
+                sender->friends_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
+                ret = xmlTextReaderRead(reader);
+                sender->favourites_count = (const char *)xmlTextReaderValue(reader);
+            }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
+                ret = xmlTextReaderRead(reader);
+                sender->statuses_count = (const char *)xmlTextReaderValue(reader);
+            }
+            xmlFree(name);
+        }else if(type == XML_READER_TYPE_END_ELEMENT) {
+            name = xmlTextReaderName(reader);
+            if(!xmlStrcmp(name, (xmlChar *)"sender")) {
+                xmlFree(name);
+                break;
+            }
+            xmlFree(name);
+        }
+    }while(ret == 1);
+    return sender;
 }
 
 /*****************************************************************************/
@@ -1082,6 +1567,36 @@ void twitter_status_print_friendsfollowers(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
     printf(GetString(&li, MSG_STATS2)/*"<b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br>
     <b>Date:</b><small>  %s</small></b><br><p>"*/,  status->id, status->text, status->created_at);
+    printf("<p>");
+
+    fclose(stdout);
+}
+
+/*****************************************************************************/
+
+// Display in HTMLtext .mcc (direct_messages/sent)
+void twitter_status_print_dirmsg(twitter_direct_message_t *direct_message) {
+
+    FILE *outfile;
+
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);                                                           
+
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s  ",direct_message->recipient->id, direct_message->recipient_screen_name, direct_message->text);
+    printf("<p>");
+
+    fclose(stdout);
+}
+
+/*****************************************************************************/
+
+// Display in HTMLtext .mcc (direct_message)
+void twitter_status_print_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message) {
+
+    FILE *outfile;
+
+    outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
+                                                                                                            
+    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s ", direct_message->sender->id, direct_message->sender_screen_name, direct_message->text);
     printf("<p>");
 
     fclose(stdout);
@@ -1272,7 +1787,7 @@ void amitwitter_loop() {
 
 // my 'for' loop, pulls data once
 
-    for(i=1; i<2; i++) {
+    for(i=1; i<2; i++) {   
         timeline = twitter_home_timeline(twitter);
 //      if(twitter->debug >= 2)
 
@@ -2051,9 +2566,131 @@ void amitwitter_followers_loop() {
 
 ///
 
+/// direct_messages
+
+/*****************************************************************************/
+
+// Show Recieved
+void amitwitter_show_timeline_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
+    twitter_direct_message_rcvd_t *direct_message;
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return;
+    }
+    do{
+        direct_message = statuses->data;
+
+     // if(twitter->debug)
+            twitter_status_print_dirmsgrcvd(direct_message);
+
+    }while((statuses = g_list_previous(statuses)));
+
+        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+}
+
+/*****************************************************************************/
+
+// direct_messages/recieved API
+GList* twitter_dirmsgrcvd(twitter_t *twitter) {
+
+    int ret;
+    GList *timeline = NULL;
+    GByteArray *buf;
+    xmlTextReaderPtr reader;
+    char api_uri[PATH_MAX];
+    twitter_direct_message_rcvd_t *direct_message;
+
+    snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
+             twitter->base_uri, TWITTER_API_PATH_DIRECT_MSGRCVD,
+             twitter->last_dirmsgrcvd_timeline);
+//  if(twitter->debug > 1)
+        printf("api_uri: %s\n", api_uri);
+
+    buf = g_byte_array_new();
+
+    ret = twitter_fetch(twitter, api_uri, buf);
+/*  if(ret){
+        printf("ERROR: twitter_fetch()\n");
+        return NULL;
+    } */
+
+    reader = xmlReaderForMemory((const char *)buf->data, buf->len,
+                                NULL, NULL, 0);
+
+    timeline = twitter_parse_statuses_node_dirmsgrcvd(reader);
+    xmlFreeTextReader(reader);
+
+
+    g_byte_array_free (buf, TRUE);
+//  xmlMemoryDump();
+
+    if(timeline){
+        direct_message = timeline->data;
+
+        twitter->last_dirmsgrcvd_timeline = atol(direct_message->id);
+    }
+    return timeline;
+}
+
+/*****************************************************************************/
+
+// Shows Direct Messages (direct_messages/recieved)
+void amitwitter_dirmsgrcvd() {
+
+    int i;
+
+    twitter_t *twitter = NULL;
+
+    GList* timeline = NULL;
+
+    twitter = twitter_new();
+    twitter_config(twitter);
+
+    for(i=1; i<2; i++) {
+        timeline = twitter_dirmsgrcvd(twitter);
+
+//      if(twitter->debug >= 2)
+            printf("timeline num: %d\n", g_list_length(timeline));
+
+        twitter_fetch_images_dirmsgrcvd(twitter, timeline);
+        amitwitter_show_timeline_dirmsgrcvd(twitter, timeline);
+        twitter_statuses_free_dirmsgrcvd(timeline);
+        timeline = NULL;
+//      sleep(twitter->fetch_interval);
+
+    if(i==1) break;
+    }
+
+    twitter_free(twitter);
+}
+
+/*****************************************************************************/
+
+///
+
 /// direct_messages/sent
 
-// direct_messages/sent API     *** NOT WORKING YET ***
+// Show Sent
+void amitwitter_show_timeline_dirmsg(twitter_t *twitter, GList *statuses) {
+    twitter_direct_message_t *direct_message;
+    statuses = g_list_last(statuses);
+    if(!statuses) {
+        return;
+    }
+    do{
+        direct_message = statuses->data;
+
+     // if(twitter->debug)
+            twitter_status_print_dirmsg(direct_message);
+
+    }while((statuses = g_list_previous(statuses)));
+
+        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+}
+
+/*****************************************************************************/
+
+// direct_messages/sent API    
 GList* twitter_dirmsgsent(twitter_t *twitter) {
 
     int ret;
@@ -2061,7 +2698,7 @@ GList* twitter_dirmsgsent(twitter_t *twitter) {
     GByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
-    twitter_status_t *status;
+    twitter_direct_message_t *direct_message;
 
     snprintf(api_uri, PATH_MAX, "%s%s?since_id=%lu",
              twitter->base_uri, TWITTER_API_PATH_DIRECT_MSGSENT,
@@ -2080,7 +2717,7 @@ GList* twitter_dirmsgsent(twitter_t *twitter) {
     reader = xmlReaderForMemory((const char *)buf->data, buf->len,
                                 NULL, NULL, 0);
 
-    timeline = twitter_parse_statuses_node(reader);
+    timeline = twitter_parse_statuses_node_dirmsg(reader);
     xmlFreeTextReader(reader);
 
 
@@ -2088,16 +2725,16 @@ GList* twitter_dirmsgsent(twitter_t *twitter) {
 //  xmlMemoryDump();
 
     if(timeline){
-        status = timeline->data;
+        direct_message = timeline->data;
 
-        twitter->last_dirmsgsent_timeline = atol(status->id);
+        twitter->last_dirmsgsent_timeline = atol(direct_message->id);
     }
     return timeline;
 }
 
 /*****************************************************************************/
 
-// Shows Direct Messages (direct_messages/sent)     *** NOT WORKING YET ***
+// Shows Direct Messages (direct_messages/sent)     
 void amitwitter_dirmsgsent() {
 
     int i;
@@ -2111,12 +2748,13 @@ void amitwitter_dirmsgsent() {
 
     for(i=1; i<2; i++) {
         timeline = twitter_dirmsgsent(twitter);
+
 //      if(twitter->debug >= 2)
             printf("timeline num: %d\n", g_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+        twitter_fetch_images_dirmsg(twitter, timeline);
+        amitwitter_show_timeline_dirmsg(twitter, timeline);
+        twitter_statuses_free_dirmsg(timeline);
         timeline = NULL;
 //      sleep(twitter->fetch_interval);
 
@@ -3977,6 +4615,11 @@ int main(int argc, char *argv[]) {
                 case MEN_DIRMSGSENT:
                      remove("PROGDIR:data/temp/twitter.html");
                      amitwitter_dirmsgsent();
+                     break;
+
+                case MEN_DIRMSGRCVD:
+                     remove("PROGDIR:data/temp/twitter.html");
+                     amitwitter_dirmsgrcvd();
                      break;
 
                 // Tweet
