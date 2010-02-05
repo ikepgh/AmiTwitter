@@ -1,7 +1,7 @@
 # Project: AmiTwitter
 # Compiler: ppc-MorphOS
 # Compiler Type: MingW 3
-# Makefile created by wxDev-C++ 6.10.2 on 28/01/10 17:13
+# Makefile created by wxDev-C++ 6.10.2 on 04/02/10 21:46
 
 CPP       = ppc-morphos-g++.exe
 CC        = ppc-morphos-gcc.exe

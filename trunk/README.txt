@@ -56,7 +56,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.26 - Added Tweet/Direct Message char countdown;
+0.26 - Added Tweet/Direct Message char countdown; most recent sent/recieved direct message 
 0.25 - Menu's, tabs & TheBar are now localized 
 0.24 - Began localization implementation
 0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
