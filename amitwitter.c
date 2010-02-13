@@ -3764,7 +3764,7 @@ int main(int argc, char *argv[]) {
   app = ApplicationObject,
       MUIA_Application_Title  , "AmiTwitter",
       MUIA_Application_Version , "$VER: "VSTRING"",
-      MUIA_Application_Copyright , "©2009, IKE",
+      MUIA_Application_Copyright , "©2009-10, IKE",
       MUIA_Application_Author  , "IKE",
       MUIA_Application_Description, "A Twitter program",
       MUIA_Application_Base  , "AmiTwitter",
@@ -4100,7 +4100,7 @@ int main(int argc, char *argv[]) {
 
       // The Main Program Window
       SubWindow, window = WindowObject,
-          MUIA_Window_Title, "AmiTwitter",
+          MUIA_Window_Title, ""VERS"", // "AmiTwitter",
           MUIA_Window_ID , MAKE_ID('W','T','M','F'),
           MUIA_Window_Menustrip,      MUI_MakeObject(MUIO_MenustripNM,Menu,0),
 
@@ -4112,9 +4112,9 @@ int main(int argc, char *argv[]) {
                        MUIA_Image_Spec, "5:data/program_images/amitwitter.png",
                        MUIA_Image_FreeVert, TRUE,
                        MUIA_Image_FreeHoriz, TRUE,
-                       MUIA_FixWidth, 157,
-                       MUIA_FixHeight, 66,
-                       MUIA_ShortHelp, "AmiTwitter © IKE",
+                       MUIA_FixWidth, 118,
+                       MUIA_FixHeight, 50,
+                       MUIA_ShortHelp, "AmiTwitter © IKE 2009-10",
                   End,
 
                   Child, RectangleObject, MUIA_Weight, 20, End,

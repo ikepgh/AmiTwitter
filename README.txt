@@ -23,6 +23,8 @@ Features:
     * Receive/Stop receiving SMS messages from Users
     * Update your profile; view Favorites and view Users currently Blocking
     * Display most recent Tweet for any User (whether following them or not)
+    * Displays most recently sent and received Direct Message
+    * Fully localized program and FAQs
     * MorphOS, OS 3.x compatible
 
 
@@ -34,9 +36,9 @@ Send email/feedback to: ikepgh@ezcyberspace.com
 INSTALLATION
 -----------
 
-Just place the binary wherever you'd like on your hard drive.  The 'data' directory 
-(and its subdirectories) must be in the same directory as the binary file or the program 
-will not run correctly.
+Just place the 'AmiTwitter' directory wherever you'd like on your hard drive. 
+Place the <U>enclosed libiconv.ixlibary in your system 'Libs' directory</U>, 
+if you don't already have this library.
 
 REQUIREMENTS
 -----------
@@ -56,7 +58,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.26 - Added Tweet/Direct Message char countdown; most recent sent/recieved direct message 
+0.26 - Added Tweet/Direct Message char countdown; most recent sent/recieved direct message; updated and reduced logo size by popular demand; reordered Users tabs 
 0.25 - Menu's, tabs & TheBar are now localized 
 0.24 - Began localization implementation
 0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
