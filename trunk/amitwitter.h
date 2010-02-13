@@ -101,7 +101,7 @@
 #define HTML_INTRO \
 "<HTML><HEAD><BODY>" \
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
-"<FONT COLOR=#000000><CENTER><B>"VSTRING"  © IKE </B></CENTER><BR><BR>" \
+"<FONT COLOR=#000000><CENTER><B>"VSTRING"  © IKE 2009-10</B></CENTER><BR><BR>" \
 "<HR>"\
 "<CENTER>Enter your User Name/Password in the Tools -> Settings dialog window to get started... </CENTER><BR>" \
 "<HR>"\
