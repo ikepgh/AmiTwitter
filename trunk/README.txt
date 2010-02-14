@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.2x Public Beta Release 1
+Version: 0.26 Public Beta Release 2
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
 Distribution: GPL, AmiKit, SourceForge only
@@ -58,7 +58,8 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.26 - Added Tweet/Direct Message char countdown; most recent sent/recieved direct message; updated and reduced logo size by popular demand; reordered Users tabs 
+0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
+reordered Users tabs; added .png images
 0.25 - Menu's, tabs & TheBar are now localized 
 0.24 - Began localization implementation
 0.23 - Public Beta Release 1 - Users controls are now tabbed; added Users/Show - can search by User Name and it will display 
@@ -128,6 +129,7 @@ Special thanks to:
 - ShInKurO for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
 - James Carroll for contributing to the code
+- All the catalog translators
 
 Donators: Roschmyr
 
