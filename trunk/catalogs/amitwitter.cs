@@ -116,7 +116,7 @@ Recharger le fichier local courant
 Prze³aduj obecny plik lokalny
 Recargar el fichero local actual
 Aktueel lokaal bestand opnieuw laden
-Aggiona file locale
+Aggiorna file locale
 ;
 MSG_SEARCH (/1/)
 _Search
@@ -197,7 +197,7 @@ MSG_ERROR (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord verkeerd</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li>
 ;
 MSG_ERROR2 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>
@@ -206,7 +206,7 @@ MSG_ERROR2 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li><li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)?</li>
 <B>Hmm...¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Estás seguro de que se incluyó texto (y/o un usuario válido para enviar un Mensaje Directo)?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord verkeerd</li><li>Heeft u een tekst ingegeven (en/of een korrekte ontvangst-screennaam voor direkte booschappen)?</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito un testo ed/oppure un ricevente corretto per il tuo messaggio?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito un testo ed/oppure un ricevente corretto per il tuo messaggio?</li>
 ;
 MSG_ERROR3 (/1/)
 <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
@@ -215,7 +215,7 @@ MSG_ERROR3 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Czy twoja nazwa u¿ytkownika i has³o s± prawid³owe?
 <B>Hmm...¡Ha ocurrido un error!</B><p>¿Has introducido tu usuario/contraseña correctamente?
 <B>Hmm... Een fout is opgetreden!</B><p>Is gebruikernaam/kenwoord korrekt gezet?
-<B>Hmm...Si è verificato un'errore!</B><p>Nome e/o password utente corretti?
+<B>Hmm...Si è verificato un errore!</B><p>Nome e/o password utente corretti?
 ;
 MSG_ERROR4 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>
@@ -224,7 +224,7 @@ MSG_ERROR4 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy pod±¿asz (lub nie pod±¿asz) za tym u¿ytkownikiem?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya siguiendo (o has dejado de seguir) a ese usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Gebruikernam/kenwoord verkeerd</li><li>Heeft u de screennaam korrekt ingevoerd?</li><li>Bent u reeds ein opvolger (of niet-opvolger) van deze gebruiker?</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai seguendo (o hai smesso di seguire) l'utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai seguendo (o hai smesso di seguire) l'utente?</li>
 ;
 MSG_ERROR5 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
@@ -233,7 +233,7 @@ MSG_ERROR5 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy pod±¿asz (lub nie pod±¿asz) za tym u¿ytkownikiem?</li></li>Czy blokujesz (lub nie blokujesz) tego u¿ytkownika?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya bloqueando (o no bloqueando) a este usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Heeft u de screennaam kerrekt ingevoerd?</li><li>Blokkeerd u (niet) deze gebruiker?</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Hai bloccato l'utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Hai bloccato l'utente?</li>
 ;
 MSG_ERROR6 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
@@ -242,7 +242,7 @@ MSG_ERROR6 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy otrzymujesz (lub przesta³e¶ otrzymywaæ) powiadomienia SMS od tego u¿ytkownika?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya reciviendo (o has dejado de recibir) notificaciones SMS de ese usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagnia niet bereikbaar</li><li>Gebruikernaam/kenwoord fout</li><li>Heeft u de screennaam korrekt ingevoerd?</li><li>Ontvangt u al SMS-boodschappen van deze gebruiker (of heeft u de ontvangst gestopt)?</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai giá ricevendo messaggi di notifica SMS per questo utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai giá ricevendo messaggi di notifica SMS per questo utente?</li>
 ;
 MSG_ERROR7 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>
@@ -251,7 +251,7 @@ MSG_ERROR7 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li></li><b>*MUSISZ*</b> wpisaæ nazwê u¿ytkownika aby zrobiæ jakiekolwiek uaktualnienie!</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¡Es OBLIGATORIO especificar un 'Nombre' para hacer cualquier actualización!</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord fout</li><li>U <b>*MOET*</b> een naam ingeven, om aktualizeringen uit te kunnen voeren!</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li><B>*Devi* </B>specificare un Nome poter attualizzare</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li><B>*Devi* </B>specificare un Nome poter attualizzare</li>
 ;
 MSG_ERROR8 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
@@ -260,7 +260,7 @@ MSG_ERROR8 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>gebruikernaam/Kenwoord fout</li><li>Heeft u de screennaam korrekt ingevoerd?</li>
-<B>Hmm...Si è verificato un'errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li>
 ;
 MSG_ATTEMPTING (/1/)
 Attempting to get the latest...
@@ -458,7 +458,7 @@ MSG_REGISTER (/1/)
 \33c\nNie masz jeszcze nazwy u¿ytkownika i has³a?\n  Musisz siê najpierw zarejestrowaæ na stronie Twittera!\n
 \33c\n¿No tienes un usuario/contraseña?\n  ¡Debes registrarte en la página de Twitter primero!\n
 \33c\nHeeft u nog geen gebruikernaam/kenwoord?\nU moet eerst op de Twitter-webpagina registreren!\n
-\33c\nNon hai ancoro un nome utente/password\nDevi prima registrarti sul sito di Twitter!\n
+\33c\nNon hai ancora un nome utente/password\nDevi prima registrarti sul sito di Twitter!\n
 ;
 MSG_ESTABLISH (/1/)
 Establish An Account!
@@ -1277,7 +1277,7 @@ MSG_SMSNOTE (/1/)
 \33cNotka: Musisz najperw ustawiæ swój telefon\nna stronie Twittera (podr 'Settings/Mobile')\nje¶li tego jeszcze nie zrobi³e¶, aby zacz±æ otrzymywaæ\n powiadomienia SMS przez AmiTwittear...
 \33cAtención: Si aún no lo has hecho, debes de configurar\n tu móvil en la página de Twitter (en la sección\n'Preferencias/móvil') para recibir notificaciones vía SMS con AmiTwitter...
 \33cOpgelet aub: U moet eerst uw mobielnummer\nop de Twitter-webpagina (onder 'Settings/Mobile')\naangeven, indien u dat nog niet gedaan heeft,\nom SMS-boodschappen met\nAmiTwitter te kunnen ontvangen...
-\33cAttenzione: devi prima immettere il tuo numero di\ncellulare sul sito Twitter (sotto 'Settings/Mobile')\naltrimenti non potrai ricevere le notifche SMS con AmiTwitter...
+\33cAttenzione: devi prima immettere il tuo numero di\ncellulare sul sito Twitter (sotto 'Settings/Mobile')\naltrimenti non potrai ricevere le notifiche SMS con AmiTwitter...
 ;
 MSG_SMSSTOP (/1/)
 Stop receiving SMS notifications from this user
@@ -1349,7 +1349,7 @@ Annuler le Message Direct
 Anuluj wiadomo¶æ bezpo¶redni±
 Cancelar Mensaje Directo
 Direktboodschap afbreken
-Cancella mesaggio diretto
+Cancella messaggio diretto
 ;
 MSG_UPDATEPROFILE4 (/1/)
 Update Your Profile!
@@ -1421,7 +1421,7 @@ MSG_BLOCK4 (/1/)
 \33cCzy jeste¶ pewny, ¿e chcesz zablokowaæ tego u¿ytkownika?\n\nJe¶li kogo¶ zablokujesz nie bêdzie on móg³ za Tob± pod±¿aæ\nani wysy³aæ jakichkolwiek wiadomo¶æi. Je¶li twoje konto jest publiczne\n, bêd± oni wci±¿ w stanie je ogl±daæ, ale\nnie pojawi± siê na li¶cie pod±¿aj±cych,\n\nJe¶li to jest spamer, dziêkujê!
 \33c¿Estás seguro de que quieres bloquear a este usuario?\n\nAl bloquear a alguien, no podrá seguirte\nni enviarte mensajes. Si tu cuenta es\npública, podrá verla, pero no aparecerá en tu lista de\nseguidores, y además no aparecerás en su lista de seguidos.\n\nSi el usuario que vas a bloquear es un spammer, ¡gracias!
 \33cBent u zeker dat u deze gebruiker wilt blokkeren?\n\nIndien u iemand blokeert, kunt u \ndeze gebruiker niet meer opvolgen of boodschappen zenden.\n indien uw rekening publiek is,\nkan deze gebruiker u nog steeds zien,\nmaar hij wordt niet meer als uw opvolger getoond en u niet meer als zijn opvolger.\n\nIndien u een spammer blokeert, dank u wel!
-\33cSei sicuro di voler bloccare questo utente?\n\nSe blocchi un utente, questi no potrù più seguirti\no inviarti messaggi. Se il tuo account è pubblico,\npotrá ancora vederlo, ma non apparirá nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
+\33cSei sicuro di voler bloccare questo utente?\n\nSe blocchi un utente, questi non potrù più seguirti\no inviarti messaggi. Se il tuo account è pubblico,\npotrá ancora vederlo, ma non apparirá nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
 ;
 MSG_QUIT (//)
 ;
@@ -1871,7 +1871,7 @@ Mes Tweets retweetés
 Mój Retweet
 Retweets míos
 Mijn Retweet
-Retweets miei
+Retweets di me
 ;
 MSG_0006 (/1/)
 @Replies
