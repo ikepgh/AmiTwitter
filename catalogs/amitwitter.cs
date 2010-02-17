@@ -350,7 +350,7 @@ Vous recevez désormais les notifications SMS de cet utilisateur !
 Pobierasz wiadomo¶æi (SMS) od tego u¿ytkownika!
 ¡A partir de ahora recivirás notificaciones (SMS) de ese usuario!
 U ontvangt nu SMS-boodschappen van deze gebruiker!
-Ricevereai notifiche SMS per questo utente!
+Riceverai notifiche SMS per questo utente!
 ;
 MSG_SMSUNFOLLOW (/1/)
 You are no longer receiving notifications (SMS following) that User!
@@ -710,7 +710,7 @@ Changer le statut de blocage d'un utilisateur
 Zmieñ status blokowania dla u¿ytkownika
 Cambiar el bloqueo para un usuario
 De blokkeerstatus van een gebruiker veranderen
-Cambiakd lo stato di blocco di un utente
+Cambia lo stato di blocco di un utente
 ;
 MSG_BLOCKING3 (//)
 ;
@@ -1502,7 +1502,7 @@ MSG_UPDATEPROFILE6 (/1/)
 \33cNotka:\n\n Aktualnie, musisz *ZAWSZE* ustawiæ 'Nazwê',\ninne pola s± opcjonalne, ale je¶li zostan± puste\nto wyczyszcz± aktualny profil na stronie Twittera.\n  (tzn. ¿e powiniene¶ wype³niæ wszystkie\ninformacje je¶li chcesz aby by³y wy¶wietlone na stronie\nTwittera! Je¶li nie chcesz aby siê wy¶wietla³y, zostaw je puste\n(oprócz 'Nazwy' oczywi¶cie)...\n\nMam nadziejê, ¿e w przysz³o¶ci bêdzie to bardziej przyjazne dla u¿ytkownika!\nProszê zagl±daj do b±belków pomocy po wiêcej informacji dla ka¿dego pola!
 \33cAtención:\n\n Debes especificar el campo 'Nombre' *SIEMPRE*,\nlos demás campos son opcionales, pero si los dejas en blanco\nsobrescribirán el perfil que tienes en la página\n de Twitter. (es decir, deberías completar toda\nla información que quieres que se muestre en tu página\n de Twitter. Si quieres que algo no se muestra, déjalo vacío\n(excepto el campo 'Nombre')...\n\n¡Espero mejorarlo en breve! Puedes consultar la ayuda\n de cada uno de los campos en el icono que aparece al lado de los mismos.ç
 \33cOpgepast:\n\nop dit moment moet u *ALTIJD* een 'naam' ingeven,\nde andere velden zijn optioneel, indien u ze \nleeg laat, worden uw aktuele\n profielvelden op de Twitter-pagina overschreven  (d.w.z. vul alle velden in, indien u wenst dat ze \nop uw Twitter-pagina getoond moeten worden!\nIndien u dit niet wenst, laat u die velden leeg\n(uitgezonderd 'Naam' natuurlijk)...\n\nDit wordt in de toekomst hopelijk gebruikersvriendelijker!\nIn de spreekblaasinformatie vindt u meer informatie over elk veld!
-\33cRicorda:\n\n attualmente devi *SEMPRE* specifcare un 'Nome',\nle altre caselle sono opzionali, però se lasciate vuote\nsovvrasciveranno l'attuale profilo sulla tuo\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se vuoi che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'Nome' ovviamente)....\n\nSpero di rendere questo procedimento più user friendly in futuro!\nLeggi gli aiuti "a fumetto" per maggiori informazioni su ogni casella!
+\33cRicorda:\n\n attualmente devi *SEMPRE* specificare un 'Nome',\nle altre caselle sono opzionali, però se lasciate vuote\nsovrasctiveranno l'attuale profilo sulla tuo\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se vuoi che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'Nome' ovviamente)....\n\nSpero di rendere questo procedimento più user friendly in futuro!\nLeggi gli aiuti "a fumetto" per maggiori informazioni su ogni casella!
 ;
 MSG_HTML1 (//)
 ;
