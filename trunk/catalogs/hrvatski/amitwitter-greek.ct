@@ -1,0 +1,720 @@
+## version $VER: amitwitter.ct 0.26 (13.02.10)
+## language greek
+## codeset 10
+;
+;
+; Source descriptor
+; This file holds all 'original' (base) strings. Due to international
+; character, they should be in english (I assume you target your
+; program to the international community). Strings from this file
+; will be used when there's no appropriate translation or the
+; catalog file does not containg given string.
+; 
+MSG_FOLLOW
+Ακολούθηση/Μη ακολούθηση
+; Follow/Unfollow
+MSG_BLOCK
+Αποκλεισμός/Αναίρεση αποκλεισμού
+; Block/Unblock
+MSG_NOTIFY
+Ειδοποίηση/Χωρίς ειδοποίηση
+; Notify/Unnotify
+MSG_SHOWUSER
+Εμφάνιση χρήστη
+; Show User
+MSG_TIMELINE
+_Χρονοδιάγραμμα
+; _Timeline
+MSG_TIMELINE2
+Παραλαβή των νεότερων Tweets (μεγ. 20)
+; Get most recent Tweets (max 20)
+MSG_RETWEETS
+Ret_weets
+; Ret_weets
+MSG_RETWEETS2
+Παραλαβή των νεότερων Retweets (μεγ. 20)
+; Get most recent Retweets to me (max 20)
+MSG_REPLIES
+@_Απαντήσεις
+; @_Replies
+MSG_REPLIES2
+Παραλαβή των νεότερων απαντήσεων (μεγ. 20)
+; Get most recent @Replies (max 20)
+MSG_RELOAD
+Επαναφό_ρτωση
+; Rel_oad
+MSG_RELOAD2
+Επαναφόρτωση του τορινού τοπικού αρχείου
+; Reload current local file
+MSG_SEARCH
+_Αναζήτηση
+; _Search
+MSG_SEARCH2
+Αναζήτηση
+; Search
+MSG_USERS
+_Χρήστες
+; _Users
+MSG_USERS2
+Διαχείρηση χρηστών
+; Manage Users
+MSG_DIRMSG
+_Εμφάνιση μηνυμάτων
+; _Dir Msg
+MSG_DIRMSG2
+Αποστολή απευθείας μηνύματος
+; Send a Direct Message
+MSG_TWEET
+Tw_eet
+; Tw_eet
+MSG_TWEET2
+Αποστολή Tweet
+; Send a Tweet
+MSG_ERROR
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li>
+MSG_ERROR2
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li>Γράψατε κείμενο (και/ή σωστό όνομα παραλήπτη για τα απευθείας μηνύματα);</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient \
+; Screen Name for direct messages)?</li>
+MSG_ERROR3
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Έχει οριστεί σωστά το ψευδώνυμό ή ο κωδικός σας;
+; <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
+MSG_ERROR4
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li>Γράψατε σωστά το όνομα χρήστη;</li><li>Μήπως ακολουθείτε (ή δεν ακολουθείτε) ήδη τον χρήστη αυτόν;</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
+; correctly?</li><li>Are you already following (or unfollowing) that User?</li>
+MSG_ERROR5
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li>Γράψατε σωστά το όνομα χρήστη;</li><li>Μήπως έχετε μπλοκάρει (ή δεν έχετε μπλοκάρει) ήδη τον χρήστη αυτόν;</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
+; correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
+MSG_ERROR6
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li>Γράψατε σωστά το όνομα χρήστη;</li><li>Μήπως λαμβάνετε (ή δεν λαμβάνετε) ήδη μηνύματα από τον χρήστη αυτόν;</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name \
+; correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
+MSG_ERROR7
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li><b>*ΠΡΕΠΕΙ*</b> να ορίσετε ένα 'Όνομα' πρωτού κάνετε ανανεώσεις</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any \
+; updates!</li>
+MSG_ERROR8
+<B>Χμμμ... Ενα σφάλμα παρουσιάστηκε!</B><p>Πιθανοί λόγοι:<ul><li>Δεν υπάρχει σύνδεση στο Internet</li><li>Δεν λειτουργεί το site του Tweeter</li><li>Λαναθασμένο όνομα χρήστη ή κωδικός</li><li>Γράψατε σωστά το όνομα χρήστη;</li>
+; <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
+MSG_ATTEMPTING
+Προσπάθεια παραλαβής των νεότερων...
+; Attempting to get the latest...
+MSG_STATS
+<small>Όνομα: %s Τοποθεσία: %s Ακολουθεί: %s Ακόλουθοι: %s Tweets: %s</small>
+; <small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s</small>
+MSG_STATS2
+<b>ID Χρήστη:</b> %s<br><b>Τελευταίο Tweet:</b> %s<br> <b>Ημ/νια:</b><small>  %s</small></b><br><p>
+; <b>User ID:</b> %s<br><b>Last Tweet:</b> %s<br> <b>Date:</b><small>  %s</small></b><br><p>
+MSG_SENT
+Το Tweet σας εστάλει!
+; Your Tweet was sent!
+MSG_DIRMSGSENT
+Το απευθείας μήνυμά σας εστάλει!
+; Your Direct Message was sent!
+MSG_FOLLOWING
+Από τώρα <b>Ακολουθείτε</b> αυτόν τον χρήστη!
+; You are now <b>Following</b> that User!
+MSG_UNFOLLOWING
+Από τώρα <b>Δεν ακολουθείτε</b> αυτόν τον χρήστη!
+; You are now <b>Unfollowing</b> that User!
+MSG_VALID
+<B>Συγχαρητήρια!</B> Το όνομα χρήστη και ο κωδικός είναι σωστά!
+; <B>Congratulations!</B> Your username/password is valid!
+MSG_UPDATED
+<B>Συγχαρητήρια!</B> Ανανεώσατε το προφίλ σας!
+; <B>Congratulations!</B> You have updated your profile!
+MSG_SMSFOLLOW
+Από τώρα λαμβάνετε ειδοποιήσεις (SMS ακολούθησης) από αυτόν τον χρήστη!
+; You are now receiving Notifications (SMS following) that User!
+MSG_SMSUNFOLLOW
+Από τώρα δεν λαμβάνετε ειδοποιήσεις (SMS ακολούθησης) από αυτόν τον χρήστη!
+; You are no longer receiving notifications (SMS following) that User!
+MSG_BLOCKING
+Από τώρα <b>Μπλοκάρατε</b> αυτόν τον χρήστη!
+; You are now <b>Blocking</b> that User!
+MSG_UNBLOCKING
+Από τώρα <b>Ξεμπλοκάρατε</b> αυτόν τον χρήστη!
+; You are now <b>Unblocking</b> that User!
+MSG_SETTINGS
+Ρυθμίσεις
+; Settings
+MSG_SETTINGS2
+Ρυθμίσεις λογαριασμού
+; Account Information Settings
+MSG_USERNAME
+Όνομα χρήστη:
+; User Name:
+MSG_PASSWORD
+Κωδικός:
+; Password:
+MSG_SAVE
+_Αποθήκευση
+; _Save
+MSG_TEST2
+_Δοκιμή
+; _Test
+MSG_CANCEL
+Α_κύρωση
+; _Cancel
+MSG_HELP
+;
+; ;
+MSG_REGISTER
+\33c\nΔεν έχετε ανοίξει ακόμα λογαριασμό;\n Πρέπει να εγγραφείτε πρώτα στο site του Twitter!\n
+; \33c\nDon't already have a User Name/Password?\n  You must register at the Twitter website first!\n
+MSG_ESTABLISH
+Κατασκευή λογαριασμού!
+; Establish An Account!
+MSG_FORGOT
+Ξεχάσατε τον κωδικό σας;
+; Forgot Your Password?
+MSG_DONATE
+Δωρεά
+; Donate
+MSG_DONATE2
+\33c\nΕάν πιστεύετε πως το AmiTwitter είναι χρήσιμο, παρακαλούμε σκεφθείτε μια δωρεά.\n Πρέπει να είστε συνδεδεμένοι στο internet:\n
+; \33c\nIf you find AmiTwitter useful, please consider donating.\n  You must have an active internet connection:\n
+MSG_DONATE3
+;
+; ;
+MSG_SEND
+;
+; ;
+MSG_SEND2
+;
+; ;
+MSG_SEND3
+Tweet:
+; Tweet:
+MSG_SEND4
+Εισάγετε το Tweet σας και πατήστε στο Ανανέωση για να το αποστείλετε (μεγ. 140 χαρακτήρες)
+; Enter your Tweet and click Update to send (max 140 characters)
+MSG_CLEAR
+Ε_κκαθάριση
+; C_lear
+MSG_UPDATE
+_Ανανέωση
+; _Update
+MSG_CANCEL2
+;
+; ;
+MSG_SEARCH3
+;
+; ;
+MSG_SEARCH4
+;
+; ;
+MSG_SEARCH5
+Αναζήτηση:
+; Search:
+MSG_SEARCH6
+Εισάγετε το κείμενο αναζήτησης και πατήστε στο Αναζήτηση (μεγ. 140 χαρακτήρες)
+; Enter your search string and click Search (max 140 characters)
+MSG_CLEAR2
+;
+; ;
+MSG_SEARCH7
+;
+; ;
+MSG_CANCEL3
+;
+; ;
+MSG_MANAGE
+Διαχείριση χρηστών
+; Manage Users
+MSG_FOLLOW2
+Αλλαγή της κατάστασης ακολούθησης ενός χρήστη
+; Change the Following Status for a User
+MSG_FOLLOW3
+Χρήστης:
+; User:
+MSG_FOLLOW4
+Εισάγετε το όνομα του χρήστη που θέλετε να ακολουθείτε ή όχι...
+; Enter the Screen Name you want to follow or unfollow...
+MSG_CLEAR3
+;
+; ;
+MSG_FOLLOW5
+_Ακολούθηση
+; _Follow
+MSG_UNFOLLOOW
+_Μη ακολούθηση
+; _Unfollow
+MSG_CANCEL4
+;
+; ;
+MSG_BLOCKING2
+Αλλαγή της κατάστασης φραγής ενός χρήστη
+; Change the Blocking Status for a User
+MSG_BLOCKING3
+;
+; ;
+MSG_BLOCKING4
+Εισάγετε το όνομα του χρήστη που θέλετε να μπλοκάρετε ή να ξεμπλοκάρετε...
+; Enter the Screen Name you want to block or unblock...
+MSG_CLEAR4
+;
+; ;
+MSG_BLOCKING5
+Μπλοκάρισμα
+; _Block
+MSG_UNBLOCK
+Ξεμπλοκάρισμα
+; U_nblock
+MSG_CANCEL5
+;
+; ;
+MSG_SMS
+Αλλαγή της κατάστασης ειδοποίησης ενός χρήστη μέσω SMS
+; Change the SMS Notification Status for a User
+MSG_SMS2
+;
+; ;
+MSG_SMS3
+Εισάγετε το όνομα του χρήστη που θέλετε να λαμβάνετε SMS ειδοποιήσεις ή όχι...
+; Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for...
+MSG_CLEAR5
+;
+; ;
+MSG_RECEIVE
+_Παραλαβή
+; _Receive
+MSG_STOP
+Παύ_ση
+; _Stop
+MSG_CANCEL6
+;
+; ;
+MSG_SHOWUSER2
+Εμφάνιση ενός χρήστη
+; Show a User
+MSG_SHOWUSER3
+;
+; ;
+MSG_SHOWUSER4
+\33cΕισάγετε το όνομα χρήστη που θέλετε να εμφανίσετε.\nΔεν χρειάζεται να τον ακολουθείτε ώστε να\nδείτε τα νεότερα του Tweets!
+; \33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!
+MSG_CLEAR6
+;
+; ;
+MSG_SHOWUSER5
+_Εμφάνιση χρήστη
+; _Show User
+MSG_CANCEL7
+;
+; ;
+MSG_SENDDIRMSG
+;
+; ;
+MSG_SENDDIRMSG2
+;
+; ;
+MSG_RECIPIENT
+Παραλήπτης:
+; Recipient:
+MSG_SCREENNAME
+Εισάγετε μόνο το όνομα χρήστη
+; Enter a Screen Name only
+MSG_MESSAGE
+Μήνυμα:
+; Message:
+MSG_MESSAGE2
+Εισάγετε ένα μήνυμα (μεγ. 140 χαρακτήρες)
+; Enter a message (max 140 characters)
+MSG_CLEAR7
+;
+; ;
+MSG_SEND5
+Απο_στολή
+; _Send
+MSG_CANCEL8
+;
+; ;
+MSG_UPDATEPROFILE
+Ανανέωση του προφίλ σας
+; Update Your Profile
+MSG_UPDATEPROFILE2
+Ανανέωση της σελίδας του προφίλ σας στο Twitter
+; Update Your Twitter Website Profile
+MSG_PROFNAME
+Όνομα:
+; Name:
+MSG_PROFNAME2
+\33cΤο πεδίο αυτό είναι αναγκαίο για να γίνουν\nαλλαγές στο προφίλ σας. Αυτό είναι που\nεμφανίζεται στην σελίδα σας στο Twitter.\nΜπορεί να είναι οτιδήποτε και δεν επηρεάζει\nτο όνομα λογαριασμού σας ή το ID χρήστη...\nΠολλοί χρήστες βάζουν το πραγματικό τους όνομα εκεί (μεγ. 20 χαρακτήρες)
+; \33cThis field is currently mandatory to make\n any updates to your profile. This is what\n is displayed on your Twitter site\nIt can be anything and has no effect on your\n actual account Screen Name \
+; or User ID whatsoever...\nfor a lot of users this is their 'real' name\n (Max 20 characters)
+MSG_WEB
+Ιστοσελίδα:
+; Web:
+MSG_WEB2
+\33cΕισάγετε την διεύθυνση της ιστοσελίδας σας.\nΘα συνοδεύεται από το 'http://' εάν δεν υπάρχει\n(μεγ. 100 χαρακτήρες)
+; \33cEnter your website URL\n It will be prepended with 'http://' if not present\n(Max 100 characters)
+MSG_LOCATION
+Τοποθεσία:
+; Location:
+MSG_LOCATION2
+\33cΕισάγετε την τοποθεσία σας. Το περιεχόμενο\nδεν ταυτοποιούνται με κάποιον τρόπο\n(μεγ. 30 χαρακτήρες)
+; \33cEnter your location. The contents\nare not normalized or geocoded in any way\n(Max 30 characters)
+MSG_BIO
+Βιογραφικό:
+; Bio:
+MSG_BIO2
+\33cΕισάγετε λίγα λόγια για εσάς ή μια περιγραφή σας\n(μεγ. 160 χαρακτήρες)
+; \33cEnter something about yourself or your description\n(Max 160 characters)
+MSG_UPDATEPROFILE3
+_Ανανέωση προφίλ
+; _Update Profile
+MSG_CANCEL9
+;
+; ;
+MSG_WHAT
+Τι χαμπάρια;
+; What's Happening?
+MSG_FAST
+;
+; ;
+MSG_FEEDBACK
+Απάντηση
+; Feedback
+MSG_DONATE4
+;
+; ;
+MSG_SAVE2
+Αποθήκευση ρυθμίσεων
+; Save Settings
+MSG_TEST3
+Δοκιμή ονόματος χρήστη και κωδικού
+; Test User Name / Password
+MSG_DONTSAVE
+Χωρίς αποθήκευση των αλλαγών
+; Don't Save Current Changes
+MSG_CLEAR8
+Εκκαθάριση του Tweet
+; Clear Tweet
+MSG_SEND6
+Αποστολή του tweet
+; Send Tweet
+MSG_CANCEL10
+Ακύρωση του Tweet
+; Cancel Tweet
+MSG_CLEAR9
+Εκκαθάριση αναζήτησης
+; Clear Search
+MSG_SEARCH8
+;
+; ;
+MSG_CANCEL11
+Ακύρωση αναζήτησης
+; Cancel Search
+MSG_CLEAR10
+Εκκαθάριση ονόματος χρήστη
+; Clear User Name
+MSG_FOLLOWUSER
+Ακολούθηση ενός χρήστη
+; Follow a User
+MSG_UNFOLLOWUSER
+Μη ακολούθηση ενός χρήστη
+; Unfollow a User
+MSG_CANCEL12
+Ακύρωση αίτησης
+; Cancel Request
+MSG_CLEAR12
+;
+; ;
+MSG_BLOCKUSER
+Μπλοκάρισμα ενός χρήστη (χρήση με προσοχή!)
+; Block a User (Use with care!)
+MSG_UNBLOCKUSER
+Ξεμπλοκάρισμα ενός μπλοκαρισμένου χρήστη
+; Unblock a currently blocked User
+MSG_CANCEL13
+;
+; ;
+MSG_CLEAR13
+;
+; ;
+MSG_SMSNOTE
+\33cΠαρακαλούμε Προσοχή: Πρέπει να καταχωρήσετε το κινητό\nσας τηλέφωνο στην ιστοσελίδα του Twitter (στο 'Settings/Mobile')\nεάν δεν το έχετε κάνει ήδη, ώστε να λαμβάνετε\nSMS ειδοποιήσεις με το AmiTwitter...
+; \33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter...
+MSG_SMSSTOP
+Παύση παραλαβής SMS ειδοποιήσεων από αυτόν τον χρήστη
+; Stop receiving SMS notifications from this user
+MSG_CANCEL14
+;
+; ;
+MSG_CLEAR14
+;
+; ;
+MSG_SHOWTWEETS
+Εμφάνιση του τελευταίου Tweet του χρήστη
+; Show latest Tweet for this User
+MSG_CANCEL15
+;
+; ;
+MSG_CLEAR15
+Εκκαθάριση απευθείας μηνύματος
+; Clear Direct Message
+MSG_SENDDIRMSG3
+;
+; ;
+MSG_CANCEL16
+Ακύρωση απευθείας μηνύματος
+; Cancel Direct Message
+MSG_UPDATEPROFILE4
+Ανανέωση του προφίλ σας!
+; Update Your Profile!
+MSG_CANCEL17
+Ακύρωση ανανέωσης
+; Cancel Update
+MSG_SEARCH9
+Αναζήτηση
+; Search
+MSG_OK
+*Εντάξει
+; *OK
+MSG_SEARCH10
+Η αναζήτηση δεν λειτουργεί ακόμα...
+; Search not implemented yet...
+MSG_BLOCK2
+Μπλοκάρισμα;
+; Block?
+MSG_BLOCK3
+Μπλο_κάρισμα|_Ακύρωση
+; _Block|_Cancel
+MSG_BLOCK4
+\33cΣίγουρα θέλετε να μπλοκάρετε αυτόν τον χρήστη;\n\nΕάν μπλοκάρετε κάποιον δεν θα μπορεί να σας ακολουθεί\nή να σας στήλει μηνύματα. Εάν ο λογαριασμός σας\nείναι δημόσιος, θα μπορούν ακόμα να τον βλέπουν αλλά δεν θα μπορούν\nνα εμφανιστούν στην λίστα των ακολούθων σας, και εσείς δεν θα είστε στην δική τους λίστα.\n\nΕάν είναι spammer αυτό που μπλοκάρετε, καλά κάνετε τότε!
+; \33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\n\
+; wont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!
+MSG_QUIT
+;
+; ;
+MSG_QUIT2
+Έξ_οδος|_Ακύρωση
+; _Quit|_Cancel
+MSG_QUIT3
+\33cΣίγουρα θέλετε να κλείσετε\nτο AmiTwitter;
+; \33cAre you sure you want\nto quit AmiTwitter?
+MSG_SAVE3
+Αποθήκευση
+; Save
+MSG_OK2
+;
+; ;
+MSG_SAVED
+Οι ρυθμίσεις αποθηκεύτηκαν στο Envarc!
+; Settings Saved to Envarc!
+MSG_UPDATEPROFILE5
+Ανανέωση προφίλ
+; Update Profile
+MSG_OK3
+;
+; ;
+MSG_UPDATEPROFILE6
+\33cΣημειώστε παρακαλώ:\n\nΠροσωρινά, πρέπει *ΠΑΝΤΑ* να ορίζετε ένα 'Όνομα',\nτα άλλα πεδία είναι προαιρετικά, αλλά αν μείνουν κενά\nθα αντικαταστήσουν τα αντίστοιχα του προφίλ σας στο site\nτου Twitter. Πρέπει να εισάγετε\nόλες τις πληροφορίες που θέλετε να εμφανίζονται στην Twitter σελίδα σας!\nΕάν δεν θέλετε να εμφανίζονται αφήστε τα κενά (εκτός του ονόματος φυσικά)... \n\nΕλπίζω να το κάνω πιο φιλικό στολ μέλλον!\nΠαρακαλώ, δείτε περισσότερες πληροφορίες για κάθε πεδίο στην βοήθεια.
+; \33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., \
+; you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)....\n\nI hope to make this a bit \
+; more user friendly in the future!\nPlease see the bubble help for more info for each field!
+MSG_HTML1
+;
+; ;
+MSG_HTML2
+;
+; ;
+MSG_HTML3
+;
+; ;
+MSG_HTML4
+;
+; ;
+MSG_HTML5
+;
+; ;
+MSG_HTML6
+;
+; ;
+MSG_HTML7
+;
+; ;
+MSG_HTML8
+;
+; ;
+MSG_HTML9
+;
+; ;
+MSG_HTML10
+;
+; ;
+MSG_HTML11
+;
+; ;
+MSG_HTML12
+;
+; ;
+MSG_HTML13
+;
+; ;
+MSG_HTML14
+;
+; ;
+MSG_HTML15
+;
+; ;
+MSG_HTML16
+;
+; ;
+MSG_HTML17
+;
+; ;
+MSG_HTML18
+;
+; ;
+MSG_HTML19
+;
+; ;
+MSG_HTML20
+;
+; ;
+MSG_HTML21
+;
+; ;
+MSG_HTML22
+;
+; ;
+MSG_HTML23
+;
+; ;
+MSG_HTML24
+;
+; ;
+MSG_HTML25
+;
+; ;
+MSG_HTML26
+;
+; ;
+MSG_HTML27
+;
+; ;
+MSG_HTML28
+;
+; ;
+MSG_HTML29
+;
+; ;
+MSG_HTML30
+;
+; ;
+MSG_HTML31
+;
+; ;
+MSG_HTML32
+;
+; ;
+MSG_HTML33
+;
+; ;
+MSG_HTML34
+;
+; ;
+MSG_HTML35
+;
+; ;
+MSG_0000
+Αρχείο
+; File
+MSG_0001
+Χρονοδιάγραμμα
+; Timeline
+MSG_0002
+Retweets
+; Retweets
+MSG_0003
+Retweet από εμένα
+; Retweet By Me
+MSG_0004
+Retweet σε εμένα
+; Retweet To Me
+MSG_0005
+Retweet για εμένα
+; Retweet Of Me
+MSG_0006
+Απαντήσεις
+; @Replies
+MSG_0007
+Επαναφόρτωση
+; Reload
+MSG_0008
+Αναζήτηση
+; Search
+MSG_0009
+Εύρεση χρηστών
+; Find Users
+MSG_0010
+Χρήστες
+; Users
+MSG_0011
+Απευθείας μήνυμα
+; Direct Message
+MSG_0012
+Αποστολή
+; Sent
+MSG_0013
+Παρελήφθησαν
+; Received
+MSG_0014
+Tweet
+; Tweet
+MSG_0015
+Τα Tweets μου
+; My Tweets
+MSG_0016
+Τα αγαπημένα μου
+; My Favorites
+MSG_0017
+Έξοδος
+; Quit
+MSG_0018
+Γενικά
+; Misc
+MSG_0019
+Οι φίλοι μου
+; My Friends
+MSG_0020
+Οι ακόλουθοί μου
+; My Followers
+MSG_0021
+Μπλοκαρισμένοι
+; Blocking
+MSG_0022
+Τυχαίο
+; Random
+MSG_0023
+Εργαλεία
+; Tools
+MSG_0024
+Ρυθμίσεις
+; Settings
+MSG_0025
+Ανανέωση προφίλ
+; Update Profile
+MSG_0026
+Ρυθμίσεις MUI
+; MUI Settings
+MSG_0027
+Βοήθεια
+; Help
+MSG_0028
+FAQs
+; FAQs
+MSG_0029
+Δωρεά
+; Donate
+MSG_0030
+Περί του AmiTwitter
+; About AmiTwitter
+MSG_0031
+Περί του MUI
+; About MUI
