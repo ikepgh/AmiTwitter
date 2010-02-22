@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.26
+ ** Current revision : V 0.27
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
@@ -96,6 +97,9 @@
 #include <glib.h>
 #include <curl/curl.h>
 #include <libxml/xmlreader.h>
+
+#include <proto/codesets.h>
+#include <libraries/codesets.h>
 
 // Amitwitter
 #include "amitwitter.h"
@@ -181,6 +185,8 @@ struct GfxBase *GfxBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
 
+struct Library *CodesetsBase = NULL;
+
 struct Library *LocaleBase;
 struct LocaleInfo li;
 struct NewMenu *nm;
@@ -241,6 +247,15 @@ const char *screen_name, *text;
 // Update Profile
 const char *name, *web, *location, *bio;
 
+// Codesets
+#define BUF_SIZE 102400
+
+struct codeset *srcCodeset, *dstCodeset;
+
+char *buf, *destbuf;
+ULONG destlen;
+FILE *f;
+
 /*****************************************************************************/
 
 ///
@@ -268,8 +283,8 @@ static struct NewMenu Menu[]= {
     { NM_SUB,    (STRPTR)MSG_0005,      "X",  0, 0, (APTR)MEN_RETWEETOFME },
     { NM_ITEM,   (STRPTR)MSG_0006,      "R",  0, 0, (APTR)MEN_REPLIES     },
     { NM_ITEM,   (STRPTR)MSG_0007,      "O",  0, 0, (APTR)MEN_RELOAD      },
-    { NM_ITEM,   (STRPTR)MSG_0008,       0,   0, 0, (APTR)0               },
-    { NM_SUB,    (STRPTR)MSG_0008,      "S",  0, 0, (APTR)MEN_SEARCH      },
+//  { NM_ITEM,   (STRPTR)MSG_0008,       0,   0, 0, (APTR)0               },
+//  { NM_SUB,    (STRPTR)MSG_0008,      "S",  0, 0, (APTR)MEN_SEARCH      },
 //  { NM_SUB,    (STRPTR)MSG_0009,       0,   0, 0, (APTR)MEN_SEARCHUSER  },
     { NM_ITEM,   (STRPTR)MSG_0010,      "U",  0, 0, (APTR)MEN_USERS       },
     { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
@@ -437,6 +452,8 @@ BOOL Open_Libs(void ) {
         return(0);
     }
 
+    if((CodesetsBase = OpenLibrary(CODESETSNAME, CODESETSVER))) {}
+
     if ((LocaleBase = OpenLibrary("locale.library",38))) {
 
         li.li_LocaleBase = LocaleBase;
@@ -480,6 +497,11 @@ void Close_Libs(void ) {
         
         CloseCatalog(li.li_Catalog);
         CloseLibrary(LocaleBase);
+    }
+
+    if (CodesetsBase) {
+
+        CloseLibrary(CodesetsBase);
     }
 
     #ifdef __MORPHOS__
@@ -1594,20 +1616,68 @@ void twitter_status_print_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_messa
 
 // Show timelines (public, home, user, mentions, all the retweets)
 void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
+
     twitter_status_t *status;
     statuses = g_list_last(statuses);
+
     if(!statuses) {
         return;
     }
-    do{
+    do {
         status = statuses->data;
 
      // if(twitter->debug)
             twitter_status_print(status);
 
-    }while((statuses = g_list_previous(statuses)));
+    } while((statuses = g_list_previous(statuses)));
 
-        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+    srcCodeset = CodesetsFind("UTF-8", CSA_FallbackToDefault, FALSE, TAG_DONE);
+
+    if (srcCodeset)
+    {
+
+        dstCodeset = CodesetsFind("ISO-8859-1", CSA_FallbackToDefault, FALSE, TAG_DONE);
+
+        if (dstCodeset) {
+
+            buf = AllocMem(BUF_SIZE, MEMF_CLEAR);
+            if (buf) {
+
+                f = fopen("PROGDIR:data/temp/twitter.html", "r+");
+                if (f) {
+
+                    fread(buf, BUF_SIZE-1, 1, f);
+                    fclose(f);
+                    destbuf = CodesetsConvertStr(CSA_SourceCodeset, (Tag)srcCodeset,
+                                                 CSA_DestCodeset, (Tag)dstCodeset,
+                                                 CSA_Source, (Tag)buf,
+                                                 CSA_DestLenPtr, (Tag)&destlen,
+                                                 TAG_DONE);  
+                    if (destbuf) {
+
+                     //   fprintf(stderr, "Result length: %u\n", destlen);
+                        remove("PROGDIR:data/temp/twitter.html");
+                        f = fopen("PROGDIR:data/temp/twitter.html", "a+");
+                        fwrite(destbuf, destlen, 1, f);
+                        fclose(f);
+
+                        CodesetsFreeA(destbuf, NULL);
+                    }
+                    else
+                        fprintf(stderr, "Failed to convert text!\n");
+                }
+                FreeMem(buf, BUF_SIZE);
+            }
+            else
+                fprintf(stderr, "Failed to allocate %d bytes for buffer\n", BUF_SIZE);
+        }
+        else
+            fprintf(stderr, "Unknown destination codeset %s\n", "ISO-8859-1");
+    }
+    else
+       fprintf(stderr, "Unknown source codeset %s\n", "UTF-8");
+         
+    set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
 }
 
 /*****************************************************************************/
