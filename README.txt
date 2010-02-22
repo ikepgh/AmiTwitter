@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@yahoo.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.26 Public Beta Release 2
+Version: 0.27 Public Beta Release 2
 Architecture:  m68k-amigaos, MorphOS
 Requires:  see below
 Distribution: GPL, AmiKit, SourceForge only
@@ -25,6 +25,7 @@ Features:
     * Display most recent Tweet for any User (whether following them or not)
     * Displays most recently sent and received Direct Message
     * Fully localized program and FAQs
+    * International Character Support via codesets.library
     * MorphOS, OS 3.x compatible
 
 
@@ -44,7 +45,7 @@ REQUIREMENTS
 -----------
 
 OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, 
-libiconv.ixlibary (included in Libs directory), working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional), ixemul.library/ixnet.library (needed by OS 3.x version only), 
+libiconv.ixlibary (included in Libs directory), codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x), ixemul.library/ixnet.library (needed by OS 3.x version only), 
 
 OS4/AROS: Unknown at this time...Please note:  the OS 3.x version crashes on OS 4.x...
 
@@ -58,6 +59,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
+0.27 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
 0.25 - Menu's, tabs & TheBar are now localized 
@@ -103,11 +105,13 @@ works!  Compiled on OS 3.x (WinUAE/Cubic IDE/gcc 2.95.3-4) and MorphOS (AmiDevCp
 
 curl 7.14.0,  libxml2-2.6.22,  zlib-1.2.3,  libdl,  glib-2.4.4,  iconv-1.12,
 gettext-0.11.2 (libintl.a),  openssl 0.9.7m (libssl.a & libcrypto.a),  pth-bin
-(pthread.a 2.0.7), libm  &  libc.
+(pthread.a 2.0.7), libm, libc and libcodesets (MorphOS only).
 
-Here's the string used on 3.x/MorphOS:
+Here's the string used on 3.x:
 
-gcc -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
+gcc -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl 
+
+Morphos - see above and: -lcodesets
 
 LICENSE
 -------

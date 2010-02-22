@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.26
+ ** Current revision : V 0.27
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
  ** 09-Jan-10   IKE                    began localization implementation
@@ -29,10 +30,10 @@
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	26
-#define DATE		"04.02.10"
-#define VERS		"AmiTwitter 0.26"
-#define VSTRING		"AmiTwitter 0.26 (04.02.10)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.26 (04.02.10)\r\n"
+#define REVISION	27
+#define DATE		"22.02.10"
+#define VERS		"AmiTwitter 0.27"
+#define VSTRING		"AmiTwitter 0.27 (22.02.10)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.27 (22.02.10)\r\n"
 #define AUTHOR		"IKE"
 #define PROJECT		"AmiTwitter"

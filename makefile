@@ -99,11 +99,11 @@ ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
 			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -noixemul -Wall \
 
-  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
 else
   CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
 			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -noixemul -Wall
-  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
 endif
 
 LIBS	=
@@ -202,11 +202,11 @@ else # <~vbcc>
       ifeq ($(debug),)
         CFLAGS = -I./include -I../include  -s -O1 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -noixemul -Wall
         LDFLAGS =
-        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
+        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
       else
         CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
         LDFLAGS = -gstabs
-        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
+        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
       endif  # <~debug>
   else
     ifeq ($(os), os3)
