@@ -118,7 +118,7 @@
 "<CENTER>MUI © Stefen Stuntz</CENTER><BR>" \
 "<CENTER>URLtext © Alfonso Ranieri</CENTER><BR>" \
 "<CENTER>HTMLtext © Dirk Holtwick</CENTER><BR>" \
-"<CENTER>OpenURL, BetterString, TheBar © Open Source Team</CENTER><BR>" \
+"<CENTER>OpenURL, BetterString, TheBar, codesets.library © Open Source Team</CENTER><BR>" \
 "<CENTER>libiconv.ixlibrary © GNU port by Bruno Haible </CENTER><BR>" \
 "<CENTER>MasonIcons © Martin Merz </CENTER><BR>" \
 "<HR>" \
