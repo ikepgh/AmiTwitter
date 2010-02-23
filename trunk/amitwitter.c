@@ -97,7 +97,6 @@
 #include <glib.h>
 #include <curl/curl.h>
 #include <libxml/xmlreader.h>
-
 #include <proto/codesets.h>
 #include <libraries/codesets.h>
 
@@ -184,7 +183,6 @@ extern struct Library *DOSBase;
 struct GfxBase *GfxBase;
 struct IntuitionBase *IntuitionBase;
 struct Library *MUIMasterBase;
-
 struct Library *CodesetsBase = NULL;
 
 struct Library *LocaleBase;
@@ -239,7 +237,7 @@ clear_search_gad, search_gad, but_search_cancel, clear_follow_gad, follow_gad,
 but_follow_cancel, unfollow_gad, win_follow, clear_block_gad, block_gad,
 unblock_gad, but_block_cancel, clear_notify_gad, notify_gad,
 unnotify_gad, but_notify_cancel, win_userprofile, update_profile_gad,
-but_cancel_profile, clear_show_gad, show_gad, but_show_cancel;
+but_cancel_profile, clear_show_gad, show_gad, but_show_cancel, cy1;
 
 // Direct Messages
 const char *screen_name, *text;
@@ -255,6 +253,14 @@ struct codeset *srcCodeset, *dstCodeset;
 char *buf, *destbuf;
 ULONG destlen;
 FILE *f;
+/*
+  char *charset[] = { "ISO-8859-1 + Euro", "ISO-8859-1", "ISO-8859-2", "ISO-8859-3",
+                      "ISO-8859-4", "ISO-8859-5", "ISO-8859-7", "ISO-8859-9", "ISO-8859-10",
+                      "ISO-8859-15", "ISO-8859-16", "Amiga-1251", "AmigaPL", "CP1250", "CP1251",
+                      "CP1252", "IBM866", "KOI8-R", "UTF-16", "UTF-32", "UTF-8", "windows-1250",
+                      "windows-1252", NULL };  */
+
+//  Object *charsetV;
 
 /*****************************************************************************/
 
@@ -602,6 +608,61 @@ void localizeTheBar(struct MUIS_TheBar_Button *button) {
         if (button->text) button->text = getString((ULONG)button->text);
         if (button->help) button->help = getString((ULONG)button->help);
     }
+}
+
+// International Character Conversion
+void charconv() {
+    srcCodeset = CodesetsFind("UTF-8", CSA_FallbackToDefault, FALSE, TAG_DONE);
+
+    if (srcCodeset)
+    {
+    //  get(cy1, MUIA_Cycle_Active, &charsetV);
+
+    //  dstCodeset = CodesetsFind(charsetV, CSA_FallbackToDefault, FALSE, TAG_DONE); // "ISO-8859-1"
+        dstCodeset = CodesetsFindA(NULL, NULL);
+
+        if (dstCodeset) {
+
+            fprintf(stderr,"Default codeset for your system is %s\n", dstCodeset->name);
+
+            buf = AllocMem(BUF_SIZE, MEMF_CLEAR);
+            if (buf) {
+
+                f = fopen("PROGDIR:data/temp/twitter.html", "r+");
+                if (f) {
+
+                    fread(buf, BUF_SIZE-1, 1, f);
+                    fclose(f);
+                    destbuf = CodesetsConvertStr(CSA_SourceCodeset, (Tag)srcCodeset,
+                                                 CSA_DestCodeset, (Tag)dstCodeset,
+                                                 CSA_Source, (Tag)buf,
+                                                 CSA_DestLenPtr, (Tag)&destlen,
+                                                 TAG_DONE);
+                    if (destbuf) {
+
+                    //  fprintf(stderr, "Result length: %u\n", destlen);
+                        remove("PROGDIR:data/temp/twitter.html");
+                        f = fopen("PROGDIR:data/temp/twitter.html", "a+");
+                        fwrite(destbuf, destlen, 1, f);
+                        fclose(f);
+
+                        CodesetsFreeA(destbuf, NULL);
+                    }
+                    else
+                        fprintf(stderr, "Failed to convert text!\n");
+                }
+                FreeMem(buf, BUF_SIZE);
+            }
+            else
+                fprintf(stderr, "Failed to allocate %d bytes for buffer\n", BUF_SIZE);
+        }
+        else
+
+            fprintf(stderr, "Unable to query default codeset\n");
+        //  fprintf(stderr, "Unknown destination codeset %s\n", NULL); // "ISO-8859-1"
+    }
+    else
+       fprintf(stderr, "Unknown source codeset %s\n", "UTF-8");
 }
 
 /*****************************************************************************/
@@ -1631,53 +1692,10 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 
     } while((statuses = g_list_previous(statuses)));
 
-    srcCodeset = CodesetsFind("UTF-8", CSA_FallbackToDefault, FALSE, TAG_DONE);
-
-    if (srcCodeset)
-    {
-
-        dstCodeset = CodesetsFind("ISO-8859-1", CSA_FallbackToDefault, FALSE, TAG_DONE);
-
-        if (dstCodeset) {
-
-            buf = AllocMem(BUF_SIZE, MEMF_CLEAR);
-            if (buf) {
-
-                f = fopen("PROGDIR:data/temp/twitter.html", "r+");
-                if (f) {
-
-                    fread(buf, BUF_SIZE-1, 1, f);
-                    fclose(f);
-                    destbuf = CodesetsConvertStr(CSA_SourceCodeset, (Tag)srcCodeset,
-                                                 CSA_DestCodeset, (Tag)dstCodeset,
-                                                 CSA_Source, (Tag)buf,
-                                                 CSA_DestLenPtr, (Tag)&destlen,
-                                                 TAG_DONE);  
-                    if (destbuf) {
-
-                     //   fprintf(stderr, "Result length: %u\n", destlen);
-                        remove("PROGDIR:data/temp/twitter.html");
-                        f = fopen("PROGDIR:data/temp/twitter.html", "a+");
-                        fwrite(destbuf, destlen, 1, f);
-                        fclose(f);
-
-                        CodesetsFreeA(destbuf, NULL);
-                    }
-                    else
-                        fprintf(stderr, "Failed to convert text!\n");
-                }
-                FreeMem(buf, BUF_SIZE);
-            }
-            else
-                fprintf(stderr, "Failed to allocate %d bytes for buffer\n", BUF_SIZE);
-        }
-        else
-            fprintf(stderr, "Unknown destination codeset %s\n", "ISO-8859-1");
-    }
-    else
-       fprintf(stderr, "Unknown source codeset %s\n", "UTF-8");
+    charconv();
          
     set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+
 }
 
 /*****************************************************************************/
@@ -2370,7 +2388,9 @@ void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *status
 
     }while((statuses = g_list_previous(statuses)));
 
-        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+    charconv();
+
+    set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
 }
 
 /*****************************************************************************/
@@ -2627,7 +2647,9 @@ void amitwitter_show_timeline_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
 
     }while((statuses = g_list_previous(statuses)));
 
-        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+    charconv();
+
+    set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
 }
 
 /*****************************************************************************/
@@ -2726,7 +2748,9 @@ void amitwitter_show_timeline_dirmsg(twitter_t *twitter, GList *statuses) {
 
     }while((statuses = g_list_previous(statuses)));
 
-        set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
+    charconv();
+
+    set (txt_source, MUIA_HTMLtext_URL, (int)"PROGDIR:data/temp/twitter.html");
 }
 
 /*****************************************************************************/
@@ -3823,10 +3847,17 @@ int main(int argc, char *argv[]) {
                        Child, Label2(GetString(&li, MSG_USERNAME)),
                        Child, str_user_pref = StringObject, StringFrame, MUIA_ObjectID, 1, End,
                        Child, Label2(GetString(&li,MSG_PASSWORD)),
-                       Child, str_pass_pref = StringObject, StringFrame,  MUIA_ObjectID, 2, MUIA_String_Secret, TRUE, End,
+                       Child, str_pass_pref = StringObject, StringFrame, MUIA_ObjectID, 2, MUIA_String_Secret, TRUE, End,
                   End,
 
               End,       
+
+          /*  Child, ColGroup(2), GroupFrame,
+
+					Child, Label1("Charset:"),
+					Child, cy1  = CycleObject, MUIA_Cycle_Entries, charset, MUIA_ExportID, 7,
+                    End,			
+              End,    */
 
               Child, HGroup, MUIA_Group_SameSize,  TRUE,
                   Child, but_save   = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_SAVE)),
