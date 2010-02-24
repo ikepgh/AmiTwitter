@@ -1,4 +1,4 @@
-## Version $VER: amitwitter.catalog 0.26 (10.02.2010)
+## Version $VER: amitwitter.catalog 0.27 (24.02.2010)
 ## Codeset 0
 ## LANGUAGES english deutsch français polski español nederlands italiano 7
 ## SimpleCatConfig CharsPerLine 200
@@ -71,7 +71,7 @@ Ret_weets
 Ret_weets
 Ret_weets
 Ret_weets
-Ret_weets
+Ret_weet
 ;
 MSG_RETWEETS2 (/1/)
 Get most recent Retweets to me (max 20)
@@ -80,7 +80,7 @@ Retweets les plus récents (20 maxi)
 Pobierz ostatnie Retweety (max 20)
 Ver los Retweets más recientes (max 20)
 Toon mijn laatste tweets (max. 20)
-Scarica i Tweet più recenti indirizzati a me (max. 20)
+Scarica i più recenti Tweet indirizzati a me (max. 20)
 ;
 MSG_REPLIES (/1/)
 @_Replies
@@ -89,7 +89,7 @@ MSG_REPLIES (/1/)
 @_Odpowiedzi
 @_Respuestas
 @_Antwoorden
-@_Rispondere
+@_Rispondi
 ;
 MSG_REPLIES2 (/1/)
 Get most recent @Replies (max 20)
@@ -161,7 +161,7 @@ Mess _Dir
 W_B
 Men _Dir
 _Dir. boodschap
-Mes. _diretto
+Mess. _diretto
 ;
 MSG_DIRMSG2 (/1/)
 Send a Direct Message
@@ -197,7 +197,7 @@ MSG_ERROR (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord verkeerd</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li>
 ;
 MSG_ERROR2 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter text (and/or correct recipient Screen Name for direct messages)?</li>
@@ -206,7 +206,7 @@ MSG_ERROR2 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li><li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)?</li>
 <B>Hmm...¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Estás seguro de que se incluyó texto (y/o un usuario válido para enviar un Mensaje Directo)?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord verkeerd</li><li>Heeft u een tekst ingegeven (en/of een korrekte ontvangst-screennaam voor direkte booschappen)?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito un testo ed/oppure un ricevente corretto per il tuo messaggio?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito un testo ed/oppure un ricevente corretto per il tuo messaggio?</li>
 ;
 MSG_ERROR3 (/1/)
 <B>Hmm...An error occurred!</B><p>Is your Username/password set correctly?
@@ -215,7 +215,7 @@ MSG_ERROR3 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Czy twoja nazwa u¿ytkownika i has³o s± prawid³owe?
 <B>Hmm...¡Ha ocurrido un error!</B><p>¿Has introducido tu usuario/contraseña correctamente?
 <B>Hmm... Een fout is opgetreden!</B><p>Is gebruikernaam/kenwoord korrekt gezet?
-<B>Hmm...Si è verificato un errore!</B><p>Nome e/o password utente corretti?
+<B>Hmm...Si è verificato un errore!</B><p>Nome utente e/o password non corretti?
 ;
 MSG_ERROR4 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already following (or unfollowing) that User?</li>
@@ -224,7 +224,7 @@ MSG_ERROR4 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy pod±¿asz (lub nie pod±¿asz) za tym u¿ytkownikiem?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya siguiendo (o has dejado de seguir) a ese usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Gebruikernam/kenwoord verkeerd</li><li>Heeft u de screennaam korrekt ingevoerd?</li><li>Bent u reeds ein opvolger (of niet-opvolger) van deze gebruiker?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai seguendo (o hai smesso di seguire) l'utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li><li>Stai seguendo (o hai smesso di seguire) l'utente?</li>
 ;
 MSG_ERROR5 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already blocking (or not blocking) that User?</li>
@@ -233,7 +233,7 @@ MSG_ERROR5 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy pod±¿asz (lub nie pod±¿asz) za tym u¿ytkownikiem?</li></li>Czy blokujesz (lub nie blokujesz) tego u¿ytkownika?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya bloqueando (o no bloqueando) a este usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Heeft u de screennaam kerrekt ingevoerd?</li><li>Blokkeerd u (niet) deze gebruiker?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Hai bloccato l'utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li><li>Hai bloccato l'utente?</li>
 ;
 MSG_ERROR6 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li><li>Are you already receiving (or stopped receiving) SMS notifications for that User?</li>
@@ -242,7 +242,7 @@ MSG_ERROR6 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy otrzymujesz (lub przesta³e¶ otrzymywaæ) powiadomienia SMS od tego u¿ytkownika?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya reciviendo (o has dejado de recibir) notificaciones SMS de ese usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagnia niet bereikbaar</li><li>Gebruikernaam/kenwoord fout</li><li>Heeft u de screennaam korrekt ingevoerd?</li><li>Ontvangt u al SMS-boodschappen van deze gebruiker (of heeft u de ontvangst gestopt)?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li><li>Stai giá ricevendo messaggi di notifica SMS per questo utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li><li>Stai giá ricevendo messaggi di notifica SMS per questo utente?</li>
 ;
 MSG_ERROR7 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>You <b>*MUST*</b> specify a 'Name' to make any updates!</li>
@@ -251,7 +251,7 @@ MSG_ERROR7 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li></li><b>*MUSISZ*</b> wpisaæ nazwê u¿ytkownika aby zrobiæ jakiekolwiek uaktualnienie!</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¡Es OBLIGATORIO especificar un 'Nombre' para hacer cualquier actualización!</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>Gebruikernaam/kenwoord fout</li><li>U <b>*MOET*</b> een naam ingeven, om aktualizeringen uit te kunnen voeren!</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li><B>*Devi* </B>specificare un Nome poter attualizzare</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li><B>*Devi* </B>specificare un nome prima di aggiornare</li>
 ;
 MSG_ERROR8 (/1/)
 <B>Hmm...An error occurred!</B><p>Possible reasons:<ul><li>No internet connection</li><li>Twitter site down</li><li>Username/password incorrect</li><li>Did you enter the Screen Name correctly?</li>
@@ -260,7 +260,7 @@ MSG_ERROR8 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagina niet bereikbaar</li><li>gebruikernaam/Kenwoord fout</li><li>Heeft u de screennaam korrekt ingevoerd?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>nessuna connessione internet</li><li>il sito Twitter è offline</li><li>Nome o password utente scorretti</li><li>Hai inserito lo screen Name corretto?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li>
 ;
 MSG_ATTEMPTING (/1/)
 Attempting to get the latest...
@@ -269,7 +269,7 @@ Réception en cours...
 Próbujê pobraæ ostatnie...
 Intentando obtener los últimos mensajes...
 Probeer de nieuwste berichten te ontvangen...
-Ricevo le ultime notizie...
+Ricezione delle ultime notizie...
 ;
 MSG_STATS (/1/)
 <small>Name: %s Location: %s Following: %s Followers: %s Tweets: %s</small>
@@ -314,7 +314,7 @@ Vous <b>suivez</b> désormais cet utilisateur !
 Teraz ju¿ <b>Pod±¿asz</b> za tym u¿ytkownikem!
 ¡Ahora estás <b>Siguiendo</b> a este usuario!
 U <b>volgt</b> nu deze gebruiker!
-Stai <b>sequendo</b> questo utente!
+Stai <b>seguendo</b> questo utente!
 ;
 MSG_UNFOLLOWING (/1/)
 You are now <b>Unfollowing</b> that User!
@@ -332,7 +332,7 @@ MSG_VALID (/1/)
 <B>Gratulacje!</B> Twója nazwa u¿ytkownika i has³o s± poprawne!
 <b>¡Enhorabuena!</b> ¡Tu usuario/contraseña son válidos!
 <b>Gefeliciteerd!</b> Uw gebruikernaam/kenwoord is geldig!
-<b>Congratulazioni!</b> nome e password sono validi!
+<b>Congratulazioni!</b> il nome e la password sono validi!
 ;
 MSG_UPDATED (/1/)
 <B>Congratulations!</B> You have updated your profile!
@@ -350,7 +350,7 @@ Vous recevez désormais les notifications SMS de cet utilisateur !
 Pobierasz wiadomo¶æi (SMS) od tego u¿ytkownika!
 ¡A partir de ahora recivirás notificaciones (SMS) de ese usuario!
 U ontvangt nu SMS-boodschappen van deze gebruiker!
-Riceverai notifiche SMS per questo utente!
+Potrai ora ricevere notifiche SMS da questo utente!
 ;
 MSG_SMSUNFOLLOW (/1/)
 You are no longer receiving notifications (SMS following) that User!
@@ -359,7 +359,7 @@ Vous ne recevez plus désormais les notifications SMS de cet utilisateur !
 Ju¿ wiêcej nie pobierasz wiadomo¶ci (SMS) od tego u¿ytkownika!
 ¡Has dejado de recivir notificaciones (SMS) de este usuario!
 U ontvangt nu geen SMS-boodschappen meer van deze gebruiker!
-Hai smesso di ricevere notificazioni SMS per questo utente!
+Non sarà più possibile ricevere notifiche SMS da questo utente!
 ;
 MSG_BLOCKING (/1/)
 You are now <b>Blocking</b> that User!
@@ -395,7 +395,7 @@ Préférences d'informations du compte
 Ustawienia konta
 Preferencias de la cuenta
 Rekening informatie instellingen
-Impostazioni di account
+Impostazioni account
 ;
 MSG_USERNAME (/1/)
 User Name:
@@ -458,7 +458,7 @@ MSG_REGISTER (/1/)
 \33c\nNie masz jeszcze nazwy u¿ytkownika i has³a?\n  Musisz siê najpierw zarejestrowaæ na stronie Twittera!\n
 \33c\n¿No tienes un usuario/contraseña?\n  ¡Debes registrarte en la página de Twitter primero!\n
 \33c\nHeeft u nog geen gebruikernaam/kenwoord?\nU moet eerst op de Twitter-webpagina registreren!\n
-\33c\nNon hai ancora un nome utente/password\nDevi prima registrarti sul sito di Twitter!\n
+\33c\nNon hai ancora un nome utente/password\nE' necessario registrarsi prima sul sito di Twitter!\n
 ;
 MSG_ESTABLISH (/1/)
 Establish An Account!
@@ -476,7 +476,7 @@ Mot de passe oublié ?
 Zapomnia³e¶ has³a?
 ¿Olvidaste tu contraseña?
 Kenwoord vergeten?
-Hai scordato la tua password?
+Hai dimenticato la tua password?
 ;
 MSG_DONATE (/1/)
 Donate
@@ -539,7 +539,7 @@ Tapez votre Tweet et cliquez sur Mettre à jour pour l'envoyer (140 caractères ma
 Wpisz swojego Tweeta i kliknij "Aktualizuj" aby go wys³aæ (max 140 znaków)
 Escribe tu Tweet y pulsa sobre Actualizar para enviarlo (max 140 caracteres)
 Geef uw Tweet in en druk op aktualiseren om te versturen (max. 140 karakters)
-Immetti il tuo Tweet e clicca su update per inviarlo (max. 140 caratteri)
+Inserisci il tuo Tweet e clicca su update per inviarlo (max. 140 caratteri)
 ;
 MSG_CLEAR (/1/)
 C_lear
@@ -602,7 +602,7 @@ Tapez votre recherche et cliquez sur Rechercher (140 caratères maxi)
 Wpisz ³añcuch i kliknij Szukaj (max 140 znaków)
 Introduce la cadena a buscar y pulsa sobre Buscar (max 140 caracteres)
 Geef uw zoektekst in en klik op zoeken (max. 140 karakters)
-Immetti il testo di ricerca e clicca su cerca (max. 140 caratteri)
+Inserisci il testo da ricercare e clicca su cerca (max. 140 caratteri)
 ;
 MSG_CLEAR2 (//)
 ;
@@ -638,7 +638,7 @@ Gérer les utilisateurs
 Zarz±dzaj u¿ytkownikami
 Configurar Usuarios
 Gebruikers organizeren
-Gestire utenti
+Gestione utenti
 ;
 MSG_FOLLOW2 (/1/)
 Change the Following Status for a User
@@ -647,7 +647,7 @@ Changer le statut de suivi d'un utilisateur
 Zmieñ status pod±¿ania dla U¿ytkownika
 Cambiar el tipo de seguimiento para un usuario
 Verander de status van een gebruiker
-Cambiare il tipo di seguimento per un utente
+Cambia il tipo di seguimento per un utente
 ;
 MSG_FOLLOW3 (/1/)
 User:
@@ -665,7 +665,7 @@ Entrez le pseudo de l'utilisateur que vous désirez suivre ou ne plus suivre...
 Wpisz nazwê u¿ytkownika, za którym chcesz pod±¿aæ lub nie...
 Introduce el ScreenName que quieres seguir o dejar de seguir
 Geef de screennaam in van de geruiker die u wenst op te volgen (of niet op te volgen)...
-Immetti il nome dell'utente che vuoi seguire o smettere di seguire...
+Inserisci il nome dell'utente che vuoi seguire o smettere di seguire...
 ;
 MSG_CLEAR3 (//)
 ;
@@ -710,7 +710,7 @@ Changer le statut de blocage d'un utilisateur
 Zmieñ status blokowania dla u¿ytkownika
 Cambiar el bloqueo para un usuario
 De blokkeerstatus van een gebruiker veranderen
-Cambia lo stato di blocco di un utente
+Cambia lo stato di blocco relativo all'utente
 ;
 MSG_BLOCKING3 (//)
 ;
@@ -728,7 +728,7 @@ Entrez le pseudo que vous désirez bloquer ou débloquer...
 Wpisz nazwê u¿ytkownika którego chcesz blokowaæ lub odblokowaæ....
 Introduce el ScreenName que quieres bloquear o desbloquear...
 Geef de screennaam in van de gebruiker die u (niet meer) wenst te blokkeren...
-Immetti il nome dell'utente che vuoi bloccare/sbloccare...
+Inserisci il nome dell'utente che vuoi bloccare/sbloccare...
 ;
 MSG_CLEAR4 (//)
 ;
@@ -773,7 +773,7 @@ Changer le statut de notification SMS d'un utilisateur
 Zmieñ status powiadamiania SMS dla u¿ytkownika
 Cambiar el estado de notificaciones SMS para un usuario
 De SMS ontvangststatus voor een gebruiker veranderen
-Cambio lo stato di notifica SMS per un utente
+Cambio lo stato delle notifiche SMS relative all'utente
 ;
 MSG_SMS2 (//)
 ;
@@ -791,7 +791,7 @@ Entrez le pseudo de l'utilisateur dont\nvous désirez aussi recevoir\n ou stopper
 Wpisz nazwê u¿ytkownika od którego chcesz otrzymywaæ (lub nie) powiadomienia SMS...
 Introduce el ScreenName del que deseas recibir o dejar de recibir notificaciones SMS
 Geef de screennaam in, voor wie u (geen) SMS berichten (meer) wilt ontvangen.
-Immeti il nome dell'utente per il quale vuoi ricevere o non più ricevere notifiche SMS...
+Inserisci il nome dell'utente per il quale vuoi ricevere o non più ricevere notifiche SMS...
 ;
 MSG_CLEAR5 (//)
 ;
@@ -854,7 +854,7 @@ MSG_SHOWUSER4 (/1/)
 \33cWpisz nazwê u¿ytkownika którego chcesz wy¶wietliæ.\nNie musisz za nim pod±¿aæ aby zobaczyæ ich\n ostatnie Tweety!
 \33cIntroduce el nombre de usuario que quieres visualizar..\n¡No es necesario que lo estés siguiendo para ver sus Tweets más recientes!
 \33cGeef de screennaam van een gebruiker in, die u wilt tonen .\nU moet hem niet opvolgen,\n om uw laatste tweets te zien!
-\33cImmetti il nome dell'utente che vuoi visualizzare.\nNon è necessario seguirlo per,\n vedere i suoi ultimi Tweets!
+\33cInserisci il nome dell'utente che vuoi visualizzare.\nNon è necessario seguirlo per\n vedere i suoi ultimi Tweets!
 ;
 MSG_CLEAR6 (//)
 ;
@@ -917,7 +917,7 @@ Entrez un pseudo seulement
 Wpisz tylko nazwê u¿ytkownika
 Introduce un Screen Name
 Alleen een screennaam ingeven
-Immetti solo un nome utente
+Inserisci solo un nome utente
 ;
 MSG_MESSAGE (/1/)
 Message:
@@ -935,7 +935,7 @@ Tapez votre message (140 caractères maxi)
 Wpisz wiadomo¶æ (max 140 znaków)
 Introduce el mensaje (max 140 caracteres)
 Geef een bericht in (max. 140 karakters)
-Immetti un messaggio (max. 140 caratteri)
+Inserisci un messaggio (max. 140 caratteri)
 ;
 MSG_CLEAR7 (//)
 ;
@@ -980,7 +980,7 @@ Mise à jour du profil du site Twitter
 Aktualizuj profil na stronie Twittera
 Actualizar perfil de la página de Twitter
 Uw twitter-webpagina profiel aktualiseren
-Aggiorna la tua pagina di profilo sul sito Twitter
+Aggiorna la tua pagina del profilo sul sito di Twitter
 ;
 MSG_PROFNAME (/1/)
 Name:
@@ -998,7 +998,7 @@ MSG_PROFNAME2 (/1/)
 \33cTo pole jest obecnie niezbêdne aby robiæ\n aktualizacjê twojego profilu. To jest to\n co jest wy¶wietlone na twojej stronie Twittera\nMo¿e byæ czymkolwiek i nie mieæ efektu\n na twoje konto lub ID u¿ytkownika\n dla wielu u¿ytkowników jest to ich prawdziwa nazwa\n (Max 20 znaków)
 \33cEste campo es obligatorio para poder actualizar\n tu perfil. Es lo que se va\n a mostrar en tu página de Twitter\n Puede ser cualquier cosa y no tiene ningún efecto\n sobre tu cuenta. Para muchos usuarios es el nombre 'real'\n (Max 20 caracteres)
 \33cDit veld is op dit moment nodig om aktualiseringen\n aan uw profiel voor te nemen. \n Dit is zoals ook op de Twitter-webpagina\n getoond wordt. Het kan een gewenste tekst zijn\n en heeft geen invloed op uw aktuele\n screennaam, uw gebruiker-id of wat dan ook...\nVoor vele gebruikers is het de echte naam\n (max. 20 karakters)
-\33cQuesto campo è necessario per poter attualizzare\n il tuo profilo utente. Questo sará\nil testo visualizzato sul sito. Potrá essere\nun testo qualsiasi che non avrá alcun\neffetto sul tuo attuale \nnome utente, ID o Screenname...\nPer molti utenti è il nome reale (max. 20 caratteri)
+\33cQuesto campo è necessario per poter aggiornare\n il tuo profilo utente. Questo sarà\nil testo visualizzato sul sito. Potrá essere\nun testo qualsiasi che non avrá alcun\neffetto sul tuo attuale \nnome utente, ID o lo screenname...\nPer molti utenti è il nome reale (max. 20 caratteri)
 ;
 MSG_WEB (/1/)
 Web:
@@ -1016,7 +1016,7 @@ MSG_WEB2 (/1/)
 \33cWpisz URL swojej strony\n 'http://' zostanie dodane je¶li go nie wpiszesz\n(Max 100 znaków)
 \33cIntroduce tu página web (URL)\n Tiene que incluir 'http://' al comienzo\n(Max 100 caracteres)
 \33cGeef de URL van uw webpagina in.\nEr wordt ein 'http://' voor gezet,\nals die niet te vinden is.\n (max. 100 karakters)
-\33cImmetti l'indirizzo della pagina Web.\nL'indirizzo deve essere preceduto da 'http://' se,\nnon è giá presente.\n (max. 100 caratteri)
+\33cInserisci l'indirizzo della pagina Web.\nL'indirizzo dovrà essere preceduto da 'http://' nel,\ncaso non sia giá presente.\n (max. 100 caratteri)
 ;
 MSG_LOCATION (/1/)
 Location:
@@ -1034,7 +1034,7 @@ MSG_LOCATION2 (/1/)
 \33cWpisz swoj± lokacjê. Zawarto¶æ nie jest sprawdzana w jakikolwiek sposób\n(Max 30 znaków)
 \33cIntroduce tu localización. Los contenidos de este campo\nno están normalizados o geolocalizados.\n(Max 30 caracteres)
 \33cGeef uw woonplaats in. De inhoud word niet \ngenormaliseerds of op eender welke \nmanier gekodeerd\n (max. 30 karakters)
-\33cImmetti luogo in cui ti trovi.\nIl contenuto non verrá normalizzato o geocodificato\n(Max. 30 caratteri)
+\33cInserisci una nota relativa al luogo in cui ti trovi.\nIl contenuto non verrá normalizzato o geocodificato\n(Max. 30 caratteri)
 ;
 MSG_BIO (/1/)
 Bio:
@@ -1052,7 +1052,7 @@ MSG_BIO2 (/1/)
 \33cNapisz co¶ o sobie\n(Max 160 znaków)
 \33cIntroduce lo que consideres acerca de tí, tu descripción\n(Max 160 caracteres)
 \33cGeef iets over uzelf als beschrijving in\n(max. 160 karakters)
-\33cImmetti qualcosa su di te o una descrizione\n(Max. 160 caratteri)
+\33cInserisci qualche breve informazione personale oppure una descrizione\n(Max. 160 caratteri)
 ;
 MSG_UPDATEPROFILE3 (/1/)
 _Update Profile
@@ -1061,7 +1061,7 @@ _Mise à jour du profil
 Akt_ualizuj profil
 _Actualizar Perfil
 Profiel akt_ualiseren
-_Attualizza profilo
+_Aggiorna profilo
 ;
 MSG_CANCEL9 (//)
 ;
@@ -1133,7 +1133,7 @@ Ne pas sauver les changements courants
 Nie zapisuj zmian
 No guardar cambios
 Veranderingen niet wegschrijven
-Non salvare le impostazioni attuali
+Non salvare le attuali impostazioni
 ;
 MSG_CLEAR8 (/1/)
 Clear Tweet
@@ -1169,7 +1169,7 @@ Effacer la recherche
 Wyczy¶æ szukanie
 Borrar búsqueda
 Zoekopdracht wissen
-Cancella la ricerca
+Cancella ricerca
 ;
 MSG_SEARCH8 (//)
 ;
@@ -1187,7 +1187,7 @@ Annuler la recherche
 Anuluj szukanie
 Cancelar búsqueda
 Zoekopdracht afbreken
-Annulla ricerca
+Cancella ricerca
 ;
 MSG_CLEAR10 (/1/)
 Clear User Name
@@ -1214,7 +1214,7 @@ Ne plus suivre un utilisateur
 Nie pod±¿aj za u¿ytkownikiem
 Dejar de seguir a un usuario
 Een gebruiker niet meer opvolgen
-Smetti di seguir l'utente
+Smetti di seguire l'utente
 ;
 MSG_CANCEL12 (/1/)
 Cancel Request
@@ -1241,7 +1241,7 @@ Bloquer un utilisateur
 Zablokuj u¿ytkownika (U¿ywaj ostro¿nie!)
 Bloquear usuario (¡usar con cuidado!)
 Een gebruiker blokkeren (voorzichtig!)
-Blocca utente (usa con moderazione)
+Blocca utente (usare con moderazione)
 ;
 MSG_UNBLOCKUSER (/1/)
 Unblock a currently blocked User
@@ -1277,7 +1277,7 @@ MSG_SMSNOTE (/1/)
 \33cNotka: Musisz najperw ustawiæ swój telefon\nna stronie Twittera (podr 'Settings/Mobile')\nje¶li tego jeszcze nie zrobi³e¶, aby zacz±æ otrzymywaæ\n powiadomienia SMS przez AmiTwittear...
 \33cAtención: Si aún no lo has hecho, debes de configurar\n tu móvil en la página de Twitter (en la sección\n'Preferencias/móvil') para recibir notificaciones vía SMS con AmiTwitter...
 \33cOpgelet aub: U moet eerst uw mobielnummer\nop de Twitter-webpagina (onder 'Settings/Mobile')\naangeven, indien u dat nog niet gedaan heeft,\nom SMS-boodschappen met\nAmiTwitter te kunnen ontvangen...
-\33cAttenzione: devi prima immettere il tuo numero di\ncellulare sul sito Twitter (sotto 'Settings/Mobile')\naltrimenti non potrai ricevere le notifiche SMS con AmiTwitter...
+\33cAttenzione: devi prima immettere il tuo numero di\ncellulare sul sito di Twitter (sotto 'Settings/Mobile')\naltrimenti non sarà possibile ricevere notifiche SMS con AmiTwitter...
 ;
 MSG_SMSSTOP (/1/)
 Stop receiving SMS notifications from this user
@@ -1286,7 +1286,7 @@ Stopper la notification SMS de cet utilisateur
 Zatrzymaj pobieranie powiadomieñ SMS od tego u¿ytkownika
 Dejar de recibir notificaciones SMS de este usuario
 SMS-boodschappen voor deze gebruiker niet meer ontvangen
-Ferma la ricezione di notifiche SMS da parte di questo utente
+Blocca la ricezione di ulteriori notifiche SMS da parte di questo utente
 ;
 MSG_CANCEL14 (//)
 ;
@@ -1331,7 +1331,7 @@ Effacer le Message Direct
 Wyczy¶æ wiadomo¶æ bezpo¶redni±
 Borrar Mensaje Directo
 Direktboodschap wissen
-Borrar Mensaje Directo
+Cancella messaggio diretto
 ;
 MSG_SENDDIRMSG3 (//)
 ;
@@ -1358,7 +1358,7 @@ Mise à jour du profil !
 Aktualizuj swój profil!
 ¡Actualiza tu perfil!
 Profiel aktualizeren
-¡Actualiza tu perfil!
+Aggiorna il tuo profilo!
 ;
 MSG_CANCEL17 (/1/)
 Cancel Update
@@ -1367,7 +1367,7 @@ Annuler la mise à jour
 Anuluj aktualizacjê
 Cancelar actualización
 Aktualizatie afbreken
-Cancelar actualización
+Annulla aggiornamento
 ;
 MSG_SEARCH9 (/1/)
 Search
@@ -1394,7 +1394,7 @@ La recherche n'est pas encore active.
 Szukanie jeszcze niezaimplementowane.
 Búsqueda aún no disponible...
 Zoeken nog niet geimplementeerd
-Ricerca non è ancora implementata...
+Ricerca non ancora implementata...
 ;
 MSG_BLOCK2 (/1/)
 Block?
@@ -1421,7 +1421,7 @@ MSG_BLOCK4 (/1/)
 \33cCzy jeste¶ pewny, ¿e chcesz zablokowaæ tego u¿ytkownika?\n\nJe¶li kogo¶ zablokujesz nie bêdzie on móg³ za Tob± pod±¿aæ\nani wysy³aæ jakichkolwiek wiadomo¶æi. Je¶li twoje konto jest publiczne\n, bêd± oni wci±¿ w stanie je ogl±daæ, ale\nnie pojawi± siê na li¶cie pod±¿aj±cych,\n\nJe¶li to jest spamer, dziêkujê!
 \33c¿Estás seguro de que quieres bloquear a este usuario?\n\nAl bloquear a alguien, no podrá seguirte\nni enviarte mensajes. Si tu cuenta es\npública, podrá verla, pero no aparecerá en tu lista de\nseguidores, y además no aparecerás en su lista de seguidos.\n\nSi el usuario que vas a bloquear es un spammer, ¡gracias!
 \33cBent u zeker dat u deze gebruiker wilt blokkeren?\n\nIndien u iemand blokeert, kunt u \ndeze gebruiker niet meer opvolgen of boodschappen zenden.\n indien uw rekening publiek is,\nkan deze gebruiker u nog steeds zien,\nmaar hij wordt niet meer als uw opvolger getoond en u niet meer als zijn opvolger.\n\nIndien u een spammer blokeert, dank u wel!
-\33cSei sicuro di voler bloccare questo utente?\n\nSe blocchi un utente, questi non potrù più seguirti\no inviarti messaggi. Se il tuo account è pubblico,\npotrá ancora vederlo, ma non apparirá nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
+\33cSei sicuro di voler bloccare questo utente?\n\nBloccando un utente, questi non potrà più seguirti\nné inviarti messaggi. Nel caso il tuo account sia pubblico,\npotrá ancora continuare a vederlo, ma esso non apparirá nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
 ;
 MSG_QUIT (//)
 ;
@@ -1484,7 +1484,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar perfil
 Profiel aktualizeren
-Attualizza profilo
+Aggiorna profilo
 ;
 MSG_OK3 (//)
 ;
@@ -1502,7 +1502,7 @@ MSG_UPDATEPROFILE6 (/1/)
 \33cNotka:\n\n Aktualnie, musisz *ZAWSZE* ustawiæ 'Nazwê',\ninne pola s± opcjonalne, ale je¶li zostan± puste\nto wyczyszcz± aktualny profil na stronie Twittera.\n  (tzn. ¿e powiniene¶ wype³niæ wszystkie\ninformacje je¶li chcesz aby by³y wy¶wietlone na stronie\nTwittera! Je¶li nie chcesz aby siê wy¶wietla³y, zostaw je puste\n(oprócz 'Nazwy' oczywi¶cie)...\n\nMam nadziejê, ¿e w przysz³o¶ci bêdzie to bardziej przyjazne dla u¿ytkownika!\nProszê zagl±daj do b±belków pomocy po wiêcej informacji dla ka¿dego pola!
 \33cAtención:\n\n Debes especificar el campo 'Nombre' *SIEMPRE*,\nlos demás campos son opcionales, pero si los dejas en blanco\nsobrescribirán el perfil que tienes en la página\n de Twitter. (es decir, deberías completar toda\nla información que quieres que se muestre en tu página\n de Twitter. Si quieres que algo no se muestra, déjalo vacío\n(excepto el campo 'Nombre')...\n\n¡Espero mejorarlo en breve! Puedes consultar la ayuda\n de cada uno de los campos en el icono que aparece al lado de los mismos.ç
 \33cOpgepast:\n\nop dit moment moet u *ALTIJD* een 'naam' ingeven,\nde andere velden zijn optioneel, indien u ze \nleeg laat, worden uw aktuele\n profielvelden op de Twitter-pagina overschreven  (d.w.z. vul alle velden in, indien u wenst dat ze \nop uw Twitter-pagina getoond moeten worden!\nIndien u dit niet wenst, laat u die velden leeg\n(uitgezonderd 'Naam' natuurlijk)...\n\nDit wordt in de toekomst hopelijk gebruikersvriendelijker!\nIn de spreekblaasinformatie vindt u meer informatie over elk veld!
-\33cRicorda:\n\n attualmente devi *SEMPRE* specificare un 'Nome',\nle altre caselle sono opzionali, però se lasciate vuote\nsovrasctiveranno l'attuale profilo sulla tuo\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se vuoi che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'Nome' ovviamente)....\n\nSpero di rendere questo procedimento più user friendly in futuro!\nLeggi gli aiuti "a fumetto" per maggiori informazioni su ogni casella!
+\33cRicorda:\n\n attualmente devi *SEMPRE* specificare un 'Nome',\nle altre caselle sono opzionali, però se lasciate vuote\nsovrascriveranno l'attuale profilo sulla tua\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se vuoi che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'Nome' ovviamente)....\n\nSpero di rendere questo procedimento più user friendly in futuro!\nLeggere gli aiuti "a fumetto" per maggiori informazioni su ogni casella!
 ;
 MSG_HTML1 (//)
 ;
@@ -1844,7 +1844,7 @@ Retweets
 Retweety
 Retweets
 Retweets
-Retweets
+Retweet
 ;
 MSG_0003 (/1/)
 Retweet By Me
@@ -1853,7 +1853,7 @@ Retweetés par moi
 Moje Retweety
 Retweets hechos por mí
 Mijn retweets
-Retweets miei
+Retweet personali
 ;
 MSG_0004 (/1/)
 Retweet To Me
@@ -1862,7 +1862,7 @@ Retweetés pour moi
 Retweety do mnie
 Retweets a mí
 Retweets aan mij gestuurd
-Retweets diretti a me
+Retweet diretti a me
 ;
 MSG_0005 (/1/)
 Retweet Of Me
@@ -1871,7 +1871,7 @@ Mes Tweets retweetés
 Mój Retweet
 Retweets míos
 Mijn Retweet
-Retweets di me
+Retweet di me stesso
 ;
 MSG_0006 (/1/)
 @Replies
@@ -1970,7 +1970,7 @@ Mes favoris
 Moje ulubione
 Mis Favoritos
 Mijn favorieten
-Favoriti
+Preferiti
 ;
 MSG_0017 (/1/)
 Quit
@@ -1988,7 +1988,7 @@ Divers
 Ró¿ne
 Misceláneo
 Verschillende
-Diversi
+Varie
 ;
 MSG_0019 (/1/)
 My Friends
@@ -1997,7 +1997,7 @@ Mes amis
 Moi przyjaciele
 Mis Amigos
 Mijn vrienden
-Amici miei
+Amici personali
 ;
 MSG_0020 (/1/)
 My Followers
@@ -2024,7 +2024,7 @@ Aléatoire
 Losowe
 Aleatorio
 Toevallig
-A caso
+Casuali
 ;
 MSG_0023 (/1/)
 Tools
@@ -2051,7 +2051,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar Perfil
 Profiel aktualiseren
-Attualizza profilo
+Aggiorna profilo
 ;
 MSG_0026 (/1/)
 MUI Settings
@@ -2078,7 +2078,7 @@ FAQs
 FAQs
 FAQs
 FAQs
-FAQs
+FAQ
 ;
 MSG_0029 (/1/)
 Donate
@@ -2090,7 +2090,7 @@ Donaties
 Dona
 ;
 MSG_0030 (/1/)
-About AmiTwitter
+About AmiTwitter...
 Über AmiTwitter
 À propos de AmiTwitter
 O programie...
@@ -2099,7 +2099,7 @@ Betreffend AmiTwitter
 Informazioni su AmiTwitter...
 ;
 MSG_0031 (/1/)
-About MUI
+About MUI...
 Über MUI
 À propos de MUI
 O MUI...
