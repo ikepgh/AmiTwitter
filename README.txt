@@ -1,5 +1,5 @@
 Short:   AmiTwitter
-Uploader:  ikepgh@yahoo.com (IKE) 
+Uploader:  ikepgh@ezcyberspace.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
 Version: 0.27 Public Beta Release 2
@@ -14,20 +14,17 @@ INTRODUCTION
 Features:
 
     * Sends Tweets and Direct Messages on the Twitter network
-    * Downloads Following Tweets Timeline (and images)
-    * Downloads @Replies; Retweets of me, by me and to me
+    * Downloads Timeline, Retweets of me/by me/to me, @Replies, Favorites Tweets
     * Downloads Public Timeline (Random Tweets just for fun...)
     * Displays the most recent Tweets that you have sent
-    * Displays the most recent Tweet by all friends & followers (User ID)
-    * Follow/Unfollow, Block/Unblock specified Users
-    * Receive/Stop receiving SMS messages from Users
-    * Update your profile; view Favorites and view Users currently Blocking
-    * Display most recent Tweet for any User (whether following them or not)
-    * Displays most recently sent and received Direct Message
-    * Fully localized program and FAQs
-    * International Character Support via codesets.library
-    * MorphOS, OS 3.x compatible
-
+    * Displays the most recent Tweet by Friends, Followers and Blocking (User ID only)
+    * Follow/Unfollow, Block/Unblock, Receive/Stop SMS messages from Users
+    * Update your Twitter website profile
+    * Display most recent Tweet for any User (whether following them or not! via User ID)
+    * Displays most recently sent and received Direct Message 
+    * Fully localized program and FAQs 
+    * International Character Support via codesets.library 
+    * MorphOS, AmigaOS 3.x compatible
 
 Thanks for your interest!
 AmiTwitter Open Source Team
@@ -38,14 +35,15 @@ INSTALLATION
 -----------
 
 Just place the 'AmiTwitter' directory wherever you'd like on your hard drive. 
-Place the <U>enclosed libiconv.ixlibary in your system 'Libs' directory</U>, 
+Place the enclosed libiconv.ixlibary in your system 'Libs' directory, 
 if you don't already have this library.
 
 REQUIREMENTS
 -----------
 
-OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, 
-libiconv.ixlibary (included in Libs directory), codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x), ixemul.library/ixnet.library (needed by OS 3.x version only), 
+OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, libiconv.ixlibary (included in Libs directory), 
+codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x), ixemul.library/ixnet.library 
+(needed by OS 3.x version only)
 
 OS4/AROS: Unknown at this time...Please note:  the OS 3.x version crashes on OS 4.x...
 
@@ -59,7 +57,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.27 - codesets.library implemented!  
+0.27 - Public Beta Release 2 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
 0.25 - Menu's, tabs & TheBar are now localized 
@@ -133,7 +131,7 @@ Special thanks to:
 - ShInKurO for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
 - James Carroll for contributing to the code
-- All the catalog translators
+- All the catalog translators and beta testers
 
 Donators: Roschmyr
 
