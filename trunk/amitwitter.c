@@ -66,8 +66,8 @@
 #include <dos/dos.h>
 #include <dos/dosextens.h>
 #if defined(__AMIGA__) && !defined(__PPC__)
-#include <pragmas/dos_pragmas.h>
-#include <pragmas/exec_pragmas.h>
+# include <pragmas/dos_pragmas.h>
+# include <pragmas/exec_pragmas.h>
 #endif
 #include <workbench/workbench.h>
 #include <proto/intuition.h>
@@ -76,10 +76,14 @@
 #include <libraries/mui.h>
 #include <libraries/gadtools.h>
 #include <libraries/locale.h>
-#include <clib/exec_protos.h>
-#include <clib/locale_protos.h>
+#ifndef __amigaos4__
+# include <clib/exec_protos.h>
+# include <clib/locale_protos.h>
+#else
+# include <proto/locale.h>
+#endif
 #if defined(__AMIGA__) && !defined(__PPC__)
-#include <clib/gadtools_protos.h>
+# include <clib/gadtools_protos.h>
 #endif
 #include <proto/exec.h>
 #include <sys/types.h>
@@ -94,7 +98,6 @@
 #include <mui/TheBar_mcc.h>
 
 // Dependencies
-#include <glib.h>
 #include <curl/curl.h>
 #include <libxml/xmlreader.h>
 #include <proto/codesets.h>
@@ -104,6 +107,8 @@
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
 #include "amitwitter_strings.h"
+
+//#include "mcc_common.h" //not used yet...
 
 /*****************************************************************************/
 
@@ -196,7 +201,8 @@ extern struct DOSIFace  *IDOS;
 struct GraphicsIFace    *IGraphics      = NULL;
 struct IntuitionIFace   *IIntuition     = NULL;
 struct MUIMasterIFace   *IMUIMaster     = NULL;
-#endif
+struct CodesetsIFace	*ICodesets		= NULL;
+#endif   
 
 #ifdef __MORPHOS__
 #ifndef __ixemul__
@@ -459,12 +465,31 @@ BOOL Open_Libs(void ) {
         return(0);
     }
 
-    if((CodesetsBase = OpenLibrary(CODESETSNAME, CODESETSVER))) {}
+	if((CodesetsBase = OpenLibrary(CODESETSNAME, CODESETSVER))) {
+        #ifdef __amigaos4__
+		if (!(ICodesets = (struct CodesetsIFace *) GetInterface((struct Library *)CodesetsBase,
+                                                               "main", 1, NULL)))
+        {
+			CloseLibrary((struct Library *)CodesetsBase);
+
+			DropInterface((struct Interface *)IMUIMaster);
+            CloseLibrary((struct Library *)MUIMasterBase);
+
+            DropInterface((struct Interface *)IGraphics);
+            CloseLibrary((struct Library *)GfxBase);
+
+            DropInterface((struct Interface *)IIntuition);
+            CloseLibrary((struct Library *)IntuitionBase);
+            return 0;
+        }
+        #endif
+	}
 
     if ((LocaleBase = OpenLibrary("locale.library",38))) {
 
         li.li_LocaleBase = LocaleBase;
-        if ((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
+  
+		if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL) != NULL) {      
 
             struct CatCompArrayType *cca;
             int                     cnt;
@@ -475,7 +500,7 @@ BOOL Open_Libs(void ) {
             {
                 STRPTR s;
 
-                if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str))) cca->cca_Str = s;
+			    if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str))) cca->cca_Str = s;
             }
         }
     }
@@ -486,6 +511,7 @@ BOOL Open_Libs(void ) {
 void Close_Libs(void ) {
 
     #ifdef __amigaos4__
+	DropInterface((struct Interface *)ICodesets);
     DropInterface((struct Interface *)IMUIMaster);
     DropInterface((struct Interface *)IIntuition);
     DropInterface((struct Interface *)IGraphics);
@@ -669,6 +695,64 @@ void charconv() {
        fprintf(stderr, "Unknown source codeset %s\n", "UTF-8");
 }
 
+ULONG my_list_length(struct List *list)
+{
+	struct Node *node = NULL;
+	ULONG num = 0;
+
+	for(node = list->lh_Head;
+		node->ln_Succ;
+		node = node->ln_Succ)
+	{
+		num++;
+	}
+
+	return num;
+}
+
+
+/* Lame replacement for glib array functions follows */
+
+MyByteArray *my_byte_array_new(void)
+{
+	return AllocVec(sizeof(MyByteArray), MEMF_ANY|MEMF_CLEAR);
+}
+
+void my_byte_array_free(MyByteArray *mba, BOOL free_segment)
+{
+	if(mba)
+	{
+		if(free_segment && mba->data)
+			FreeVec(mba->data);
+
+		FreeVec(mba);
+	}
+}
+
+MyByteArray	*my_byte_array_append(MyByteArray *mba, UBYTE *ptr, ULONG size)
+{
+	UBYTE *temp = NULL;
+	ULONG newsize = 0;
+
+	if(!mba || !ptr || !size)
+		return mba;
+
+	newsize = mba->len + size;
+	temp = AllocVec(newsize, MEMF_ANY|MEMF_CLEAR);
+
+	if(mba->data && mba->len > 0)
+		memcpy(temp, mba->data, mba->len);
+
+	memcpy(temp+mba->len, ptr, size);
+
+	FreeVec(mba->data);
+	mba->data = temp;
+	mba->len = newsize;
+
+	return mba;
+}
+
+
 /*****************************************************************************/
 
 ///
@@ -735,17 +819,29 @@ void twitter_free(twitter_t *twitter) {
 /*****************************************************************************/
 
 // Free User
-void twitter_statuses_free(GList *statuses) {
-    GList *l = statuses;
-    twitter_status_t *status;
-    if(!statuses){
+void twitter_statuses_free(struct List *statuses)
+{
+	struct Node *node = NULL, *next = NULL;
+
+	twitter_status_t *status;
+
+	if(!statuses)
+	{
         return;
     }
-    do{
-        status = l->data;
+
+	for(node = statuses->lh_Head;
+		node->ln_Succ;
+		node = next)
+	{
+		next = node->ln_Succ;
+
+		status = (twitter_status_t *)node;
         if(!status) {
             continue;
         }
+		Remove(node);
+
         free((void*)(status->created_at));
         free((void*)(status->id));
         free((void*)(status->text));
@@ -771,24 +867,33 @@ void twitter_statuses_free(GList *statuses) {
             free((void*)(status->user));
         }
         free(status);
-    }while((l = g_list_next(l)));
-    g_list_free(statuses);
+	}
+	FreeVec(statuses);
 }
 
 /*****************************************************************************/
 
 // Free Recipient
-void twitter_statuses_free_dirmsg(GList *statuses) {
-    GList *l = statuses;
+void twitter_statuses_free_dirmsg(struct List *statuses) {
+	struct Node *node = NULL, *next = NULL;
     twitter_direct_message_t *direct_message;
     if(!statuses){
         return;
     }
-    do{
-        direct_message = l->data;
+
+	for(node = statuses->lh_Head;
+		node->ln_Succ;
+		node = next)
+	{
+		next = node->ln_Succ;
+
+		direct_message = (twitter_direct_message_t *)node;
         if(!direct_message) {
             continue;
         }
+
+		Remove(node);
+
         free((void*)(direct_message->id));
         free((void*)(direct_message->sender_id));
         free((void*)(direct_message->text));
@@ -812,31 +917,40 @@ void twitter_statuses_free_dirmsg(GList *statuses) {
             free((void*)(direct_message->recipient));
         }
         free(direct_message);
-    }while((l = g_list_next(l)));
-    g_list_free(statuses);
+	}
+	FreeVec(statuses);
 }
 
 /*****************************************************************************/
 
 // Free Sender
-void twitter_statuses_free_dirmsgrcvd(GList *statuses) {
-    GList *l = statuses;
+void twitter_statuses_free_dirmsgrcvd(struct List *statuses) {
+	struct Node *node = NULL, *next = NULL;
     twitter_direct_message_rcvd_t *direct_message;
     if(!statuses){
         return;
     }
-    do{
-        direct_message = l->data;
+
+	for(node = statuses->lh_Head;
+		node->ln_Succ;
+		node = next)
+	{
+		next = node->ln_Succ;
+
+		direct_message = (twitter_direct_message_rcvd_t *)node;
         if(!direct_message) {
             continue;
         }
-        free((void*)(direct_message->id));
+
+		Remove(node);
+
+	    free((void*)(direct_message->id));
         free((void*)(direct_message->sender_id));
         free((void*)(direct_message->text));
         free((void*)(direct_message->recipient_id));
         free((void*)(direct_message->created_at));
         free((void*)(direct_message->sender_screen_name));
-        free((void*)(direct_message->recipient_screen_name));
+        free((void*)(direct_message->recipient_screen_name)); 
 
         if(direct_message->sender){
             free((void*)(direct_message->sender->id));
@@ -853,8 +967,8 @@ void twitter_statuses_free_dirmsgrcvd(GList *statuses) {
             free((void*)(direct_message->sender));
         }
         free(direct_message);
-    }while((l = g_list_next(l)));
-    g_list_free(statuses);
+	}
+	FreeVec(statuses);
 }
 
 /*****************************************************************************/
@@ -867,7 +981,7 @@ void twitter_statuses_free_dirmsgrcvd(GList *statuses) {
 static size_t twitter_curl_write_cb(void *ptr, size_t size, size_t nmemb, void *data) {
 
     size_t realsize = size * nmemb;
-    g_byte_array_append((GByteArray *)data, (guint8*)ptr, realsize);
+	my_byte_array_append((MyByteArray *)data, (UBYTE*)ptr, realsize);
 
     return realsize;
 }
@@ -886,7 +1000,7 @@ static size_t twitter_curl_file_cb(void *ptr, size_t size, size_t nmemb, void *d
 /*****************************************************************************/
 
 // Fetch with cURL
-int twitter_fetch(twitter_t *twitter, const char *apiuri, GByteArray *buf) {
+int twitter_fetch(twitter_t *twitter, const char *apiuri, MyByteArray *buf) {
 
     CURL *curl;
     CURLcode code;
@@ -999,21 +1113,24 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
 /*****************************************************************************/
 
 // Fetch Images
-int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
+int twitter_fetch_images(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_status_t *status;
     const char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
+	struct Node *node = NULL;
 
-    statuses = g_list_last(statuses);
     if(!statuses) {
         return 0;
     }
 
-    do {
-        status = statuses->data;
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		status = (twitter_status_t *)node;
         twitter_image_name(status, name);
         url = status->user->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1021,7 +1138,7 @@ int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
         printf("fetch_image: %s\n", url);
         twitter_fetch_image(twitter, url, path);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     return 0;
 }
@@ -1029,21 +1146,24 @@ int twitter_fetch_images(twitter_t *twitter, GList *statuses) {
 /*****************************************************************************/
 
 // Fetch Recipient Images
-int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses) {
+int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_direct_message_t *direct_message;
     const char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
+	struct Node *node = NULL;
 
-    statuses = g_list_last(statuses);
     if(!statuses) {
         return 0;
     }
 
-    do {
-        direct_message = statuses->data;
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		direct_message = (twitter_direct_message_t *)node;
         twitter_image_name_dirmsg(direct_message, name);
         url = direct_message->recipient->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1051,7 +1171,7 @@ int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses) {
         printf("fetch_image: %s\n", url);
         twitter_fetch_image(twitter, url, path);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     return 0;
 }
@@ -1059,21 +1179,24 @@ int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses) {
 /*****************************************************************************/
 
 // Fetch Sender Images
-int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
+int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_direct_message_rcvd_t *direct_message;
     const char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
+	struct Node *node = NULL;
 
-    statuses = g_list_last(statuses);
     if(!statuses) {
         return 0;
     }
 
-    do {
-        direct_message = statuses->data;
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		direct_message = (twitter_direct_message_rcvd_t *)node;
         twitter_image_name_dirmsgrcvd(direct_message, name);
         url = direct_message->sender->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1081,7 +1204,7 @@ int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
         printf("fetch_image: %s\n", url);
         twitter_fetch_image(twitter, url, path);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     return 0;
 }
@@ -1105,8 +1228,16 @@ int twitter_image_name(twitter_status_t *status, char *name) {
         if(name[i] == '/')
          name[i] = '_';
 
-      // added to truncate image name for displaying in HTMLtext .mcc
-         name[i] = strncpy(name, status->user->id, PATH_MAX);
+	/* cyborg: Errr... whoever this did: You should really check this again
+			   as
+				   a) you are overwriting below what you did with name[] above!
+				   b) strncpy() returns a STRPTR, putting this into a char will
+					  very likely not have the effect you hoped for, but most
+					  likely just crash at some point!  */
+
+	// added to truncate image name for displaying in HTMLtext .mcc
+	name[i] = strncpy(name, status->user->id, PATH_MAX);
+
 
     return 0;
 }
@@ -1130,8 +1261,16 @@ int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *na
         if(name[i] == '/')
          name[i] = '_';
 
-      // added to truncate image name for displaying in HTMLtext .mcc
-         name[i] = strncpy(name, direct_message->recipient->id, PATH_MAX);
+	/* cyborg: Errr... whoever this did: You should really check this again
+			   as
+				   a) you are overwriting below what you did with name[] above!
+				   b) strncpy() returns a STRPTR, putting this into a char will
+					  very likely not have the effect you hoped for, but most
+					  likely just crash at some point!  */
+
+	// added to truncate image name for displaying in HTMLtext .mcc
+	name[i] = strncpy(name, direct_message->recipient->id, PATH_MAX);
+
 
     return 0;
 }
@@ -1155,8 +1294,16 @@ int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message,
         if(name[i] == '/')
          name[i] = '_';
 
-      // added to truncate image name for displaying in HTMLtext .mcc
-         name[i] = strncpy(name, direct_message->sender->id, PATH_MAX);
+	/* cyborg: Errr... whoever this did: You should really check this again
+			   as
+				   a) you are overwriting below what you did with name[] above!
+				   b) strncpy() returns a STRPTR, putting this into a char will
+					  very likely not have the effect you hoped for, but most
+					  likely just crash at some point! */
+
+	// added to truncate image name for displaying in HTMLtext .mcc
+	name[i] = strncpy(name, direct_message->sender->id, PATH_MAX);
+
 
     return 0;
 }
@@ -1168,13 +1315,17 @@ int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message,
 /// AmiTwitter XML Parser *****************************************************/
 
 // XML parse Statuses node
-GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
+struct List* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
 
     int ret;
     xmlElementType type;
     xmlChar *name;
-    GList* statuses = NULL;
+	struct List* statuses = AllocVec(sizeof(struct List), MEMF_ANY|MEMF_CLEAR);
     twitter_status_t *status;
+
+	if(!statuses)
+		return NULL;
+	NewList(statuses);
 
     do {
         ret = xmlTextReaderRead(reader);
@@ -1184,7 +1335,7 @@ GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
             if(!xmlStrcmp(name, (xmlChar *)"status")) {
                 status = twitter_parse_status_node(reader);
                 if(status) {
-                    statuses = g_list_append(statuses, status);
+					AddTail(statuses, (struct Node *)status);
                 }
             }
             xmlFree(name);
@@ -1196,13 +1347,17 @@ GList* twitter_parse_statuses_node(xmlTextReaderPtr reader) {
 /*****************************************************************************/
 
 // Parse Direct Messages Recipient
-GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader) {
+struct List* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader) {
 
     int ret;
     xmlElementType type;
     xmlChar *name;
-    GList* statuses = NULL;
+    struct List* statuses = AllocVec(sizeof(struct List), MEMF_ANY|MEMF_CLEAR);
     twitter_direct_message_t *direct_message;
+
+	if(!statuses)
+		return NULL;
+	NewList(statuses);
 
     do {
         ret = xmlTextReaderRead(reader);
@@ -1212,7 +1367,7 @@ GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader) {
             if(!xmlStrcmp(name, (xmlChar *)"direct-messages")) {
                 direct_message = twitter_parse_status_node_dirmsg(reader);
                 if(direct_message) {
-                    statuses = g_list_append(statuses, direct_message);
+					AddTail(statuses, (struct Node *)direct_message);
                 }
             }
             xmlFree(name);
@@ -1224,13 +1379,17 @@ GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader) {
 /*****************************************************************************/
 
 // Parse Direct Messages Sender
-GList* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader) {
+struct List* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader) {
 
     int ret;
     xmlElementType type;
     xmlChar *name;
-    GList* statuses = NULL;
+	struct List* statuses = AllocVec(sizeof(struct List), MEMF_ANY|MEMF_CLEAR);
     twitter_direct_message_rcvd_t *direct_message;
+
+	if(!statuses)
+		return NULL;
+	NewList(statuses);
 
     do {
         ret = xmlTextReaderRead(reader);
@@ -1240,7 +1399,7 @@ GList* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader) {
             if(!xmlStrcmp(name, (xmlChar *)"direct-messages")) {
                 direct_message = twitter_parse_status_node_dirmsgrcvd(reader);
                 if(direct_message) {
-                    statuses = g_list_append(statuses, direct_message);
+                    AddTail(statuses, (struct Node *)direct_message);
                 }
             }
             xmlFree(name);
@@ -1617,7 +1776,7 @@ void twitter_status_print(twitter_status_t *status) {
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
     printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
-    printf(GetString(&li, MSG_STATS), status->user->name, status->user->location, status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+	printf(GetString(&li, MSG_STATS), status->user->name, status->user->location ? status->user->location : "n/a", status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
     fclose(stdout);
@@ -1674,20 +1833,24 @@ void twitter_status_print_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_messa
 /*****************************************************************************/
 
 // Show timelines (public, home, user, mentions, all the retweets)
-void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
+void amitwitter_show_timeline(twitter_t *twitter, struct List *statuses) {
 
     twitter_status_t *status;
-    statuses = g_list_last(statuses);
+	struct Node *node = NULL;
 
     if(!statuses) {
         return;
     }
-    do {
-        status = statuses->data;
+
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		status = (twitter_status_t*)node;
 
             twitter_status_print(status);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     charconv();
          
@@ -1698,11 +1861,11 @@ void amitwitter_show_timeline(twitter_t *twitter, GList *statuses) {
 /*****************************************************************************/
 
 // statuses/public_timeline API
-GList* twitter_public_timeline(twitter_t *twitter) {
+struct List* twitter_public_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+	MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -1713,22 +1876,22 @@ GList* twitter_public_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+	buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
     reader = xmlReaderForMemory((const char *)buf->data, buf->len,
                                 NULL, NULL, 0);
 
-    timeline = twitter_parse_statuses_node(reader);
+	timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+	my_byte_array_free (buf, TRUE);
 
-    if(timeline){
-        status = timeline->data;
+	if(timeline){
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_home_timeline = atol(status->id);
+		if(status && status->id) twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -1742,7 +1905,7 @@ void amitwitter_public_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1750,11 +1913,14 @@ void amitwitter_public_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_public_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -1769,11 +1935,11 @@ void amitwitter_public_loop() {
 /// statuses/home_timeline
 
 // statuses/home_timeline API
-GList* twitter_home_timeline(twitter_t *twitter) {
+struct List* twitter_home_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+	MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -1784,7 +1950,7 @@ GList* twitter_home_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+	buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -1794,12 +1960,12 @@ GList* twitter_home_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_home_timeline = atol(status->id);
+		if(status && status->id) twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -1813,7 +1979,7 @@ void amitwitter_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1821,11 +1987,14 @@ void amitwitter_loop() {
     for(i=1; i<2; i++) {   
         timeline = twitter_home_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -1840,11 +2009,11 @@ void amitwitter_loop() {
 /// statuses/user_timeline
 
 // statuses/user_timeline API
-GList* twitter_user_timeline(twitter_t *twitter) {
+struct List* twitter_user_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -1855,7 +2024,7 @@ GList* twitter_user_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -1865,12 +2034,12 @@ GList* twitter_user_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_user_timeline = atol(status->id);
+		if(status && status->id) twitter->last_user_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -1884,7 +2053,7 @@ void amitwitter_user_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1892,11 +2061,14 @@ void amitwitter_user_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_user_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -1911,11 +2083,11 @@ void amitwitter_user_loop() {
 /// statuses/mentions
 
 // statuses/mentions API
-GList* twitter_mentions(twitter_t *twitter) {
+struct List* twitter_mentions(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -1926,7 +2098,7 @@ GList* twitter_mentions(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -1936,12 +2108,12 @@ GList* twitter_mentions(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->mentions = atol(status->id);
+		if(status && status->id) twitter->mentions = atol(status->id);
     }
     return timeline;
 }
@@ -1955,7 +2127,7 @@ void amitwitter_mentions_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -1963,11 +2135,14 @@ void amitwitter_mentions_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_mentions(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -1982,11 +2157,11 @@ void amitwitter_mentions_loop() {
 /// statuses/retweeted_by_me
 
 // statuses/twitter_retweeted_by_me API
-GList* twitter_retweeted_by_me(twitter_t *twitter) {
+struct List* twitter_retweeted_by_me(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -1997,7 +2172,7 @@ GList* twitter_retweeted_by_me(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2007,12 +2182,12 @@ GList* twitter_retweeted_by_me(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_home_timeline = atol(status->id);
+		if(status && status->id) twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2026,7 +2201,7 @@ void amitwitter_retweeted_by_me() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2034,11 +2209,14 @@ void amitwitter_retweeted_by_me() {
     for(i=1; i<2; i++) {
         timeline = twitter_retweeted_by_me(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2053,11 +2231,11 @@ void amitwitter_retweeted_by_me() {
 /// statuses/retweeted_to_me
 
 // statuses/twitter_retweeted_to_me API
-GList* twitter_retweeted_to_me(twitter_t *twitter) {
+struct List* twitter_retweeted_to_me(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -2068,7 +2246,7 @@ GList* twitter_retweeted_to_me(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2078,12 +2256,12 @@ GList* twitter_retweeted_to_me(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_home_timeline = atol(status->id);
+		if(status && status->id) twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2097,7 +2275,7 @@ void amitwitter_retweeted_to_me() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2105,11 +2283,14 @@ void amitwitter_retweeted_to_me() {
     for(i=1; i<2; i++) {
         timeline = twitter_retweeted_to_me(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2124,11 +2305,11 @@ void amitwitter_retweeted_to_me() {
 /// statuses/retweets_of_me
 
 // statuses/twitter_retweets_of_me API
-GList* twitter_retweets_of_me(twitter_t *twitter) {
+struct List* twitter_retweets_of_me(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -2139,7 +2320,7 @@ GList* twitter_retweets_of_me(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2149,12 +2330,12 @@ GList* twitter_retweets_of_me(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_home_timeline = atol(status->id);
+        if(status && status->id) twitter->last_home_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2168,7 +2349,7 @@ void amitwitter_retweets_of_me() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2176,11 +2357,14 @@ void amitwitter_retweets_of_me() {
     for(i=1; i<2; i++) {
         timeline = twitter_retweets_of_me(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2204,11 +2388,11 @@ int twitter_update(twitter_t *twitter, const char *status) {
     struct curl_httppost *formpost=NULL;
     struct curl_httppost *lastptr=NULL;
     struct curl_slist *headers=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
@@ -2298,18 +2482,24 @@ void amitwitter_update(const char *text) {
 /// users/show
 
 // Show timeline friends/followers/Users
-void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *statuses) {
+void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, struct List *statuses) {
     twitter_status_t *status;
-    statuses = g_list_last(statuses);
+	struct Node *node = NULL;
+
+
     if(!statuses) {
         return;
     }
-    do {
-        status = statuses->data;
+	
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		status = (twitter_status_t *)node;
 
             twitter_status_print_friendsfollowers(status);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     charconv();
 
@@ -2319,11 +2509,11 @@ void amitwitter_show_timeline_friendsfollowers(twitter_t *twitter, GList *status
 /*****************************************************************************/
 
 // Show a user with cURL (users/show API)
-GList* twitter_usershow_timeline(twitter_t *twitter) {
+struct List* twitter_usershow_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -2331,13 +2521,13 @@ GList* twitter_usershow_timeline(twitter_t *twitter) {
 
     get(STR_show, MUIA_String_Contents, &text);
 
-    snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-             twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml",
-             twitter->last_usershow_timeline);
+	snprintf(api_uri, PATH_MAX, "%s%s%s%s",
+			 twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml"); /*,
+			 twitter->last_usershow_timeline);*/
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2347,12 +2537,12 @@ GList* twitter_usershow_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_usershow_timeline = atol(status->id);
+		if(status && status->id) twitter->last_usershow_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2366,7 +2556,7 @@ void amitwitter_usershow() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2374,10 +2564,13 @@ void amitwitter_usershow() {
     for(i=1; i<2; i++) {
         timeline = twitter_usershow_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
-        twitter_statuses_free(timeline);
+			amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2392,11 +2585,11 @@ void amitwitter_usershow() {
 /// statuses/friends
 
 // statuses/friends API
-GList* twitter_friends_timeline(twitter_t *twitter) {
+struct List* twitter_friends_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -2407,7 +2600,7 @@ GList* twitter_friends_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2417,12 +2610,12 @@ GList* twitter_friends_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_friends_timeline = atol(status->id);
+        if(status && status->id) twitter->last_friends_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2436,7 +2629,7 @@ void amitwitter_friends_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2444,10 +2637,13 @@ void amitwitter_friends_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_friends_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
-        twitter_statuses_free(timeline);
+			amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2462,11 +2658,11 @@ void amitwitter_friends_loop() {
 /// statuses/followers
 
 // statuses/followers API
-GList* twitter_followers_timeline(twitter_t *twitter) {
+struct List* twitter_followers_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -2477,7 +2673,7 @@ GList* twitter_followers_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2487,12 +2683,12 @@ GList* twitter_followers_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_followers_timeline = atol(status->id);
+        if(status && status->id) twitter->last_followers_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -2506,7 +2702,7 @@ void amitwitter_followers_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2514,10 +2710,13 @@ void amitwitter_followers_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_followers_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
-        twitter_statuses_free(timeline);
+			amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2534,18 +2733,24 @@ void amitwitter_followers_loop() {
 /*****************************************************************************/
 
 // Show Recieved
-void amitwitter_show_timeline_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
+void amitwitter_show_timeline_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
     twitter_direct_message_rcvd_t *direct_message;
-    statuses = g_list_last(statuses);
+	struct Node *node = NULL;
+
+
     if(!statuses) {
         return;
     }
-    do {
-        direct_message = statuses->data;
+	
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		direct_message = (twitter_direct_message_rcvd_t *)node;
 
             twitter_status_print_dirmsgrcvd(direct_message);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     charconv();
 
@@ -2555,11 +2760,11 @@ void amitwitter_show_timeline_dirmsgrcvd(twitter_t *twitter, GList *statuses) {
 /*****************************************************************************/
 
 // direct_messages/recieved API
-GList* twitter_dirmsgrcvd(twitter_t *twitter) {
+struct List* twitter_dirmsgrcvd(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_direct_message_rcvd_t *direct_message;
@@ -2570,7 +2775,7 @@ GList* twitter_dirmsgrcvd(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2580,12 +2785,12 @@ GList* twitter_dirmsgrcvd(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node_dirmsgrcvd(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        direct_message = timeline->data;
+		direct_message = (twitter_direct_message_rcvd_t *)timeline->lh_TailPred;
 
-        twitter->last_dirmsgrcvd_timeline = atol(direct_message->id);
+		if(direct_message && direct_message->id) twitter->last_dirmsgrcvd_timeline = atol(direct_message->id);
     }
     return timeline;
 }
@@ -2599,7 +2804,7 @@ void amitwitter_dirmsgrcvd() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2607,11 +2812,14 @@ void amitwitter_dirmsgrcvd() {
     for(i=1; i<2; i++) {
         timeline = twitter_dirmsgrcvd(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images_dirmsgrcvd(twitter, timeline);
-        amitwitter_show_timeline_dirmsgrcvd(twitter, timeline);
-        twitter_statuses_free_dirmsgrcvd(timeline);
+			twitter_fetch_images_dirmsgrcvd(twitter, timeline);
+			amitwitter_show_timeline_dirmsgrcvd(twitter, timeline);
+		    twitter_statuses_free_dirmsgrcvd(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2626,18 +2834,23 @@ void amitwitter_dirmsgrcvd() {
 /// direct_messages/sent
 
 // Show Sent
-void amitwitter_show_timeline_dirmsg(twitter_t *twitter, GList *statuses) {
+void amitwitter_show_timeline_dirmsg(twitter_t *twitter, struct List *statuses) {
     twitter_direct_message_t *direct_message;
-    statuses = g_list_last(statuses);
+	struct Node *node = NULL;
+
     if(!statuses) {
         return;
     }
-    do {
-        direct_message = statuses->data;
+	
+	for(node = statuses->lh_TailPred;
+		node->ln_Pred;
+		node = node->ln_Pred)
+	{
+		direct_message = (twitter_direct_message_t *)node;
 
             twitter_status_print_dirmsg(direct_message);
 
-    } while((statuses = g_list_previous(statuses)));
+	}
 
     charconv();
 
@@ -2647,11 +2860,11 @@ void amitwitter_show_timeline_dirmsg(twitter_t *twitter, GList *statuses) {
 /*****************************************************************************/
 
 // direct_messages/sent API    
-GList* twitter_dirmsgsent(twitter_t *twitter) {
+struct List* twitter_dirmsgsent(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_direct_message_t *direct_message;
@@ -2662,7 +2875,7 @@ GList* twitter_dirmsgsent(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -2672,12 +2885,12 @@ GList* twitter_dirmsgsent(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node_dirmsg(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        direct_message = timeline->data;
+		direct_message = (twitter_direct_message_t *)timeline->lh_TailPred;
 
-        twitter->last_dirmsgsent_timeline = atol(direct_message->id);
+		if(direct_message && direct_message->id) twitter->last_dirmsgsent_timeline = atol(direct_message->id);
     }
     return timeline;
 }
@@ -2691,7 +2904,7 @@ void amitwitter_dirmsgsent() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2699,11 +2912,14 @@ void amitwitter_dirmsgsent() {
     for(i=1; i<2; i++) {
         timeline = twitter_dirmsgsent(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images_dirmsg(twitter, timeline);
-        amitwitter_show_timeline_dirmsg(twitter, timeline);
-        twitter_statuses_free_dirmsg(timeline);
+			twitter_fetch_images_dirmsg(twitter, timeline);
+			amitwitter_show_timeline_dirmsg(twitter, timeline);
+			twitter_statuses_free_dirmsg(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -2727,11 +2943,11 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
     struct curl_httppost *formpost=NULL;
     struct curl_httppost *lastptr=NULL;
     struct curl_slist *headers=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
@@ -2828,11 +3044,11 @@ int twitter_follow(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -2910,11 +3126,11 @@ int twitter_unfollow(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -2991,11 +3207,11 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
     CURLcode code;
     long res;
     char api_uri[PATH_MAX];
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
     if(!curl) {
         printf("error: curl_easy_init()\n");
@@ -3077,11 +3293,11 @@ int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web,
     struct curl_httppost *lastptr=NULL;
     struct curl_slist *headers=NULL;
 
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -3183,11 +3399,11 @@ void amitwitter_updateprofile(const char *name, const char *web, const char *loc
 /// favorites
 
 // Favorites API
-GList* twitter_favs(twitter_t *twitter) {
+struct List* twitter_favs(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -3198,7 +3414,7 @@ GList* twitter_favs(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -3208,12 +3424,12 @@ GList* twitter_favs(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_favs_timeline = atol(status->id);
+        if(status && status->id) twitter->last_favs_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -3227,7 +3443,7 @@ void amitwitter_favs() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -3235,11 +3451,14 @@ void amitwitter_favs() {
     for(i=1; i<2; i++) {
         timeline = twitter_favs(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        twitter_fetch_images(twitter, timeline);
-        amitwitter_show_timeline(twitter, timeline);
-        twitter_statuses_free(timeline);
+			twitter_fetch_images(twitter, timeline);
+			amitwitter_show_timeline(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
@@ -3262,11 +3481,11 @@ int twitter_notify(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -3344,11 +3563,11 @@ int twitter_unnotify(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -3426,11 +3645,11 @@ int twitter_block(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -3508,11 +3727,11 @@ int twitter_unblock(twitter_t *twitter, const char *status) {
     long res;
     char api_uri[PATH_MAX];
     struct curl_httppost *formpost=NULL;
-    GByteArray *buf;
+    MyByteArray *buf;
     char userpass[256];
 
     snprintf(userpass, 256, "%s:%s", twitter->user, twitter->pass);
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
     curl = curl_easy_init();
 
     if(!curl) {
@@ -3584,11 +3803,11 @@ void amitwitter_unblock(const char *text) {
 /// blocks/blocking
 
 // blocks/blocking API
-GList* twitter_blocking_timeline(twitter_t *twitter) {
+struct List* twitter_blocking_timeline(twitter_t *twitter) {
 
     int ret;
-    GList *timeline = NULL;
-    GByteArray *buf;
+	struct List *timeline = NULL;
+    MyByteArray *buf;
     xmlTextReaderPtr reader;
     char api_uri[PATH_MAX];
     twitter_status_t *status;
@@ -3599,7 +3818,7 @@ GList* twitter_blocking_timeline(twitter_t *twitter) {
 
         printf("api_uri: %s\n", api_uri);
 
-    buf = g_byte_array_new();
+    buf = my_byte_array_new();
 
     ret = twitter_fetch(twitter, api_uri, buf);
 
@@ -3609,12 +3828,12 @@ GList* twitter_blocking_timeline(twitter_t *twitter) {
     timeline = twitter_parse_statuses_node(reader);
     xmlFreeTextReader(reader);
 
-    g_byte_array_free (buf, TRUE);
+    my_byte_array_free (buf, TRUE);
 
     if(timeline){
-        status = timeline->data;
+		status = (twitter_status_t *)timeline->lh_TailPred;
 
-        twitter->last_blocking_timeline = atol(status->id);
+        if(status && status->id) twitter->last_blocking_timeline = atol(status->id);
     }
     return timeline;
 }
@@ -3628,7 +3847,7 @@ void amitwitter_blocking_loop() {
 
     twitter_t *twitter = NULL;
 
-    GList* timeline = NULL;
+	struct List* timeline = NULL;
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -3636,10 +3855,13 @@ void amitwitter_blocking_loop() {
     for(i=1; i<2; i++) {
         timeline = twitter_blocking_timeline(twitter);
 
-            printf("timeline num: %d\n", g_list_length(timeline));
+		if(timeline)
+		{
+			printf("timeline num: %ld\n", my_list_length(timeline));
 
-        amitwitter_show_timeline_friendsfollowers(twitter, timeline);
-        twitter_statuses_free(timeline);
+			amitwitter_show_timeline_friendsfollowers(twitter, timeline);
+			twitter_statuses_free(timeline);
+		}
         timeline = NULL;
 
     if(i==1) break;
