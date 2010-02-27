@@ -57,7 +57,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg; first OS 4 version compiled
+0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg; first OS 4 version compiled; updated swedish, italian catalogs
 0.27 - Public Beta Release 2 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
@@ -125,7 +125,7 @@ as available in the SOBJS: drawer of AmigaOS 4.1 Update 1:
 If you get a requester claiming that "libz.so.1" couldn't be opened,
 just go to your SOBJS: in a Shell and enter:
 
-	Makelink SOFT libz.so.1 libz.so
+    Makelink SOFT libz.so.1 libz.so
 
 LICENSE
 -------
