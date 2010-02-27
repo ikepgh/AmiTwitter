@@ -77,10 +77,10 @@
 #include <libraries/gadtools.h>
 #include <libraries/locale.h>
 #ifndef __amigaos4__
-# include <clib/exec_protos.h>
-# include <clib/locale_protos.h>
+#include <clib/exec_protos.h>
+#include <clib/locale_protos.h>
 #else
-# include <proto/locale.h>
+#include <proto/locale.h>
 #endif
 #if defined(__AMIGA__) && !defined(__PPC__)
 # include <clib/gadtools_protos.h>
@@ -489,7 +489,7 @@ BOOL Open_Libs(void ) {
 
         li.li_LocaleBase = LocaleBase;
   
-		if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL) != NULL) {      
+		if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
 
             struct CatCompArrayType *cca;
             int                     cnt;
