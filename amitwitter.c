@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.27
+ ** Current revision : V 0.28
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
@@ -65,10 +66,10 @@
 #include <exec/libraries.h>
 #include <dos/dos.h>
 #include <dos/dosextens.h>
-#if defined(__AMIGA__) && !defined(__PPC__)
-# include <pragmas/dos_pragmas.h>
-# include <pragmas/exec_pragmas.h>
-#endif
+//#if defined(__AMIGA__) && !defined(__PPC__)
+//# include <pragmas/dos_pragmas.h>
+//# include <pragmas/exec_pragmas.h>
+//#endif
 #include <workbench/workbench.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
@@ -82,9 +83,9 @@
 #else
 #include <proto/locale.h>
 #endif
-#if defined(__AMIGA__) && !defined(__PPC__)
-# include <clib/gadtools_protos.h>
-#endif
+//#if defined(__AMIGA__) && !defined(__PPC__)
+//# include <clib/gadtools_protos.h>
+//#endif
 #include <proto/exec.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -182,26 +183,28 @@
 long __stack = 65536;
 
 // Base Structures
-extern struct ExecBase *SysBase;
-extern struct Library *DOSBase;
+/* For some reason I have to comment the following two lines out 
+for OS 4 when compiling with AmiDevCpp, but needed for OS 3 & MorphOS */
+extern struct ExecBase *SysBase     = NULL; 
+extern struct Library *DOSBase      = NULL; 
 
-struct GfxBase *GfxBase;
-struct IntuitionBase *IntuitionBase;
-struct Library *MUIMasterBase;
-struct Library *CodesetsBase = NULL;
+struct GfxBase *GfxBase             = NULL;
+struct IntuitionBase *IntuitionBase = NULL;
+struct Library *MUIMasterBase       = NULL;
+struct Library *CodesetsBase        = NULL;
 
-struct Library *LocaleBase;
+struct Library *LocaleBase          = NULL;
 struct LocaleInfo li;
 struct NewMenu *nm;
 
 #ifdef __amigaos4__
-extern struct ExecIFace *IExec;    
+extern struct ExecIFace *IExec;
 extern struct DOSIFace  *IDOS;
-
 struct GraphicsIFace    *IGraphics      = NULL;
 struct IntuitionIFace   *IIntuition     = NULL;
 struct MUIMasterIFace   *IMUIMaster     = NULL;
 struct CodesetsIFace	*ICodesets		= NULL;
+struct LocaleIFace      *ILocale        = NULL;
 #endif   
 
 #ifdef __MORPHOS__
@@ -488,8 +491,12 @@ BOOL Open_Libs(void ) {
     if ((LocaleBase = OpenLibrary("locale.library",38))) {
 
         li.li_LocaleBase = LocaleBase;
-  
-		if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
+        
+        #if  __amigaos4__
+        if((li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL) !=NULL)) {            
+        #else        
+        if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
+        #endif    
 
             struct CatCompArrayType *cca;
             int                     cnt;
@@ -515,6 +522,7 @@ void Close_Libs(void ) {
     DropInterface((struct Interface *)IMUIMaster);
     DropInterface((struct Interface *)IIntuition);
     DropInterface((struct Interface *)IGraphics);
+	DropInterface((struct Interface *)ILocale);
     #endif
 
     if ( IntuitionBase )
