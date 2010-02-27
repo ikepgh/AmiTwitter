@@ -174,6 +174,7 @@ typedef struct {
 
 // Status structure
 typedef struct {
+	struct Node Node;
     const char *created_at;
     const char *id;
     const char *text;
@@ -207,6 +208,7 @@ typedef struct {
 
 // Direct Message Recipient structure
 typedef struct {
+	struct Node Node;
     const char *created_at;
     const char *id;
     const char *sender_id;
@@ -237,6 +239,7 @@ typedef struct {
 
 // Direct Message Sender structure
 typedef struct {
+    struct Node Node;
     const char *created_at;
     const char *id;
     const char *sender_id;
@@ -249,11 +252,18 @@ typedef struct {
 
 /******************************************************************************/
 
+typedef struct {
+	UBYTE *data;
+	ULONG len;
+} MyByteArray;
+
+/******************************************************************************/
+
 twitter_t *twitter_new();
 void twitter_free(twitter_t *twitter);
 int twitter_config(twitter_t *twitter);
 
-int twitter_fetch(twitter_t *twitter, const char *api_uri, GByteArray *buf);
+int twitter_fetch(twitter_t *twitter, const char *api_uri, MyByteArray *buf);
 int twitter_update(twitter_t *twitter, const char *status);
 int twitter_follow(twitter_t *twitter, const char *status);
 int twitter_unfollow(twitter_t *twitter, const char *status);
@@ -264,29 +274,29 @@ int twitter_unnotify(twitter_t *twitter, const char *status);
 int twitter_direct_message(twitter_t *twitter, const char *screen_name, const char *text); 
 int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web, const char *location, const char *bio);
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
-int twitter_search(twitter_t *twitter, const char *apiuri, GByteArray *buf);
+int twitter_search(twitter_t *twitter, const char *apiuri, MyByteArray *buf);
 
-GList* twitter_home_timeline(twitter_t *twitter);
-GList* twitter_user_timeline(twitter_t *twitter);   
-GList* twitter_mentions(twitter_t *twitter);
-GList* twitter_friends_timeline(twitter_t *twitter);
-GList* twitter_followers_timeline(twitter_t *twitter);
-GList* twitter_blocking_timeline(twitter_t *twitter);
-GList* twitter_public_timeline(twitter_t *twitter);
-GList* twitter_usershow_timeline(twitter_t *twitter);
+struct List* twitter_home_timeline(twitter_t *twitter);
+struct List* twitter_user_timeline(twitter_t *twitter);
+struct List* twitter_mentions(twitter_t *twitter);
+struct List* twitter_friends_timeline(twitter_t *twitter);
+struct List* twitter_followers_timeline(twitter_t *twitter);
+struct List* twitter_blocking_timeline(twitter_t *twitter);
+struct List* twitter_public_timeline(twitter_t *twitter);
+struct List* twitter_usershow_timeline(twitter_t *twitter);
 
-GList* twitter_retweeted_by_me(twitter_t *twitter);
-GList* twitter_retweeted_to_me(twitter_t *twitter);
-GList* twitter_retweets_of_me(twitter_t *twitter);
+struct List* twitter_retweeted_by_me(twitter_t *twitter);
+struct List* twitter_retweeted_to_me(twitter_t *twitter);
+struct List* twitter_retweets_of_me(twitter_t *twitter);
 
-GList* twitter_dirmsgsent(twitter_t *twitter);
-GList* twitter_dirmsgrcvd(twitter_t *twitter);
+struct List* twitter_dirmsgsent(twitter_t *twitter);
+struct List* twitter_dirmsgrcvd(twitter_t *twitter);
 
-GList* twitter_favs(twitter_t *twitter);
+struct List* twitter_favs(twitter_t *twitter);
 
-GList* twitter_parse_statuses_node(xmlTextReaderPtr reader);
-GList* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader);
-GList* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader); 
+struct List* twitter_parse_statuses_node(xmlTextReaderPtr reader);
+struct List* twitter_parse_statuses_node_dirmsg(xmlTextReaderPtr reader);
+struct List* twitter_parse_statuses_node_dirmsgrcvd(xmlTextReaderPtr reader);
 
 twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader);
 twitter_recipient_t* twitter_parse_recipient_node(xmlTextReaderPtr reader);  
@@ -296,17 +306,21 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader);
 twitter_direct_message_t* twitter_parse_status_node_dirmsg(xmlTextReaderPtr reader); 
 twitter_direct_message_rcvd_t* twitter_parse_status_node_dirmsgrcvd(xmlTextReaderPtr reader); 
 
-void twitter_statuses_free(GList *statuses);
-void twitter_statuses_free_dirmsg(GList *statuses);
-void twitter_statuses_free_dirmsgrcvd(GList *statuses);
+void twitter_statuses_free(struct List *statuses);
+void twitter_statuses_free_dirmsg(struct List *statuses);
+void twitter_statuses_free_dirmsgrcvd(struct List *statuses);
 
 void twitter_status_print(twitter_status_t *status);
 void twitter_status_print_dirmsg(twitter_direct_message_t *direct_message);
 void twitter_status_print_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message);
 
 int twitter_fetch_image(twitter_t *twitter, const char *url, char* path);
-int twitter_fetch_images(twitter_t *twitter, GList *statuses);
-int twitter_fetch_images_dirmsg(twitter_t *twitter, GList *statuses);
-int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, GList *statuses);
+int twitter_fetch_images(twitter_t *twitter, struct List *statuses);
+int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses);
+int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses);
+
+int twitter_image_name(twitter_status_t *status, char *name);
+int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *name);
+int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message, char *name);
 
 /******************************************************************************/

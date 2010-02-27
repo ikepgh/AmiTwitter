@@ -64,11 +64,11 @@ ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
 			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
 
-  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
 else
   CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
 			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall
-  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lcurl
 endif
 
 LIBS	=
@@ -99,11 +99,11 @@ ifeq ($(debug),)
   CFLAGS	= -s -O1 -I./include -I../include  -fomit-frame-pointer -funroll-loops \
 			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -noixemul -Wall \
 
-  LDFLAGS   = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
+  LDFLAGS   = -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
 else
   CFLAGS	= -I./include -I../include -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
 			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -noixemul -Wall
-  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
+  LDFLAGS   = -gstabs -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
 endif
 
 LIBS	=
@@ -202,11 +202,11 @@ else # <~vbcc>
       ifeq ($(debug),)
         CFLAGS = -I./include -I../include  -s -O1 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -noixemul -Wall
         LDFLAGS =
-        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
+        LIBS = -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
       else
         CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
         LDFLAGS = -gstabs
-        LIBS = -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
+        LIBS = -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -lcodesets
       endif  # <~debug>
   else
     ifeq ($(os), os3)
@@ -219,11 +219,11 @@ else # <~vbcc>
         CFLAGS = -I./include -I../include -s -m68020-60 -fomit-frame-pointer -funroll-loops -fstrict-aliasing -Wall
 
         LDFLAGS =
-        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
+        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
       else
         CFLAGS = -I./include -I../include -fstrict-aliasing -Wall -D_DBUG
         LDFLAGS = -g 
-        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
+        LIBS   = -lauto -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl -ldebug
       endif  # <~debug>
     else
       ifeq ($(os), aros)
@@ -243,6 +243,25 @@ else # <~vbcc>
         endif  # <~debug>
       endif  # <~aros>
     endif  # <~os3>
+	ifeq ($(os), os4)
+	  # gcc & AmigaOS4
+      BIN    = AmiTwitter_OS4
+	  LIBS	  = -lauto -lcurl-7.16 -lxml2 -ldl -lssl-0.9.8 -lpthread -lz
+      RM	  = rm -f
+      LINK	  = ppc-amigaos-gcc
+      CC	  = ppc-amigaos-gcc
+      STRIP	  = ppc-amigaos-strip
+      ifeq ($(debug),)
+		CFLAGS	  = -s -O2 -I./include -I../include -I./include/os4 -mcrt=newlib -fomit-frame-pointer -funroll-loops -mcpu=powerpc -mstring -mmultiple \
+			  -fstrict-aliasing -D__USE_INLINE__ -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -Wall \
+			  -Wno-pointer-sign -mregnames
+		LDFLAGS   = -use-dynld -L/SOBJS #-liconv
+      else
+		CFLAGS	  = -I./include -I../include -I./include/os4 -mcpu=powerpc  -fomit-frame-pointer  -Wno-pointer-sign  -D__USE_INLINE__ \
+			  -D__USE_BASETYPE__ -D__USE_OLD_TIMEVAL__ -D_DBUG -Wall -ggdb
+		LDFLAGS   = -gstabs -use-dynld -L/SOBJS
+	  endif # <~debug>
+	endif # <~os4>
   endif  # <~morphos>
 endif  # <~gcc> 
 
