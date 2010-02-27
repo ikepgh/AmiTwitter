@@ -1,4 +1,4 @@
-## Version $VER: amitwitter.catalog 0.27 (24.02.2010)
+## Version $VER: amitwitter.catalog 0.28 (28.02.2010)
 ## Codeset 0
 ## LANGUAGES english deutsch français polski español nederlands italiano svenska 8
 ## SimpleCatConfig CharsPerLine 200
@@ -857,7 +857,7 @@ Changer le statut de notification SMS d'un utilisateur
 Zmieñ status powiadamiania SMS dla u¿ytkownika
 Cambiar el estado de notificaciones SMS para un usuario
 De SMS ontvangststatus voor een gebruiker veranderen
-Cambio lo stato delle notifiche SMS relative all'utente
+Cambia lo stato delle notifiche SMS relative all'utente
 Ändra SMS-tillkännangivandestatus för användaren
 ;
 MSG_SMS2 (//)
@@ -1197,7 +1197,7 @@ Quoi de neuf ?
 Co siê dzieje?
 ¿Que está pasando?
 Wat gebeurt er?
-Che combini?
+Cosa stai facendo?
 Vad händer?
 ;
 MSG_FAST (//)
@@ -1647,7 +1647,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar perfil
 Profiel aktualizeren
-Aggiorna profilo
+Aggiornamento profilo
 Uppdatera profil
 ;
 MSG_OK3 (//)
@@ -1667,7 +1667,7 @@ MSG_UPDATEPROFILE6 (/1/)
 \33cNotka:\n\n Aktualnie, musisz *ZAWSZE* ustawiæ 'Nazwê',\ninne pola s± opcjonalne, ale je¶li zostan± puste\nto wyczyszcz± aktualny profil na stronie Twittera.\n  (tzn. ¿e powiniene¶ wype³niæ wszystkie\ninformacje je¶li chcesz aby by³y wy¶wietlone na stronie\nTwittera! Je¶li nie chcesz aby siê wy¶wietla³y, zostaw je puste\n(oprócz 'Nazwy' oczywi¶cie)...\n\nMam nadziejê, ¿e w przysz³o¶ci bêdzie to bardziej przyjazne dla u¿ytkownika!\nProszê zagl±daj do b±belków pomocy po wiêcej informacji dla ka¿dego pola!
 \33cAtención:\n\n Debes especificar el campo 'Nombre' *SIEMPRE*,\nlos demás campos son opcionales, pero si los dejas en blanco\nsobrescribirán el perfil que tienes en la página\n de Twitter. (es decir, deberías completar toda\nla información que quieres que se muestre en tu página\n de Twitter. Si quieres que algo no se muestra, déjalo vacío\n(excepto el campo 'Nombre')...\n\n¡Espero mejorarlo en breve! Puedes consultar la ayuda\n de cada uno de los campos en el icono que aparece al lado de los mismos.ç
 \33cOpgepast:\n\nop dit moment moet u *ALTIJD* een 'naam' ingeven,\nde andere velden zijn optioneel, indien u ze \nleeg laat, worden uw aktuele\n profielvelden op de Twitter-pagina overschreven  (d.w.z. vul alle velden in, indien u wenst dat ze \nop uw Twitter-pagina getoond moeten worden!\nIndien u dit niet wenst, laat u die velden leeg\n(uitgezonderd 'Naam' natuurlijk)...\n\nDit wordt in de toekomst hopelijk gebruikersvriendelijker!\nIn de spreekblaasinformatie vindt u meer informatie over elk veld!
-\33cRicorda:\n\n attualmente devi *SEMPRE* specificare un 'Nome',\nle altre caselle sono opzionali, però se lasciate vuote\nsovrascriveranno l'attuale profilo sulla tua\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se vuoi che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'Nome' ovviamente)....\n\nSpero di rendere questo procedimento più user friendly in futuro!\nLeggere gli aiuti "a fumetto" per maggiori informazioni su ogni casella!
+\33cRicorda:\n\n Attualmente è necessario specificare *SEMPRE* un 'nome',\nle altre caselle sono opzionali, però nel caso vengano lasciate vuote\nesse sovrascriveranno l'attuale profilo all'interno della tua\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se se si desidera che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'nome' ovviamente)....\n\nSpero in futuro di rendere questa procedura il più user friendly possibile!\nLeggere gli aiuti (Bubble help) per maggiori informazioni circa ogni casella!
 \33cVar god observera:\n\nFör närvarande måste du *ALLTID* ange ett 'Namn',\nandra fält är frivilliga, men om de lämnas blanka\nskriver de över den profil som för närvarande finns\npå din Twitter-sida.  (m.a.o. bör du skriva in\nall information om du vill att den ska visas\npå din Twitter-sida! Om du inte vill visa den, lämna blankt\n(förutom 'Name' då, såklart)....\n\nJag hoppas kunna göra detta mer användarvänligt i framtiden!\nSe bubbelhjälpen för mer information om varje fält!
 ;
 MSG_HTML1 (//)
@@ -2321,21 +2321,21 @@ Dona
 Donera
 ;
 MSG_0030 (/1/)
-About AmiTwitter...
+About AmiTwitter
 Über AmiTwitter
 À propos de AmiTwitter
-O programie...
+O programie
 Acerca de AmiTwitter
 Betreffend AmiTwitter
-Informazioni su AmiTwitter...
+Informazioni su AmiTwitter
 Om AmiTwitter
 ;
 MSG_0031 (/1/)
-About MUI...
+About MUI
 Über MUI
 À propos de MUI
-O MUI...
+O MUI
 Acerca de MUI
 Betreffend MUI
-Informazioni su MUI...
+Informazioni su MUI
 Om MUI
