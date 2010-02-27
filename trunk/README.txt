@@ -2,8 +2,8 @@ Short:   AmiTwitter
 Uploader:  ikepgh@ezcyberspace.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.27 Public Beta Release 2
-Architecture:  m68k-amigaos, MorphOS
+Version: 0.28 Public Beta Release 3
+Architecture:  m68k-amigaos, MorphOS, ppc-amigaos 
 Requires:  see below
 Distribution: GPL, AmiKit, SourceForge only
 
@@ -24,7 +24,7 @@ Features:
     * Displays most recently sent and received Direct Message 
     * Fully localized program and FAQs 
     * International Character Support via codesets.library 
-    * MorphOS, AmigaOS 3.x compatible
+    * MorphOS, AmigaOS 3.x/4.1 compatible
 
 Thanks for your interest!
 AmiTwitter Open Source Team
@@ -41,11 +41,11 @@ if you don't already have this library.
 REQUIREMENTS
 -----------
 
-OS3/MorphOS: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, libiconv.ixlibary (included in Libs directory), 
-codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x), ixemul.library/ixnet.library 
+OS3/MorphOS/OS4.1: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc, libiconv.ixlibary (included in Libs directory), 
+codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x/4.1), ixemul.library/ixnet.library 
 (needed by OS 3.x version only)
 
-OS4/AROS: Unknown at this time...Please note:  the OS 3.x version crashes on OS 4.x...
+AROS: Unknown at this time...
 
 USAGE
 -----
@@ -57,6 +57,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
+0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg; first OS 4 version compiled
 0.27 - Public Beta Release 2 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
@@ -111,6 +112,21 @@ gcc -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -
 
 Morphos - see above and: -lcodesets
 
+On OS 4.1 It's linked dynamically against the following shared libraries
+as available in the SOBJS: drawer of AmigaOS 4.1 Update 1:
+- libcurl-7.16.so
+- libxml2.so
+- libdl.so
+- libssl-0.9.8.so
+- libpthread.so
+- libz.so
+
+- There seems to be an issue with the shared libraries on Update 1.
+If you get a requester claiming that "libz.so.1" couldn't be opened,
+just go to your SOBJS: in a Shell and enter:
+
+	Makelink SOFT libz.so.1 libz.so
+
 LICENSE
 -------
 
@@ -130,7 +146,7 @@ THANKS
 Special thanks to: 
 - ShInKurO for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
-- James Carroll for contributing to the code
+- Cyborg and James Carroll for contributing to the code
 - All the catalog translators and beta testers
 
 Donators: Roschmyr

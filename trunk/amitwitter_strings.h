@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.27
+ ** Current revision : V 0.28
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized

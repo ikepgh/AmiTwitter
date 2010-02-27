@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.27
+ ** Current revision : V 0.28
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
  ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
@@ -30,10 +31,10 @@
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	27
-#define DATE		"22.02.10"
-#define VERS		"AmiTwitter 0.27"
-#define VSTRING		"AmiTwitter 0.27 (22.02.10)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.27 (22.02.10)\r\n"
+#define REVISION	28
+#define DATE		"27.02.10"
+#define VERS		"AmiTwitter 0.28"
+#define VSTRING		"AmiTwitter 0.28 (27.02.10)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.28 (27.02.10)\r\n"
 #define AUTHOR		"IKE"
 #define PROJECT		"AmiTwitter"
