@@ -28,8 +28,6 @@
 
         "-ldl"
 
-        "-lglib-2.0"
-
         "-liconv"
 
         "-lintl"
