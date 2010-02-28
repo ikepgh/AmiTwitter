@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 28-Feb-10   Cyborg                 Removed all 'const' keywords as none of them was actually a const.
  ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
@@ -131,12 +132,12 @@
 
 // Twitter structure
 typedef struct {
-    const char *base_uri;
-    const char *base_search_uri;
-    const char *user;
-    const char *pass;
-    const char *source;
-    const char *text;                   
+    char *base_uri;
+    char *base_search_uri;
+    char *user;
+    char *pass;
+    char *source;
+    char *text;
     char res_dir[PATH_MAX];
     char images_dir[PATH_MAX];
     unsigned long last_home_timeline;
@@ -161,94 +162,94 @@ typedef struct {
 
 // User structure
 typedef struct {
-    const char *id;
-    const char *name;              
-    const char *screen_name;
-    const char *location;          
-    const char *description;
-    const char *profile_image_url;
-    const char *followers_count;   
-    const char *friends_count;     
-    const char *favourites_count;
-    const char *statuses_count;
+	char *id;
+    char *name;
+    char *screen_name;
+    char *location;
+    char *description;
+    char *profile_image_url;
+    char *followers_count;
+    char *friends_count;
+    char *favourites_count;
+    char *statuses_count;
 }twitter_user_t;
 
 // Status structure
 typedef struct {
 	struct Node Node;
-    const char *created_at;
-    const char *id;
-    const char *text;
-    const char *source;
-    const char *truncated;              
-    const char *in_reply_to_status_id;   
-    const char *in_reply_to_user_id;     
-    const char *favorited;               
-    const char *in_reply_to_screen_name; 
-    const char *retweeted_status;        
-    const twitter_user_t *user;
+    char *created_at;
+    char *id;
+    char *text;
+    char *source;
+    char *truncated;
+    char *in_reply_to_status_id;
+    char *in_reply_to_user_id;
+    char *favorited;
+    char *in_reply_to_screen_name;
+    char *retweeted_status;
+    twitter_user_t *user;
 }twitter_status_t;
 
 /******************************************************************************/
 
 // Recipient structure
 typedef struct {
-    const char *created_at;
-    const char *id;
-    const char *name;
-    const char *screen_name;
-    const char *location;
-    const char *description;
-    const char *profile_image_url;
-    const char *followers_count;
-    const char *friends_count;
-    const char *favourites_count;
-    const char *statuses_count;
-    const char *recipient;
+    char *created_at;
+    char *id;
+    char *name;
+    char *screen_name;
+    char *location;
+    char *description;
+    char *profile_image_url;
+    char *followers_count;
+    char *friends_count;
+    char *favourites_count;
+    char *statuses_count;
+    char *recipient;
 }twitter_recipient_t;
 
 // Direct Message Recipient structure
 typedef struct {
 	struct Node Node;
-    const char *created_at;
-    const char *id;
-    const char *sender_id;
-    const char *text;
-    const char *recipient_id;
-    const char *sender_screen_name;
-    const char *recipient_screen_name;
-    const twitter_recipient_t *recipient;
+    char *created_at;
+    char *id;
+    char *sender_id;
+    char *text;
+    char *recipient_id;
+    char *sender_screen_name;
+    char *recipient_screen_name;
+    twitter_recipient_t *recipient;
 }twitter_direct_message_t;
 
 /******************************************************************************/
 
 // Sender structure
 typedef struct {
-    const char *created_at;
-    const char *id;
-    const char *name;
-    const char *screen_name;
-    const char *location;
-    const char *description;
-    const char *profile_image_url;
-    const char *followers_count;
-    const char *friends_count;
-    const char *favourites_count;
-    const char *statuses_count;
-    const char *sender;
+    char *created_at;
+    char *id;
+    char *name;
+    char *screen_name;
+    char *location;
+    char *description;
+    char *profile_image_url;
+    char *followers_count;
+    char *friends_count;
+    char *favourites_count;
+    char *statuses_count;
+    char *sender;
 }twitter_sender_t;
 
 // Direct Message Sender structure
 typedef struct {
     struct Node Node;
-    const char *created_at;
-    const char *id;
-    const char *sender_id;
-    const char *text;
-    const char *recipient_id;
-    const char *sender_screen_name;
-    const char *recipient_screen_name;
-    const twitter_sender_t *sender;
+    char *created_at;
+    char *id;
+    char *sender_id;
+    char *text;
+    char *recipient_id;
+    char *sender_screen_name;
+    char *recipient_screen_name;
+    twitter_sender_t *sender;
 }twitter_direct_message_rcvd_t;
 
 /******************************************************************************/
@@ -320,8 +321,11 @@ int twitter_fetch_images(twitter_t *twitter, struct List *statuses);
 int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses);
 int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses);
 
+#if 0
+/* cyborg: Deactivated. See amitwitter.c for more info why. */
 int twitter_image_name(twitter_status_t *status, char *name);
 int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *name);
 int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message, char *name);
+#endif
 
 /******************************************************************************/

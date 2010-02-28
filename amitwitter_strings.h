@@ -1,75 +1,40 @@
-/** $Revision Header *** Header built automatically - do not edit! ***********
- **
- ** © Copyright 2010 IKE <ikepgh@yahoo.com>
- **
- ** File             : amitwitter.c
- ** Created on       : Friday, 06-Nov-09
- ** Created by       : IKE
- ** Current revision : V 0.28
- **
- ** Purpose
- ** -------
- **   AmiTwitter - a Twitter Program
- **
- ** Date        Author                 Comment
- ** =========   ====================   ====================
- ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
- ** 22-Feb-10   IKE                    codesets.library implemented
- ** 04-Feb-10   IKE                    most recent sent/recieved direct message
- ** 28-Jan-10   IKE                    Menu's, tabs & TheBar are now localized
- ** 09-Jan-10   IKE                    began localization implementation
- ** 18-Dec-09   IKE                    Fast Link prefs, interface cleanup, Users/show added
- ** 15-Dec-09   IKE                    Profile update, Favorites, Blocking/Unblocking and SMS implemented
- ** 14-Dec-09   IKE                    Can now Follow and Unfollow Users via Screen Name!
- ** 13-Dec-09   IKE                    most recent tweet by friends and followers displayed by User ID; began search
- ** 12-Dec-09   IKE                    added TheBar.mcc, other minor enhancements
- ** 04-Dec-09   IKE                    revised interface, new features and error checking
- ** 18-Nov-09   IKE                    login loaded/displayed at startup, error checking, code cleanup
- ** 17-Nov-09   IKE                    Added Hothelp,cleaned up interface and added cross-platform menu's (MorphOS)
- ** 15-Nov-09   - Unknown -            initial MorphOS compile
- ** 06-Nov-09   IKE                    added bumprevision
- **
- ** $Revision Header *********************************************************/
-/**
- **
- ** This program is free software; you can redistribute it and/or modify
- ** it under the terms of the GNU General Public License as published by
- ** the Free Software Foundation; either version 2 of the License, or
- ** (at your option) any later version.
- **
- ** This program is distributed in the hope that it will be useful,
- ** but WITHOUT ANY WARRANTY; without even the implied warranty of
- ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- ** GNU General Public License for more details.
- **
- ** You should have received a copy of the GNU General Public License
- ** along with this program; if not, write to the Free Software
- ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- **
- ** AmiTwitter was compiled with Cubic IDE/gcc 2.95.3-4 on WinUAE for OS 3.x and
- ** AmiDevCpp for MorphOS
- **
- ** This code is based heavily on xTwitter written
- ** by Tsukasa Hamano found on http://www.cuspy.org/xtwitter/
- **
- ******************************************************************************/
+#ifndef AMITWITTER_STRINGS_H
+#define AMITWITTER_STRINGS_H 1
 
-/* This file was created automatically by CatComp.
+/* Locale Catalog Source File
+ *
+ * Automatically created by SimpleCat V3
  * Do NOT edit by hand!
+ *
+ * SimpleCat ©1992-2010 Guido Mersmann
+ *
  */
+
+
+
+/****************************************************************************/
 
 
 #ifndef EXEC_TYPES_H
 #include <exec/types.h>
 #endif
 
+#ifdef CATCOMP_ARRAY
+#undef CATCOMP_NUMBERS
+#undef CATCOMP_STRINGS
 #define CATCOMP_NUMBERS
-#define CATCOMP_ARRAY
-#define CATCOMP_BLOCK
-#define CATCOMP_CODE
 #define CATCOMP_STRINGS
+#endif
+
+#ifdef CATCOMP_BLOCK
+#undef CATCOMP_STRINGS
+#define CATCOMP_STRINGS
+#endif
+
+
 
 /****************************************************************************/
+
 
 #ifdef CATCOMP_NUMBERS
 
@@ -307,9 +272,13 @@
 #define MSG_0030 231
 #define MSG_0031 232
 
+#define CATCOMP_LASTID 232
+
 #endif /* CATCOMP_NUMBERS */
 
+
 /****************************************************************************/
+
 
 #ifdef CATCOMP_STRINGS
 
@@ -361,64 +330,64 @@
 #define MSG_SAVE_STR "_Save"
 #define MSG_TEST2_STR "_Test"
 #define MSG_CANCEL_STR "_Cancel"
-#define MSG_HELP_STR "Help!"
+#define MSG_HELP_STR ";"
 #define MSG_REGISTER_STR "\33c\nDon't already have a User Name/Password?\n  You must register at the Twitter website first!\n"
 #define MSG_ESTABLISH_STR "Establish An Account!"
 #define MSG_FORGOT_STR "Forgot Your Password?"
 #define MSG_DONATE_STR "Donate"
 #define MSG_DONATE2_STR "\33c\nIf you find AmiTwitter useful, please consider donating.\n  You must have an active internet connection:\n"
-#define MSG_DONATE3_STR "Donate!"
-#define MSG_SEND_STR "Send a Tweet"
-#define MSG_SEND2_STR "Send a Tweet"
+#define MSG_DONATE3_STR ";"
+#define MSG_SEND_STR ";"
+#define MSG_SEND2_STR ";"
 #define MSG_SEND3_STR "Tweet:"
 #define MSG_SEND4_STR "Enter your Tweet and click Update to send (max 140 characters)"
 #define MSG_CLEAR_STR "C_lear"
 #define MSG_UPDATE_STR "_Update"
-#define MSG_CANCEL2_STR "_Cancel"
-#define MSG_SEARCH3_STR "Search"
-#define MSG_SEARCH4_STR "Search"
+#define MSG_CANCEL2_STR ";"
+#define MSG_SEARCH3_STR ";"
+#define MSG_SEARCH4_STR ";"
 #define MSG_SEARCH5_STR "Search:"
 #define MSG_SEARCH6_STR "Enter your search string and click Search (max 140 characters)"
-#define MSG_CLEAR2_STR "C_lear"
-#define MSG_SEARCH7_STR "_Search"
-#define MSG_CANCEL3_STR "_Cancel"
+#define MSG_CLEAR2_STR ";"
+#define MSG_SEARCH7_STR ";"
+#define MSG_CANCEL3_STR ";"
 #define MSG_MANAGE_STR "Manage Users"
 #define MSG_FOLLOW2_STR "Change the Following Status for a User"
 #define MSG_FOLLOW3_STR "User:"
 #define MSG_FOLLOW4_STR "Enter the Screen Name you want to follow or unfollow..."
-#define MSG_CLEAR3_STR "C_lear"
+#define MSG_CLEAR3_STR ";"
 #define MSG_FOLLOW5_STR "_Follow"
 #define MSG_UNFOLLOOW_STR "_Unfollow"
-#define MSG_CANCEL4_STR "_Cancel"
+#define MSG_CANCEL4_STR ";"
 #define MSG_BLOCKING2_STR "Change the Blocking Status for a User"
-#define MSG_BLOCKING3_STR "User:"
+#define MSG_BLOCKING3_STR ";"
 #define MSG_BLOCKING4_STR "Enter the Screen Name you want to block or unblock..."
-#define MSG_CLEAR4_STR "C_lear"
+#define MSG_CLEAR4_STR ";"
 #define MSG_BLOCKING5_STR "_Block"
 #define MSG_UNBLOCK_STR "U_nblock"
-#define MSG_CANCEL5_STR "_Cancel"
+#define MSG_CANCEL5_STR ";"
 #define MSG_SMS_STR "Change the SMS Notification Status for a User"
-#define MSG_SMS2_STR "User:"
+#define MSG_SMS2_STR ";"
 #define MSG_SMS3_STR "Enter the Screen Name you want to either receive\n or stop receiving SMS notifications for..."
-#define MSG_CLEAR5_STR "C_lear"
+#define MSG_CLEAR5_STR ";"
 #define MSG_RECEIVE_STR "_Receive"
 #define MSG_STOP_STR "_Stop"
-#define MSG_CANCEL6_STR "_Cancel"
+#define MSG_CANCEL6_STR ";"
 #define MSG_SHOWUSER2_STR "Show a User"
-#define MSG_SHOWUSER3_STR "User:"
+#define MSG_SHOWUSER3_STR ";"
 #define MSG_SHOWUSER4_STR "\33cEnter the Screen Name of the User you want to display.\nYou do not need to be following them to view their\n most recent Tweet!"
-#define MSG_CLEAR6_STR "C_lear"
+#define MSG_CLEAR6_STR ";"
 #define MSG_SHOWUSER5_STR "_Show User"
-#define MSG_CANCEL7_STR "_Cancel"
-#define MSG_SENDDIRMSG_STR "Send a Direct Message"
-#define MSG_SENDDIRMSG2_STR "Send a Direct Message"
+#define MSG_CANCEL7_STR ";"
+#define MSG_SENDDIRMSG_STR ";"
+#define MSG_SENDDIRMSG2_STR ";"
 #define MSG_RECIPIENT_STR "Recipient:"
 #define MSG_SCREENNAME_STR "Enter a Screen Name only"
 #define MSG_MESSAGE_STR "Message:"
 #define MSG_MESSAGE2_STR "Enter a message (max 140 characters)"
-#define MSG_CLEAR7_STR "C_lear"
+#define MSG_CLEAR7_STR ";"
 #define MSG_SEND5_STR "_Send"
-#define MSG_CANCEL8_STR "_Cancel"
+#define MSG_CANCEL8_STR ";"
 #define MSG_UPDATEPROFILE_STR "Update Your Profile"
 #define MSG_UPDATEPROFILE2_STR "Update Your Twitter Website Profile"
 #define MSG_PROFNAME_STR "Name:"
@@ -430,11 +399,11 @@
 #define MSG_BIO_STR "Bio:"
 #define MSG_BIO2_STR "\33cEnter something about yourself or your description\n(Max 160 characters)"
 #define MSG_UPDATEPROFILE3_STR "_Update Profile"
-#define MSG_CANCEL9_STR "_Cancel"
+#define MSG_CANCEL9_STR ";"
 #define MSG_WHAT_STR "What's Happening?"
-#define MSG_FAST_STR "Fast Links"
+#define MSG_FAST_STR ";"
 #define MSG_FEEDBACK_STR "Feedback"
-#define MSG_DONATE4_STR "Donate!"
+#define MSG_DONATE4_STR ";"
 #define MSG_SAVE2_STR "Save Settings"
 #define MSG_TEST3_STR "Test User Name / Password"
 #define MSG_DONTSAVE_STR "Don't Save Current Changes"
@@ -442,25 +411,25 @@
 #define MSG_SEND6_STR "Send Tweet"
 #define MSG_CANCEL10_STR "Cancel Tweet"
 #define MSG_CLEAR9_STR "Clear Search"
-#define MSG_SEARCH8_STR "Search"
+#define MSG_SEARCH8_STR ";"
 #define MSG_CANCEL11_STR "Cancel Search"
 #define MSG_CLEAR10_STR "Clear User Name"
 #define MSG_FOLLOWUSER_STR "Follow a User"
 #define MSG_UNFOLLOWUSER_STR "Unfollow a User"
 #define MSG_CANCEL12_STR "Cancel Request"
-#define MSG_CLEAR12_STR "Clear User Name"
+#define MSG_CLEAR12_STR ";"
 #define MSG_BLOCKUSER_STR "Block a User (Use with care!)"
 #define MSG_UNBLOCKUSER_STR "Unblock a currently blocked User"
-#define MSG_CANCEL13_STR "Cancel Request"
-#define MSG_CLEAR13_STR "Clear User Name"
+#define MSG_CANCEL13_STR ";"
+#define MSG_CLEAR13_STR ";"
 #define MSG_SMSNOTE_STR "\33cPlease Note: You must first set up your cell phone\non the Twitter website (under 'Settings/Mobile')\nif you have not done so already, to begin receiving\n SMS notifications with AmiTwitter..."
 #define MSG_SMSSTOP_STR "Stop receiving SMS notifications from this user"
-#define MSG_CANCEL14_STR "Cancel Request"
-#define MSG_CLEAR14_STR "Clear User Name"
+#define MSG_CANCEL14_STR ";"
+#define MSG_CLEAR14_STR ";"
 #define MSG_SHOWTWEETS_STR "Show latest Tweet for this User"
-#define MSG_CANCEL15_STR "Cancel Request"
+#define MSG_CANCEL15_STR ";"
 #define MSG_CLEAR15_STR "Clear Direct Message"
-#define MSG_SENDDIRMSG3_STR "Send Direct Message"
+#define MSG_SENDDIRMSG3_STR ";"
 #define MSG_CANCEL16_STR "Cancel Direct Message"
 #define MSG_UPDATEPROFILE4_STR "Update Your Profile!"
 #define MSG_CANCEL17_STR "Cancel Update"
@@ -470,50 +439,50 @@
 #define MSG_BLOCK2_STR "Block?"
 #define MSG_BLOCK3_STR "_Block|_Cancel"
 #define MSG_BLOCK4_STR "\33cAre you sure you want to block this User?\n\nIf you block someone, they wont be able to follow\nyou or send you any messages. If your account is\npublic, they'll still be able to view it, but they\nwont show up on your followers list, and you wont be\non their following list.\n\nIf it's a spammer you're blocking, then thanks!"
-#define MSG_QUIT_STR "Quit"
+#define MSG_QUIT_STR ";"
 #define MSG_QUIT2_STR "_Quit|_Cancel"
 #define MSG_QUIT3_STR "\33cAre you sure you want\nto quit AmiTwitter?"
 #define MSG_SAVE3_STR "Save"
-#define MSG_OK2_STR "*OK"
+#define MSG_OK2_STR ";"
 #define MSG_SAVED_STR "Settings Saved to Envarc!"
 #define MSG_UPDATEPROFILE5_STR "Update Profile"
-#define MSG_OK3_STR "*OK"
-#define MSG_UPDATEPROFILE6_STR "\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)...\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"
-#define MSG_HTML1_STR "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>"
-#define MSG_HTML2_STR "<CENTER>Enter your User Name/Password in the Tools -> Settings dialog window to get started... </CENTER><BR>"
-#define MSG_HTML3_STR "<CENTER>This program is released under the GNU General Public License</CENTER><BR>"
-#define MSG_HTML4_STR "<CENTER>No warranty is expressed or implied. Use at your own risk!</CENTER>"
-#define MSG_HTML5_STR "<CENTER>The latest source code is always available at:</CENTER><BR>"
-#define MSG_HTML6_STR "<CENTER>https://sourceforge.net/projects/amitwitter/</CENTER><BR>"
-#define MSG_HTML7_STR "<CENTER>-- Thanks for your interest, The AmiTwitter Open Source Team</CENTER><BR>"
-#define MSG_HTML8_STR "<CENTER>This program uses:</CENTER><BR>"
-#define MSG_HTML9_STR "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>"
-#define MSG_HTML10_STR "<CENTER>What does AmiTwitter stand for?</CENTER><BR>"
-#define MSG_HTML11_STR "<CENTER>Answer: <b>A</b>miga-<b>M</b>orphOS-<b>I</b>KE-Twitter </CENTER><BR>"
-#define MSG_HTML12_STR "<CENTER>What are the requirements for AmiTwitter?</CENTER><BR>"
-#define MSG_HTML13_STR "<CENTER>Answer: MUI, HTMLtext, URLtext, TheBar, BetterString, libiconv.ixlibrary.  OpenURL is optional. </CENTER><BR>"
-#define MSG_HTML14_STR "<CENTER>AmiTwitter does not download or send Tweets?</CENTER><BR>"
-#define MSG_HTML15_STR "<CENTER>Answer:  Are you connected to the internet, have you entered your Twitter User Name/Password in the Tools -> Settings window and saved them? Are you already following some people for <I>Timeline</I> to work) and have you sent some Tweets (for <I>My Tweets</I> to work)?</CENTER><BR>"
-#define MSG_HTML16_STR "<CENTER>Direct Messages don't seem to work?</CENTER><BR>"
-#define MSG_HTML17_STR "<CENTER>Answer: Ensure you enter the recipient's Screen Name (i.e. User Name) correctly, it does not currently accept user id numbers.</CENTER><BR>"
-#define MSG_HTML18_STR "<CENTER>I like AmiTwitter, how do I donate?</CENTER><BR>"
-#define MSG_HTML19_STR "<CENTER>Answer: Follow the 'Donate!' link to the PayPal website that opens in your favorite web browser</CENTER><BR>"
-#define MSG_HTML20_STR "<CENTER>Nothing happens when I click on the links at the very bottom of the main program window?</CENTER><BR>"
-#define MSG_HTML21_STR "<CENTER>Answer: Ensure OpenURL is properly installed/configured.</CENTER><BR>"
-#define MSG_HTML22_STR "<CENTER>All I see is the message, 'Attempting to get the latest...'?</CENTER><BR>"
-#define MSG_HTML23_STR "<CENTER>Answer: Most probable reason is you don't have anything in that particular timeline.  For instance, you have never 'Favorited' any items on the Twitter site, and therefore they won't show up under 'My Favorites' in AmiTwitter either.</CENTER><BR>"
-#define MSG_HTML24_STR "<CENTER>Why is the file size so large?</CENTER><BR>"
-#define MSG_HTML25_STR "<CENTER>Answer: Because AmiTwitter relies on numerous libs to work, namely: cURL, SSL, xml2, glib, etc....</CENTER><BR>"
-#define MSG_HTML26_STR "<CENTER>Why did you write AmiTwitter?</CENTER><BR>"
-#define MSG_HTML27_STR "<CENTER>Answer: To prove it could be done!</CENTER><BR>"
-#define MSG_HTML28_STR "<CENTER>What is AmiTwitter based on?</CENTER><BR>"
-#define MSG_HTML29_STR "<CENTER>Answer: xTwitter by Tsukasa Hamano </CENTER><BR>"
-#define MSG_HTML30_STR "<CENTER>Links in the main Tweets window don't work?</CENTER><BR>"
-#define MSG_HTML31_STR "<CENTER>Answer: This is not a webbrowser...Also...it is a limitation of HTMLtext.mcc currently being used (The plan is to switch to HTMLview.mcc in the future...)</CENTER><BR>"
-#define MSG_HTML32_STR "<CENTER>What are the  future plans for AmiTwitter?</CENTER><BR>"
-#define MSG_HTML33_STR "<CENTER>Answer: First, learn more of the Twitter API, but it depends a lot on the feedback I recieve.  Also, ports to other systems (i.e OS 4.x and AROS) and an active source code base with some developers joining the project at SourceForge would be nice...<BR>"
-#define MSG_HTML34_STR "<CENTER>I don't know how to code, what can I do?</CENTER><BR>"
-#define MSG_HTML35_STR "<CENTER>Consider donating.<BR>"
+#define MSG_OK3_STR ";"
+#define MSG_UPDATEPROFILE6_STR "\33cPlease Note:\n\n Currently, You must *ALWAYS* specify a 'Name',\nthe other fields are optional, but if left blank they will\noverwrite the profile that is currently on your\nTwitter site.  (i.e., you should fill in all the\ninformation if you want it displayed on your Twitter\nsite! If you don't want it displayed, leave it blank\n(except for 'Name' of course)....\n\nI hope to make this a bit more user friendly in the future!\nPlease see the bubble help for more info for each field!"
+#define MSG_HTML1_STR ";"
+#define MSG_HTML2_STR ";"
+#define MSG_HTML3_STR ";"
+#define MSG_HTML4_STR ";"
+#define MSG_HTML5_STR ";"
+#define MSG_HTML6_STR ";"
+#define MSG_HTML7_STR ";"
+#define MSG_HTML8_STR ";"
+#define MSG_HTML9_STR ";"
+#define MSG_HTML10_STR ";"
+#define MSG_HTML11_STR ";"
+#define MSG_HTML12_STR ";"
+#define MSG_HTML13_STR ";"
+#define MSG_HTML14_STR ";"
+#define MSG_HTML15_STR ";"
+#define MSG_HTML16_STR ";"
+#define MSG_HTML17_STR ";"
+#define MSG_HTML18_STR ";"
+#define MSG_HTML19_STR ";"
+#define MSG_HTML20_STR ";"
+#define MSG_HTML21_STR ";"
+#define MSG_HTML22_STR ";"
+#define MSG_HTML23_STR ";"
+#define MSG_HTML24_STR ";"
+#define MSG_HTML25_STR ";"
+#define MSG_HTML26_STR ";"
+#define MSG_HTML27_STR ";"
+#define MSG_HTML28_STR ";"
+#define MSG_HTML29_STR ";"
+#define MSG_HTML30_STR ";"
+#define MSG_HTML31_STR ";"
+#define MSG_HTML32_STR ";"
+#define MSG_HTML33_STR ";"
+#define MSG_HTML34_STR ";"
+#define MSG_HTML35_STR ";"
 #define MSG_0000_STR "File"
 #define MSG_0001_STR "Timeline"
 #define MSG_0002_STR "Retweets"
@@ -549,7 +518,9 @@
 
 #endif /* CATCOMP_STRINGS */
 
+
 /****************************************************************************/
+
 
 #ifdef CATCOMP_ARRAY
 
@@ -798,7 +769,9 @@ static const struct CatCompArrayType CatCompArray[] =
 
 #endif /* CATCOMP_ARRAY */
 
+
 /****************************************************************************/
+
 
 #ifdef CATCOMP_BLOCK
 
@@ -900,7 +873,7 @@ static const char CatCompBlock[] =
     MSG_TEST2_STR "\x00"
     "\x00\x00\x00\x2F\x00\x08"
     MSG_CANCEL_STR "\x00"
-    "\x00\x00\x00\x30\x00\x06"
+    "\x00\x00\x00\x30\x00\x02"
     MSG_HELP_STR "\x00"
     "\x00\x00\x00\x31\x00\x60"
     MSG_REGISTER_STR "\x00\x00"
@@ -912,12 +885,12 @@ static const char CatCompBlock[] =
     MSG_DONATE_STR "\x00\x00"
     "\x00\x00\x00\x35\x00\x6C"
     MSG_DONATE2_STR "\x00"
-    "\x00\x00\x00\x36\x00\x08"
+    "\x00\x00\x00\x36\x00\x02"
     MSG_DONATE3_STR "\x00"
-    "\x00\x00\x00\x37\x00\x0E"
-    MSG_SEND_STR "\x00\x00"
-    "\x00\x00\x00\x38\x00\x0E"
-    MSG_SEND2_STR "\x00\x00"
+    "\x00\x00\x00\x37\x00\x02"
+    MSG_SEND_STR "\x00"
+    "\x00\x00\x00\x38\x00\x02"
+    MSG_SEND2_STR "\x00"
     "\x00\x00\x00\x39\x00\x08"
     MSG_SEND3_STR "\x00\x00"
     "\x00\x00\x00\x3A\x00\x40"
@@ -926,21 +899,21 @@ static const char CatCompBlock[] =
     MSG_CLEAR_STR "\x00\x00"
     "\x00\x00\x00\x3C\x00\x08"
     MSG_UPDATE_STR "\x00"
-    "\x00\x00\x00\x3D\x00\x08"
+    "\x00\x00\x00\x3D\x00\x02"
     MSG_CANCEL2_STR "\x00"
-    "\x00\x00\x00\x3E\x00\x08"
-    MSG_SEARCH3_STR "\x00\x00"
-    "\x00\x00\x00\x3F\x00\x08"
-    MSG_SEARCH4_STR "\x00\x00"
+    "\x00\x00\x00\x3E\x00\x02"
+    MSG_SEARCH3_STR "\x00"
+    "\x00\x00\x00\x3F\x00\x02"
+    MSG_SEARCH4_STR "\x00"
     "\x00\x00\x00\x40\x00\x08"
     MSG_SEARCH5_STR "\x00"
     "\x00\x00\x00\x41\x00\x40"
     MSG_SEARCH6_STR "\x00\x00"
-    "\x00\x00\x00\x42\x00\x08"
-    MSG_CLEAR2_STR "\x00\x00"
-    "\x00\x00\x00\x43\x00\x08"
+    "\x00\x00\x00\x42\x00\x02"
+    MSG_CLEAR2_STR "\x00"
+    "\x00\x00\x00\x43\x00\x02"
     MSG_SEARCH7_STR "\x00"
-    "\x00\x00\x00\x44\x00\x08"
+    "\x00\x00\x00\x44\x00\x02"
     MSG_CANCEL3_STR "\x00"
     "\x00\x00\x00\x45\x00\x0E"
     MSG_MANAGE_STR "\x00\x00"
@@ -950,57 +923,57 @@ static const char CatCompBlock[] =
     MSG_FOLLOW3_STR "\x00"
     "\x00\x00\x00\x48\x00\x38"
     MSG_FOLLOW4_STR "\x00"
-    "\x00\x00\x00\x49\x00\x08"
-    MSG_CLEAR3_STR "\x00\x00"
+    "\x00\x00\x00\x49\x00\x02"
+    MSG_CLEAR3_STR "\x00"
     "\x00\x00\x00\x4A\x00\x08"
     MSG_FOLLOW5_STR "\x00"
     "\x00\x00\x00\x4B\x00\x0A"
     MSG_UNFOLLOOW_STR "\x00"
-    "\x00\x00\x00\x4C\x00\x08"
+    "\x00\x00\x00\x4C\x00\x02"
     MSG_CANCEL4_STR "\x00"
     "\x00\x00\x00\x4D\x00\x26"
     MSG_BLOCKING2_STR "\x00"
-    "\x00\x00\x00\x4E\x00\x06"
+    "\x00\x00\x00\x4E\x00\x02"
     MSG_BLOCKING3_STR "\x00"
     "\x00\x00\x00\x4F\x00\x36"
     MSG_BLOCKING4_STR "\x00"
-    "\x00\x00\x00\x50\x00\x08"
-    MSG_CLEAR4_STR "\x00\x00"
+    "\x00\x00\x00\x50\x00\x02"
+    MSG_CLEAR4_STR "\x00"
     "\x00\x00\x00\x51\x00\x08"
     MSG_BLOCKING5_STR "\x00\x00"
     "\x00\x00\x00\x52\x00\x0A"
     MSG_UNBLOCK_STR "\x00\x00"
-    "\x00\x00\x00\x53\x00\x08"
+    "\x00\x00\x00\x53\x00\x02"
     MSG_CANCEL5_STR "\x00"
     "\x00\x00\x00\x54\x00\x2E"
     MSG_SMS_STR "\x00"
-    "\x00\x00\x00\x55\x00\x06"
+    "\x00\x00\x00\x55\x00\x02"
     MSG_SMS2_STR "\x00"
     "\x00\x00\x00\x56\x00\x5E"
     MSG_SMS3_STR "\x00\x00"
-    "\x00\x00\x00\x57\x00\x08"
-    MSG_CLEAR5_STR "\x00\x00"
+    "\x00\x00\x00\x57\x00\x02"
+    MSG_CLEAR5_STR "\x00"
     "\x00\x00\x00\x58\x00\x0A"
     MSG_RECEIVE_STR "\x00\x00"
     "\x00\x00\x00\x59\x00\x06"
     MSG_STOP_STR "\x00"
-    "\x00\x00\x00\x5A\x00\x08"
+    "\x00\x00\x00\x5A\x00\x02"
     MSG_CANCEL6_STR "\x00"
     "\x00\x00\x00\x5B\x00\x0C"
     MSG_SHOWUSER2_STR "\x00"
-    "\x00\x00\x00\x5C\x00\x06"
+    "\x00\x00\x00\x5C\x00\x02"
     MSG_SHOWUSER3_STR "\x00"
     "\x00\x00\x00\x5D\x00\x80"
     MSG_SHOWUSER4_STR "\x00"
-    "\x00\x00\x00\x5E\x00\x08"
-    MSG_CLEAR6_STR "\x00\x00"
+    "\x00\x00\x00\x5E\x00\x02"
+    MSG_CLEAR6_STR "\x00"
     "\x00\x00\x00\x5F\x00\x0C"
     MSG_SHOWUSER5_STR "\x00\x00"
-    "\x00\x00\x00\x60\x00\x08"
+    "\x00\x00\x00\x60\x00\x02"
     MSG_CANCEL7_STR "\x00"
-    "\x00\x00\x00\x61\x00\x16"
+    "\x00\x00\x00\x61\x00\x02"
     MSG_SENDDIRMSG_STR "\x00"
-    "\x00\x00\x00\x62\x00\x16"
+    "\x00\x00\x00\x62\x00\x02"
     MSG_SENDDIRMSG2_STR "\x00"
     "\x00\x00\x00\x63\x00\x0C"
     MSG_RECIPIENT_STR "\x00\x00"
@@ -1010,11 +983,11 @@ static const char CatCompBlock[] =
     MSG_MESSAGE_STR "\x00\x00"
     "\x00\x00\x00\x66\x00\x26"
     MSG_MESSAGE2_STR "\x00\x00"
-    "\x00\x00\x00\x67\x00\x08"
-    MSG_CLEAR7_STR "\x00\x00"
+    "\x00\x00\x00\x67\x00\x02"
+    MSG_CLEAR7_STR "\x00"
     "\x00\x00\x00\x68\x00\x06"
     MSG_SEND5_STR "\x00"
-    "\x00\x00\x00\x69\x00\x08"
+    "\x00\x00\x00\x69\x00\x02"
     MSG_CANCEL8_STR "\x00"
     "\x00\x00\x00\x6A\x00\x14"
     MSG_UPDATEPROFILE_STR "\x00"
@@ -1038,15 +1011,15 @@ static const char CatCompBlock[] =
     MSG_BIO2_STR "\x00"
     "\x00\x00\x00\x74\x00\x10"
     MSG_UPDATEPROFILE3_STR "\x00"
-    "\x00\x00\x00\x75\x00\x08"
+    "\x00\x00\x00\x75\x00\x02"
     MSG_CANCEL9_STR "\x00"
     "\x00\x00\x00\x76\x00\x12"
     MSG_WHAT_STR "\x00"
-    "\x00\x00\x00\x77\x00\x0C"
-    MSG_FAST_STR "\x00\x00"
+    "\x00\x00\x00\x77\x00\x02"
+    MSG_FAST_STR "\x00"
     "\x00\x00\x00\x78\x00\x0A"
     MSG_FEEDBACK_STR "\x00\x00"
-    "\x00\x00\x00\x79\x00\x08"
+    "\x00\x00\x00\x79\x00\x02"
     MSG_DONATE4_STR "\x00"
     "\x00\x00\x00\x7A\x00\x0E"
     MSG_SAVE2_STR "\x00"
@@ -1062,8 +1035,8 @@ static const char CatCompBlock[] =
     MSG_CANCEL10_STR "\x00\x00"
     "\x00\x00\x00\x80\x00\x0E"
     MSG_CLEAR9_STR "\x00\x00"
-    "\x00\x00\x00\x81\x00\x08"
-    MSG_SEARCH8_STR "\x00\x00"
+    "\x00\x00\x00\x81\x00\x02"
+    MSG_SEARCH8_STR "\x00"
     "\x00\x00\x00\x82\x00\x0E"
     MSG_CANCEL11_STR "\x00"
     "\x00\x00\x00\x83\x00\x10"
@@ -1074,31 +1047,31 @@ static const char CatCompBlock[] =
     MSG_UNFOLLOWUSER_STR "\x00"
     "\x00\x00\x00\x86\x00\x10"
     MSG_CANCEL12_STR "\x00\x00"
-    "\x00\x00\x00\x87\x00\x10"
+    "\x00\x00\x00\x87\x00\x02"
     MSG_CLEAR12_STR "\x00"
     "\x00\x00\x00\x88\x00\x1E"
     MSG_BLOCKUSER_STR "\x00"
     "\x00\x00\x00\x89\x00\x22"
     MSG_UNBLOCKUSER_STR "\x00\x00"
-    "\x00\x00\x00\x8A\x00\x10"
-    MSG_CANCEL13_STR "\x00\x00"
-    "\x00\x00\x00\x8B\x00\x10"
+    "\x00\x00\x00\x8A\x00\x02"
+    MSG_CANCEL13_STR "\x00"
+    "\x00\x00\x00\x8B\x00\x02"
     MSG_CLEAR13_STR "\x00"
     "\x00\x00\x00\x8C\x00\xC0"
     MSG_SMSNOTE_STR "\x00"
     "\x00\x00\x00\x8D\x00\x30"
     MSG_SMSSTOP_STR "\x00"
-    "\x00\x00\x00\x8E\x00\x10"
-    MSG_CANCEL14_STR "\x00\x00"
-    "\x00\x00\x00\x8F\x00\x10"
+    "\x00\x00\x00\x8E\x00\x02"
+    MSG_CANCEL14_STR "\x00"
+    "\x00\x00\x00\x8F\x00\x02"
     MSG_CLEAR14_STR "\x00"
     "\x00\x00\x00\x90\x00\x20"
     MSG_SHOWTWEETS_STR "\x00"
-    "\x00\x00\x00\x91\x00\x10"
-    MSG_CANCEL15_STR "\x00\x00"
+    "\x00\x00\x00\x91\x00\x02"
+    MSG_CANCEL15_STR "\x00"
     "\x00\x00\x00\x92\x00\x16"
     MSG_CLEAR15_STR "\x00\x00"
-    "\x00\x00\x00\x93\x00\x14"
+    "\x00\x00\x00\x93\x00\x02"
     MSG_SENDDIRMSG3_STR "\x00"
     "\x00\x00\x00\x94\x00\x16"
     MSG_CANCEL16_STR "\x00"
@@ -1118,94 +1091,94 @@ static const char CatCompBlock[] =
     MSG_BLOCK3_STR "\x00\x00"
     "\x00\x00\x00\x9C\x01\x42"
     MSG_BLOCK4_STR "\x00"
-    "\x00\x00\x00\x9D\x00\x06"
-    MSG_QUIT_STR "\x00\x00"
+    "\x00\x00\x00\x9D\x00\x02"
+    MSG_QUIT_STR "\x00"
     "\x00\x00\x00\x9E\x00\x0E"
     MSG_QUIT2_STR "\x00"
     "\x00\x00\x00\x9F\x00\x2C"
     MSG_QUIT3_STR "\x00"
     "\x00\x00\x00\xA0\x00\x06"
     MSG_SAVE3_STR "\x00\x00"
-    "\x00\x00\x00\xA1\x00\x04"
+    "\x00\x00\x00\xA1\x00\x02"
     MSG_OK2_STR "\x00"
     "\x00\x00\x00\xA2\x00\x1A"
     MSG_SAVED_STR "\x00"
     "\x00\x00\x00\xA3\x00\x10"
     MSG_UPDATEPROFILE5_STR "\x00\x00"
-    "\x00\x00\x00\xA4\x00\x04"
+    "\x00\x00\x00\xA4\x00\x02"
     MSG_OK3_STR "\x00"
     "\x00\x00\x00\xA5\x01\xDE"
-    MSG_UPDATEPROFILE6_STR "\x00\x00"
-    "\x00\x00\x00\xA6\x00\x2C"
+    MSG_UPDATEPROFILE6_STR "\x00"
+    "\x00\x00\x00\xA6\x00\x02"
     MSG_HTML1_STR "\x00"
-    "\x00\x00\x00\xA7\x00\x6E"
-    MSG_HTML2_STR "\x00\x00"
-    "\x00\x00\x00\xA8\x00\x54"
-    MSG_HTML3_STR "\x00\x00"
-    "\x00\x00\x00\xA9\x00\x4C"
+    "\x00\x00\x00\xA7\x00\x02"
+    MSG_HTML2_STR "\x00"
+    "\x00\x00\x00\xA8\x00\x02"
+    MSG_HTML3_STR "\x00"
+    "\x00\x00\x00\xA9\x00\x02"
     MSG_HTML4_STR "\x00"
-    "\x00\x00\x00\xAA\x00\x44"
+    "\x00\x00\x00\xAA\x00\x02"
     MSG_HTML5_STR "\x00"
-    "\x00\x00\x00\xAB\x00\x42"
+    "\x00\x00\x00\xAB\x00\x02"
     MSG_HTML6_STR "\x00"
-    "\x00\x00\x00\xAC\x00\x52"
+    "\x00\x00\x00\xAC\x00\x02"
     MSG_HTML7_STR "\x00"
-    "\x00\x00\x00\xAD\x00\x28"
+    "\x00\x00\x00\xAD\x00\x02"
     MSG_HTML8_STR "\x00"
-    "\x00\x00\x00\xAE\x00\x2C"
+    "\x00\x00\x00\xAE\x00\x02"
     MSG_HTML9_STR "\x00"
-    "\x00\x00\x00\xAF\x00\x36"
-    MSG_HTML10_STR "\x00\x00"
-    "\x00\x00\x00\xB0\x00\x4E"
-    MSG_HTML11_STR "\x00\x00"
-    "\x00\x00\x00\xB1\x00\x40"
-    MSG_HTML12_STR "\x00\x00"
-    "\x00\x00\x00\xB2\x00\x76"
+    "\x00\x00\x00\xAF\x00\x02"
+    MSG_HTML10_STR "\x00"
+    "\x00\x00\x00\xB0\x00\x02"
+    MSG_HTML11_STR "\x00"
+    "\x00\x00\x00\xB1\x00\x02"
+    MSG_HTML12_STR "\x00"
+    "\x00\x00\x00\xB2\x00\x02"
     MSG_HTML13_STR "\x00"
-    "\x00\x00\x00\xB3\x00\x42"
+    "\x00\x00\x00\xB3\x00\x02"
     MSG_HTML14_STR "\x00"
-    "\x00\x00\x00\xB4\x01\x24"
-    MSG_HTML15_STR "\x00\x00"
-    "\x00\x00\x00\xB5\x00\x3A"
-    MSG_HTML16_STR "\x00\x00"
-    "\x00\x00\x00\xB6\x00\x94"
+    "\x00\x00\x00\xB4\x00\x02"
+    MSG_HTML15_STR "\x00"
+    "\x00\x00\x00\xB5\x00\x02"
+    MSG_HTML16_STR "\x00"
+    "\x00\x00\x00\xB6\x00\x02"
     MSG_HTML17_STR "\x00"
-    "\x00\x00\x00\xB7\x00\x3A"
-    MSG_HTML18_STR "\x00\x00"
-    "\x00\x00\x00\xB8\x00\x76"
-    MSG_HTML19_STR "\x00\x00"
-    "\x00\x00\x00\xB9\x00\x6E"
+    "\x00\x00\x00\xB7\x00\x02"
+    MSG_HTML18_STR "\x00"
+    "\x00\x00\x00\xB8\x00\x02"
+    MSG_HTML19_STR "\x00"
+    "\x00\x00\x00\xB9\x00\x02"
     MSG_HTML20_STR "\x00"
-    "\x00\x00\x00\xBA\x00\x4E"
+    "\x00\x00\x00\xBA\x00\x02"
     MSG_HTML21_STR "\x00"
-    "\x00\x00\x00\xBB\x00\x52"
+    "\x00\x00\x00\xBB\x00\x02"
     MSG_HTML22_STR "\x00"
-    "\x00\x00\x00\xBC\x01\x00"
-    MSG_HTML23_STR "\x00\x00"
-    "\x00\x00\x00\xBD\x00\x34"
+    "\x00\x00\x00\xBC\x00\x02"
+    MSG_HTML23_STR "\x00"
+    "\x00\x00\x00\xBD\x00\x02"
     MSG_HTML24_STR "\x00"
-    "\x00\x00\x00\xBE\x00\x78"
+    "\x00\x00\x00\xBE\x00\x02"
     MSG_HTML25_STR "\x00"
-    "\x00\x00\x00\xBF\x00\x34"
-    MSG_HTML26_STR "\x00\x00"
-    "\x00\x00\x00\xC0\x00\x38"
+    "\x00\x00\x00\xBF\x00\x02"
+    MSG_HTML26_STR "\x00"
+    "\x00\x00\x00\xC0\x00\x02"
     MSG_HTML27_STR "\x00"
-    "\x00\x00\x00\xC1\x00\x32"
+    "\x00\x00\x00\xC1\x00\x02"
     MSG_HTML28_STR "\x00"
-    "\x00\x00\x00\xC2\x00\x3A"
-    MSG_HTML29_STR "\x00\x00"
-    "\x00\x00\x00\xC3\x00\x42"
-    MSG_HTML30_STR "\x00\x00"
-    "\x00\x00\x00\xC4\x00\xB0"
+    "\x00\x00\x00\xC2\x00\x02"
+    MSG_HTML29_STR "\x00"
+    "\x00\x00\x00\xC3\x00\x02"
+    MSG_HTML30_STR "\x00"
+    "\x00\x00\x00\xC4\x00\x02"
     MSG_HTML31_STR "\x00"
-    "\x00\x00\x00\xC5\x00\x40"
+    "\x00\x00\x00\xC5\x00\x02"
     MSG_HTML32_STR "\x00"
-    "\x00\x00\x00\xC6\x01\x06"
+    "\x00\x00\x00\xC6\x00\x02"
     MSG_HTML33_STR "\x00"
-    "\x00\x00\x00\xC7\x00\x3E"
+    "\x00\x00\x00\xC7\x00\x02"
     MSG_HTML34_STR "\x00"
-    "\x00\x00\x00\xC8\x00\x20"
-    MSG_HTML35_STR "\x00\x00"
+    "\x00\x00\x00\xC8\x00\x02"
+    MSG_HTML35_STR "\x00"
     "\x00\x00\x00\xC9\x00\x06"
     MSG_0000_STR "\x00\x00"
     "\x00\x00\x00\xCA\x00\x0A"
@@ -1274,7 +1247,10 @@ static const char CatCompBlock[] =
 
 #endif /* CATCOMP_BLOCK */
 
+
 /****************************************************************************/
+
+
 
 struct LocaleInfo
 {
@@ -1282,7 +1258,15 @@ struct LocaleInfo
     APTR li_Catalog;
 };
 
+
+
+
+
 #ifdef CATCOMP_CODE
+
+#include <libraries/locale.h>
+#include <proto/locale.h>
+
 
 STRPTR GetString(struct LocaleInfo *li, LONG stringNum)
 {
@@ -1301,7 +1285,7 @@ STRPTR  builtIn;
 
 #undef LocaleBase
 #define LocaleBase li->li_LocaleBase
-
+    
     if (LocaleBase)
         return(GetCatalogStr(li->li_Catalog,stringNum,builtIn));
 #undef LocaleBase
@@ -1309,4 +1293,14 @@ STRPTR  builtIn;
     return(builtIn);
 }
 
+
 #endif /* CATCOMP_CODE */
+
+
+
+/****************************************************************************/
+
+
+
+#endif /* AMITWITTER_STRINGS_H */
+

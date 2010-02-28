@@ -45,7 +45,7 @@ OS3/MorphOS/OS4.1: MUI, URLtext.mcc, BetterString.mcc, HTMLtext.mcc, TheBar.mcc,
 codesets.library, working TCP stack, gif/png/jpg/bmp datatypes, OpenURL (optional for 3.x/4.1), ixemul.library/ixnet.library 
 (needed by OS 3.x version only)
 
-AROS: Unknown at this time...
+AROS: Unknown at this time.
 
 USAGE
 -----
@@ -57,7 +57,7 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg; first OS 4 version compiled; updated swedish, italian catalogs
+0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg!; first OS 4.1 version compiled; updated swedish, italian catalogs, FAQs, program icons & numerous bug fixes: image name truncation, Locale functions, safety NULL checks for free() and replaced free() with xmlFree() where appropriate, fixed numerous declarations 
 0.27 - Public Beta Release 2 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
@@ -144,12 +144,13 @@ THANKS
 ------
 
 Special thanks to: 
-- ShInKurO for joining the project, contributing to the codebase
+- Cyborg for joining the project, contributing to the codebase
 - Sprocki for his testing of the MorphOS version and very helpful suggestions!
-- Cyborg and James Carroll for contributing to the code
+- ShInKurO and James Carroll for contributing to the code
+- Mason & Patrick Jung for the buttons/icon sets
 - All the catalog translators and beta testers
 
-Donators: Roschmyr
+Donators: Roschmyr, (your name could be here...)
 
 ABOUT/AUTHORS
 -------------
