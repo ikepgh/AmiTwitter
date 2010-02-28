@@ -13,6 +13,14 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 28-Fev-10   Cyborg                 - ILocale was not opened for OS4
+									   - Fixed localization
+									   - Fixed image name truncation
+									   - Added a zillion of saftey checks before free(). Prevents lots of crashes, but
+										 there are very likely even more needed. ALWAYS check if there is actually
+										 something to free!
+									   - Removed a lot of 'const' keywords for non-const variables.
+									   - Replaced free() with xmlFree() where appropriate.
  ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
@@ -66,10 +74,6 @@
 #include <exec/libraries.h>
 #include <dos/dos.h>
 #include <dos/dosextens.h>
-//#if defined(__AMIGA__) && !defined(__PPC__)
-//# include <pragmas/dos_pragmas.h>
-//# include <pragmas/exec_pragmas.h>
-//#endif
 #include <workbench/workbench.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
@@ -83,9 +87,6 @@
 #else
 #include <proto/locale.h>
 #endif
-//#if defined(__AMIGA__) && !defined(__PPC__)
-//# include <clib/gadtools_protos.h>
-//#endif
 #include <proto/exec.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -107,6 +108,17 @@
 // Amitwitter
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
+
+/* cyborg: Always set here what you want to get included from the catalog
+		   header. NEVER touch the header file itself, because all your
+		   changes will get lost as soon as it is regenerated because of
+		   updated catalog strings!
+*/
+
+#define CATCOMP_ARRAY
+#define CATCOMP_NUMBERS
+#define CATCOMP_BLOCK
+
 #include "amitwitter_strings.h"
 
 //#include "mcc_common.h" //not used yet...
@@ -228,6 +240,14 @@ struct Library *SocketBase = NULL;
 
 ///
 
+/// Prototypes ****************************************************************/
+
+STRPTR GetString(struct LocaleInfo *li, LONG stringNum);
+
+/****************************************************************************/
+
+///
+
 /// Variables *****************************************************************/
 
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
@@ -247,10 +267,10 @@ unnotify_gad, but_notify_cancel, win_userprofile, update_profile_gad,
 but_cancel_profile, clear_show_gad, show_gad, but_show_cancel, cy1;
 
 // Direct Messages
-const char *screen_name, *text;
+char *screen_name, *text;
 
 // Update Profile
-const char *name, *web, *location, *bio;
+char *name, *web, *location, *bio;
 
 // International Character Codesets
 #define BUF_SIZE 102400
@@ -486,27 +506,49 @@ BOOL Open_Libs(void ) {
         #endif
 	}
 
-    if ((LocaleBase = OpenLibrary("locale.library",38))) {
+	if ((LocaleBase = OpenLibrary("locale.library",38)))
+	{
+		#ifdef __amigaos4__
+		if(!(ILocale = (struct LocaleIFace *) GetInterface((struct Library *)LocaleBase, "main", 1, NULL)))
+		{
+			CloseLibrary((struct Library *)LocaleBase);
+
+			DropInterface((struct Interface *)ICodesets);
+			CloseLibrary((struct Library *)CodesetsBase);
+
+			DropInterface((struct Interface *)IMUIMaster);
+            CloseLibrary((struct Library *)MUIMasterBase);
+
+            DropInterface((struct Interface *)IGraphics);
+            CloseLibrary((struct Library *)GfxBase);
+
+            DropInterface((struct Interface *)IIntuition);
+            CloseLibrary((struct Library *)IntuitionBase);
+            return 0;
+        }
+        #endif
 
         li.li_LocaleBase = LocaleBase;
-        
-        #if  __amigaos4__
-        if((li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL) !=NULL)) {            
-        #else        
-        if((STRPTR)li.li_Catalog = OpenCatalogA(NULL,"amitwitter.catalog",NULL)) {
-        #endif    
 
-            struct CatCompArrayType *cca;
-            int                     cnt;
+		/* cyborg: NEVER try to do a cast on an LVALUE!! In this case the cast
+				   target (to STRPTR) didn't make any sense as well. If you need
+				   a cast, then do it on the RVALUE. In this case, it can only
+				   be the need for APTR as li_Catalog is an APTR, but OpenCatalogA()
+				   returns a struct Catalog *.
+		*/
+		if((li.li_Catalog = (APTR)OpenCatalogA(NULL,"amitwitter.catalog",NULL)) != NULL)
+		{
+			/* cyborg: I really fail to see any sense in this. It's also utterly
+					   wrong to try to write something to a const array. On OS4
+					   this will simply crash. On the other OS, this may not crash
+					   immediately but lead to unpredictable behaviour.
 
-            for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
-                 cnt>=0;
-                 cnt--, cca--)
-            {
-                STRPTR s;
+					   If you had this in for your getString() function below, please
+					   read what I wrote below about it.
 
-			    if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str))) cca->cca_Str = s;
-            }
+			if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str)))
+				cca->cca_Str = s;
+			*/
         }
     }
     return(1);
@@ -615,6 +657,15 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 }
 
 // localization functions
+/*
+
+cyborg: This function makes no sense at all as a working GetString() is alread
+		defined in amitwitter_strings.h by SimpleCat. So why not just use that
+		one? Additionally this function requires tinkering with the const
+		CatCompArray in Open_Libs() which is just doomed to cause problems.
+
+		Best remove this and don't try to be more clever than a developer tool :-)
+
 STRPTR getString(ULONG id) {
 
     struct CatCompArrayType *cca;
@@ -626,20 +677,48 @@ STRPTR getString(ULONG id) {
 
     return "";  
 }
+*/
+
+/* cyborg: This is basically the same function as generated by SimpleCat, but
+		   we don't use the generated one, because we have to cast a bit to
+		   get rid of warnings. And the generated one would always get
+		   overwritten as soon as we regenerate because of updated catalogs.
+*/
+
+STRPTR GetString(struct LocaleInfo *li, LONG stringNum)
+{
+	LONG   *l;
+	UWORD  *w;
+	STRPTR  builtIn;
+
+    l = (LONG *)CatCompBlock;
+
+    while (*l != stringNum)
+    {
+        w = (UWORD *)((ULONG)l + 4);
+        l = (LONG *)((ULONG)l + (ULONG)*w + 6);
+    }
+    builtIn = (STRPTR)((ULONG)l + 6);
+
+    if (LocaleBase)
+		return (STRPTR)GetCatalogStr(li->li_Catalog,stringNum,builtIn);
+
+    return(builtIn);
+}
 
 void localizeNewMenu(struct NewMenu *nm) {
 
     for ( ; nm->nm_Type!=NM_END; nm++)
         if (nm->nm_Label!=NM_BARLABEL)
-            nm->nm_Label = getString((ULONG)nm->nm_Label);
+			nm->nm_Label = GetString(&li, (ULONG)nm->nm_Label);
 }
 
 void localizeTheBar(struct MUIS_TheBar_Button *button) {
 
     for ( ; button->img!=MUIV_TheBar_End; button++)
     {
-        if (button->text) button->text = getString((ULONG)button->text);
-        if (button->help) button->help = getString((ULONG)button->help);
+		if (button->text) button->text = GetString(&li, (ULONG)button->text);
+		if (button->help) button->help = GetString(&li, (ULONG)button->help);
     }
 }
 
@@ -769,7 +848,7 @@ MyByteArray	*my_byte_array_append(MyByteArray *mba, UBYTE *ptr, ULONG size)
 twitter_t* twitter_new() {
 
     twitter_t *twitter;
-    const char *home;
+	char *home;
 
     home = "PROGDIR:";
 
@@ -804,7 +883,7 @@ twitter_t* twitter_new() {
 // AmiTwitter Config
 int twitter_config(twitter_t *twitter) {
 
-    const char *home;
+	char *home;
 
     home = getenv("HOME");
     if(!home) {
@@ -818,7 +897,8 @@ int twitter_config(twitter_t *twitter) {
 // AmiTwitter Cleanup
 void twitter_free(twitter_t *twitter) {
 
-    free(twitter);
+	if(twitter)
+		free(twitter);
     return;
 }
 
@@ -848,29 +928,51 @@ void twitter_statuses_free(struct List *statuses)
         }
 		Remove(node);
 
-        free((void*)(status->created_at));
-        free((void*)(status->id));
-        free((void*)(status->text));
-        free((void*)(status->source));
-        free((void*)(status->truncated));
-        free((void*)(status->in_reply_to_status_id));
-        free((void*)(status->in_reply_to_user_id));
-        free((void*)(status->favorited));
-        free((void*)(status->in_reply_to_screen_name));
-        free((void*)(status->retweeted_status));
+		if(status->created_at)
+			xmlFree(status->created_at);
+		if(status->id)
+			xmlFree(status->id);
+		if(status->text)
+			xmlFree(status->text);
+		if(status->source)
+			xmlFree(status->source);
+		if(status->truncated)
+			xmlFree(status->truncated);
+		if(status->in_reply_to_status_id)
+			xmlFree(status->in_reply_to_status_id);
+		if(status->in_reply_to_user_id)
+			xmlFree(status->in_reply_to_user_id);
+		if(status->favorited)
+			xmlFree(status->favorited);
+		if(status->in_reply_to_screen_name)
+			xmlFree(status->in_reply_to_screen_name);
+		if(status->retweeted_status)
+			xmlFree(status->retweeted_status);
 
-        if(status->user){
-            free((void*)(status->user->id));
-            free((void*)(status->user->name));
-            free((void*)(status->user->screen_name));
-            free((void*)(status->user->location));
-            free((void*)(status->user->description));
-            free((void*)(status->user->profile_image_url));
-            free((void*)(status->user->followers_count));
-            free((void*)(status->user->friends_count));
-            free((void*)(status->user->favourites_count));
-            free((void*)(status->user->statuses_count));
-            free((void*)(status->user));
+		if(status->user)
+		{
+			if(status->user->id)
+				xmlFree(status->user->id);
+			if(status->user->name)
+				xmlFree(status->user->name);
+			if(status->user->screen_name)
+				xmlFree(status->user->screen_name);
+			if(status->user->location)
+				xmlFree(status->user->location);
+			if(status->user->description)
+				xmlFree(status->user->description);
+			if(status->user->profile_image_url)
+				xmlFree(status->user->profile_image_url);
+			if(status->user->followers_count)
+				xmlFree(status->user->followers_count);
+			if(status->user->friends_count)
+				xmlFree(status->user->friends_count);
+			if(status->user->favourites_count)
+				xmlFree(status->user->favourites_count);
+			if(status->user->statuses_count)
+				xmlFree(status->user->statuses_count);
+
+			free((void*)(status->user));
         }
         free(status);
 	}
@@ -900,27 +1002,47 @@ void twitter_statuses_free_dirmsg(struct List *statuses) {
 
 		Remove(node);
 
-        free((void*)(direct_message->id));
-        free((void*)(direct_message->sender_id));
-        free((void*)(direct_message->text));
-        free((void*)(direct_message->recipient_id));
-        free((void*)(direct_message->created_at));
-        free((void*)(direct_message->sender_screen_name));
-        free((void*)(direct_message->recipient_screen_name));
+		if(direct_message->id)
+			xmlFree(direct_message->id);
+		if(direct_message->sender_id)
+			xmlFree(direct_message->sender_id);
+		if(direct_message->text)
+			xmlFree(direct_message->text);
+		if(direct_message->recipient_id)
+			xmlFree(direct_message->recipient_id);
+		if(direct_message->created_at)
+			xmlFree(direct_message->created_at);
+		if(direct_message->sender_screen_name)
+			xmlFree(direct_message->sender_screen_name);
+		if(direct_message->recipient_screen_name)
+			xmlFree(direct_message->recipient_screen_name);
 
-        if(direct_message->recipient){
-            free((void*)(direct_message->recipient->id));
-            free((void*)(direct_message->recipient->created_at));
-            free((void*)(direct_message->recipient->name));
-            free((void*)(direct_message->recipient->screen_name));
-            free((void*)(direct_message->recipient->location));
-            free((void*)(direct_message->recipient->description));
-            free((void*)(direct_message->recipient->profile_image_url));
-            free((void*)(direct_message->recipient->followers_count));
-            free((void*)(direct_message->recipient->friends_count));
-            free((void*)(direct_message->recipient->favourites_count));
-            free((void*)(direct_message->recipient->statuses_count));
-            free((void*)(direct_message->recipient));
+		if(direct_message->recipient)
+		{
+			if(direct_message->recipient->id)
+				xmlFree(direct_message->recipient->id);
+			if(direct_message->recipient->created_at)
+				xmlFree(direct_message->recipient->created_at);
+			if(direct_message->recipient->name)
+				xmlFree(direct_message->recipient->name);
+			if(direct_message->recipient->screen_name)
+				xmlFree(direct_message->recipient->screen_name);
+			if(direct_message->recipient->location)
+				xmlFree(direct_message->recipient->location);
+			if(direct_message->recipient->description)
+				xmlFree(direct_message->recipient->description);
+			if(direct_message->recipient->profile_image_url)
+				xmlFree(direct_message->recipient->profile_image_url);
+			if(direct_message->recipient->followers_count)
+				xmlFree(direct_message->recipient->followers_count);
+			if(direct_message->recipient->friends_count)
+				xmlFree(direct_message->recipient->friends_count);
+			if(direct_message->recipient->favourites_count)
+				xmlFree(direct_message->recipient->favourites_count);
+			if(direct_message->recipient->statuses_count)
+				xmlFree(direct_message->recipient->statuses_count);
+
+			free((void*)(direct_message->recipient));
         }
         free(direct_message);
 	}
@@ -944,32 +1066,53 @@ void twitter_statuses_free_dirmsgrcvd(struct List *statuses) {
 		next = node->ln_Succ;
 
 		direct_message = (twitter_direct_message_rcvd_t *)node;
+
         if(!direct_message) {
             continue;
         }
 
 		Remove(node);
 
-	    free((void*)(direct_message->id));
-        free((void*)(direct_message->sender_id));
-        free((void*)(direct_message->text));
-        free((void*)(direct_message->recipient_id));
-        free((void*)(direct_message->created_at));
-        free((void*)(direct_message->sender_screen_name));
-        free((void*)(direct_message->recipient_screen_name)); 
+		if(direct_message->id)
+			xmlFree(direct_message->id);
+		if(direct_message->sender_id)
+			xmlFree(direct_message->sender_id);
+		if(direct_message->text)
+			xmlFree(direct_message->text);
+		if(direct_message->recipient_id)
+			xmlFree(direct_message->recipient_id);
+		if(direct_message->created_at)
+			xmlFree(direct_message->created_at);
+		if(direct_message->sender_screen_name)
+			xmlFree(direct_message->sender_screen_name);
+		if(direct_message->recipient_screen_name)
+			xmlFree(direct_message->recipient_screen_name);
 
-        if(direct_message->sender){
-            free((void*)(direct_message->sender->id));
-            free((void*)(direct_message->sender->created_at));
-            free((void*)(direct_message->sender->name));
-            free((void*)(direct_message->sender->screen_name));
-            free((void*)(direct_message->sender->location));
-            free((void*)(direct_message->sender->description));
-            free((void*)(direct_message->sender->profile_image_url));
-            free((void*)(direct_message->sender->followers_count));
-            free((void*)(direct_message->sender->friends_count));
-            free((void*)(direct_message->sender->favourites_count));
-            free((void*)(direct_message->sender->statuses_count));
+		if(direct_message->sender)
+		{
+			if(direct_message->sender->id)
+				xmlFree(direct_message->sender->id);
+			if(direct_message->sender->created_at)
+				xmlFree(direct_message->sender->created_at);
+			if(direct_message->sender->name)
+				xmlFree(direct_message->sender->name);
+			if(direct_message->sender->screen_name)
+				xmlFree(direct_message->sender->screen_name);
+			if(direct_message->sender->location)
+				xmlFree(direct_message->sender->location);
+			if(direct_message->sender->description)
+				xmlFree(direct_message->sender->description);
+			if(direct_message->sender->profile_image_url)
+				xmlFree(direct_message->sender->profile_image_url);
+			if(direct_message->sender->followers_count)
+				xmlFree(direct_message->sender->followers_count);
+			if(direct_message->sender->friends_count)
+				xmlFree(direct_message->sender->friends_count);
+			if(direct_message->sender->favourites_count)
+				xmlFree(direct_message->sender->favourites_count);
+			if(direct_message->sender->statuses_count)
+				xmlFree(direct_message->sender->statuses_count);
+
             free((void*)(direct_message->sender));
         }
         free(direct_message);
@@ -1122,7 +1265,7 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path) {
 int twitter_fetch_images(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_status_t *status;
-    const char *url;
+	char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
@@ -1137,7 +1280,20 @@ int twitter_fetch_images(twitter_t *twitter, struct List *statuses) {
 		node = node->ln_Pred)
 	{
 		status = (twitter_status_t *)node;
+
+		/* cyborg: This functions is meant to return the complete name of the image
+				   file in name[]. But the name is very likely longer than 31 chars
+				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
+				   image name with the user ID (if not, please correct me). As these
+				   functions are therefore not needed, I removed them and replaced
+				   them with a direct call to strncpy().
+
+				   AFAICT this has absolutely zero negative sideeffects but prevents
+				   crashes as the original thing was done wrong.
+
         twitter_image_name(status, name);
+		*/
+		strncpy(name, status->user->id, PATH_MAX);
         url = status->user->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
         ret = stat(path, &st);
@@ -1155,7 +1311,7 @@ int twitter_fetch_images(twitter_t *twitter, struct List *statuses) {
 int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_direct_message_t *direct_message;
-    const char *url;
+	char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
@@ -1170,7 +1326,20 @@ int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses) {
 		node = node->ln_Pred)
 	{
 		direct_message = (twitter_direct_message_t *)node;
+
+		/* cyborg: This functions is meant to return the complete name of the image
+				   file in name[]. But the name is very likely longer than 31 chars
+				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
+				   image name with the user ID (if not, please correct me). As these
+				   functions are therefore not needed, I removed them and replaced
+				   them with a direct call to strncpy().
+
+				   AFAICT this has absolutely zero negative sideeffects but prevents
+				   crashes as the original thing was done wrong.
+
         twitter_image_name_dirmsg(direct_message, name);
+		*/
+        strncpy(name, direct_message->recipient->id, PATH_MAX);
         url = direct_message->recipient->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
         ret = stat(path, &st);
@@ -1188,7 +1357,7 @@ int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses) {
 int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
     int ret;
     twitter_direct_message_rcvd_t *direct_message;
-    const char *url;
+	char *url;
     char name[PATH_MAX];
     char path[PATH_MAX];
     struct stat st;
@@ -1203,7 +1372,20 @@ int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
 		node = node->ln_Pred)
 	{
 		direct_message = (twitter_direct_message_rcvd_t *)node;
+
+		/* cyborg: This functions is meant to return the complete name of the image
+				   file in name[]. But the name is very likely longer than 31 chars
+				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
+				   image name with the user ID (if not, please correct me). As these
+				   functions are therefore not needed, I removed them and replaced
+				   them with a direct call to strncpy().
+
+				   AFAICT this has absolutely zero negative sideeffects but prevents
+				   crashes as the original thing was done wrong.
+
         twitter_image_name_dirmsgrcvd(direct_message, name);
+		*/
+		strncpy(name, direct_message->sender->id, PATH_MAX);
         url = direct_message->sender->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
         ret = stat(path, &st);
@@ -1216,6 +1398,18 @@ int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
 }
 
 /*****************************************************************************/
+
+///
+
+/// twitter_image_name#? functions ********************************************/
+
+#if 0
+
+/* cyborg: As long as we just overwrite name[] with the user->id these functions
+		   are not needed anymore.
+		   I didn't fix the wrong strncpy(), but remember to fix it if these
+		   functions ever get reactivated!!
+*/
 
 // Image Name
 int twitter_image_name(twitter_status_t *status, char *name) {
@@ -1243,7 +1437,6 @@ int twitter_image_name(twitter_status_t *status, char *name) {
 
 	// added to truncate image name for displaying in HTMLtext .mcc
 	name[i] = strncpy(name, status->user->id, PATH_MAX);
-
 
     return 0;
 }
@@ -1307,14 +1500,15 @@ int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message,
 					  very likely not have the effect you hoped for, but most
 					  likely just crash at some point! */
 
+
 	// added to truncate image name for displaying in HTMLtext .mcc
 	name[i] = strncpy(name, direct_message->sender->id, PATH_MAX);
-
 
     return 0;
 }
 
 /*****************************************************************************/
+#endif
 
 ///
 
@@ -1432,34 +1626,34 @@ twitter_status_t* twitter_parse_status_node(xmlTextReaderPtr reader) {
             name = xmlTextReaderName(reader);
             if (!xmlStrcmp(name, (xmlChar *)"created_at")) {
                 ret = xmlTextReaderRead(reader);
-                status->created_at = (const char *)xmlTextReaderValue(reader);
+                status->created_at = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                status->id = (const char *)xmlTextReaderValue(reader);
+                status->id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
                 ret = xmlTextReaderRead(reader);
-                status->text = (const char *)xmlTextReaderValue(reader);
+                status->text = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"source")) {
                 ret = xmlTextReaderRead(reader);
-                status->source = (const char *)xmlTextReaderValue(reader);
+                status->source = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"truncated")) {
                 ret = xmlTextReaderRead(reader);
-                status->truncated = (const char *)xmlTextReaderValue(reader);
+                status->truncated = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_status_id")) {
                 ret = xmlTextReaderRead(reader);
-                status->in_reply_to_status_id = (const char *)xmlTextReaderValue(reader);
+                status->in_reply_to_status_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_user_id")) {
                 ret = xmlTextReaderRead(reader);
-                status->in_reply_to_user_id = (const char *)xmlTextReaderValue(reader);
+                status->in_reply_to_user_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"favorited")) {
                 ret = xmlTextReaderRead(reader);
-                status->favorited = (const char *)xmlTextReaderValue(reader);
+                status->favorited = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"in_reply_to_screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                status->in_reply_to_screen_name = (const char *)xmlTextReaderValue(reader);
+                status->in_reply_to_screen_name = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"retweeted_status")) {
                 ret = xmlTextReaderRead(reader);
-                status->retweeted_status = (const char *)xmlTextReaderValue(reader);            
+                status->retweeted_status = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"user")) {
                 status->user = twitter_parse_user_node(reader);
             }
@@ -1494,25 +1688,25 @@ twitter_direct_message_t* twitter_parse_status_node_dirmsg(xmlTextReaderPtr read
             name = xmlTextReaderName(reader);
             if (!xmlStrcmp(name, (xmlChar *)"created_at")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->created_at = (const char *)xmlTextReaderValue(reader);
+                direct_message->created_at = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->id = (const char *)xmlTextReaderValue(reader);
+                direct_message->id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"sender_id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->sender_id = (const char *)xmlTextReaderValue(reader);
+                direct_message->sender_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->text = (const char *)xmlTextReaderValue(reader);
+                direct_message->text = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"recipient_id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->recipient_id = (const char *)xmlTextReaderValue(reader);
+                direct_message->recipient_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"sender_screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->sender_screen_name = (const char *)xmlTextReaderValue(reader);
+                direct_message->sender_screen_name = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"recipient_screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->recipient_screen_name = (const char *)xmlTextReaderValue(reader);
+                direct_message->recipient_screen_name = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"recipient")) {
                 direct_message->recipient = twitter_parse_recipient_node(reader);
             }
@@ -1547,25 +1741,25 @@ twitter_direct_message_rcvd_t* twitter_parse_status_node_dirmsgrcvd(xmlTextReade
             name = xmlTextReaderName(reader);
             if (!xmlStrcmp(name, (xmlChar *)"created_at")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->created_at = (const char *)xmlTextReaderValue(reader);
+                direct_message->created_at = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->id = (const char *)xmlTextReaderValue(reader);
+                direct_message->id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"sender_id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->sender_id = (const char *)xmlTextReaderValue(reader);
+                direct_message->sender_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"text")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->text = (const char *)xmlTextReaderValue(reader);
+                direct_message->text = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"recipient_id")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->recipient_id = (const char *)xmlTextReaderValue(reader);
+                direct_message->recipient_id = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"sender_screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->sender_screen_name = (const char *)xmlTextReaderValue(reader);
+                direct_message->sender_screen_name = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"recipient_screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                direct_message->recipient_screen_name = (const char *)xmlTextReaderValue(reader);
+                direct_message->recipient_screen_name = (char *)xmlTextReaderValue(reader);
             }else if (!xmlStrcmp(name, (xmlChar *)"sender")) {
                 direct_message->sender = twitter_parse_sender_node(reader);
             }
@@ -1600,34 +1794,34 @@ twitter_user_t* twitter_parse_user_node(xmlTextReaderPtr reader) {
             name = xmlTextReaderName(reader);
             if(!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                user->id = (const char *)xmlTextReaderValue(reader);
+                user->id = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
                 ret = xmlTextReaderRead(reader);
-                user->name = (const char *)xmlTextReaderValue(reader);
+                user->name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                user->screen_name = (const char *)xmlTextReaderValue(reader);
+                user->screen_name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
                 ret = xmlTextReaderRead(reader);
-                user->location = (const char *)xmlTextReaderValue(reader);
+                user->location = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
                 ret = xmlTextReaderRead(reader);
-                user->description = (const char *)xmlTextReaderValue(reader);
+                user->description = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
                 ret = xmlTextReaderRead(reader);
-                user->profile_image_url = (const char *)xmlTextReaderValue(reader);
+                user->profile_image_url = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->followers_count = (const char *)xmlTextReaderValue(reader);
+                user->followers_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->friends_count = (const char *)xmlTextReaderValue(reader);
+                user->friends_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->favourites_count = (const char *)xmlTextReaderValue(reader);
+                user->favourites_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
                 ret = xmlTextReaderRead(reader);
-                user->statuses_count = (const char *)xmlTextReaderValue(reader);
+                user->statuses_count = (char *)xmlTextReaderValue(reader);
             }
             xmlFree(name);
         }else if(type == XML_READER_TYPE_END_ELEMENT) {
@@ -1660,37 +1854,37 @@ twitter_recipient_t* twitter_parse_recipient_node(xmlTextReaderPtr reader) {
             name = xmlTextReaderName(reader);
             if(!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->id = (const char *)xmlTextReaderValue(reader);
+                recipient->id = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"created_at")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->created_at = (const char *)xmlTextReaderValue(reader);
+                recipient->created_at = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->name = (const char *)xmlTextReaderValue(reader);
+                recipient->name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->screen_name = (const char *)xmlTextReaderValue(reader);
+                recipient->screen_name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->location = (const char *)xmlTextReaderValue(reader);
+                recipient->location = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->description = (const char *)xmlTextReaderValue(reader);
+                recipient->description = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->profile_image_url = (const char *)xmlTextReaderValue(reader);
+                recipient->profile_image_url = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->followers_count = (const char *)xmlTextReaderValue(reader);
+                recipient->followers_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->friends_count = (const char *)xmlTextReaderValue(reader);
+                recipient->friends_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->favourites_count = (const char *)xmlTextReaderValue(reader);
+                recipient->favourites_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
                 ret = xmlTextReaderRead(reader);
-                recipient->statuses_count = (const char *)xmlTextReaderValue(reader);
+                recipient->statuses_count = (char *)xmlTextReaderValue(reader);
             }
             xmlFree(name);
         }else if(type == XML_READER_TYPE_END_ELEMENT) {
@@ -1723,37 +1917,37 @@ twitter_sender_t* twitter_parse_sender_node(xmlTextReaderPtr reader) {
             name = xmlTextReaderName(reader);
             if(!xmlStrcmp(name, (xmlChar *)"id")) {
                 ret = xmlTextReaderRead(reader);
-                sender->id = (const char *)xmlTextReaderValue(reader);
+                sender->id = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"created_at")) {
                 ret = xmlTextReaderRead(reader);
-                sender->created_at = (const char *)xmlTextReaderValue(reader);
+                sender->created_at = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"name")) {
                 ret = xmlTextReaderRead(reader);
-                sender->name = (const char *)xmlTextReaderValue(reader);
+                sender->name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"screen_name")) {
                 ret = xmlTextReaderRead(reader);
-                sender->screen_name = (const char *)xmlTextReaderValue(reader);
+                sender->screen_name = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"location")) {
                 ret = xmlTextReaderRead(reader);
-                sender->location = (const char *)xmlTextReaderValue(reader);
+                sender->location = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"description")) {
                 ret = xmlTextReaderRead(reader);
-                sender->description = (const char *)xmlTextReaderValue(reader);
+                sender->description = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"profile_image_url")) {
                 ret = xmlTextReaderRead(reader);
-                sender->profile_image_url = (const char *)xmlTextReaderValue(reader);
+                sender->profile_image_url = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"followers_count")) {
                 ret = xmlTextReaderRead(reader);
-                sender->followers_count = (const char *)xmlTextReaderValue(reader);
+                sender->followers_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"friends_count")) {
                 ret = xmlTextReaderRead(reader);
-                sender->friends_count = (const char *)xmlTextReaderValue(reader);
+                sender->friends_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"favourites_count")) {
                 ret = xmlTextReaderRead(reader);
-                sender->favourites_count = (const char *)xmlTextReaderValue(reader);
+                sender->favourites_count = (char *)xmlTextReaderValue(reader);
             }else if(!xmlStrcmp(name, (xmlChar *)"statuses_count")) {
                 ret = xmlTextReaderRead(reader);
-                sender->statuses_count = (const char *)xmlTextReaderValue(reader);
+                sender->statuses_count = (char *)xmlTextReaderValue(reader);
             }
             xmlFree(name);
         }else if(type == XML_READER_TYPE_END_ELEMENT) {
@@ -2471,14 +2665,14 @@ void amitwitter_update(const char *text) {
 
     get(STR_message, MUIA_String_Contents, &text);
 
-    printf("Message is %u characters long.\n", strlen(text));
+    //printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
     twitter_update(twitter, text);
     twitter_free(twitter);
 
-    fprintf(stdout, "done\n");
+    //fprintf(stdout, "done\n");
 }
 
 /*****************************************************************************/
@@ -2826,6 +3020,7 @@ void amitwitter_dirmsgrcvd() {
 			amitwitter_show_timeline_dirmsgrcvd(twitter, timeline);
 		    twitter_statuses_free_dirmsgrcvd(timeline);
 		}
+
         timeline = NULL;
 
     if(i==1) break;
@@ -3026,14 +3221,14 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     get(STR_user_id, MUIA_String_Contents, &screen_name);
     get(STR_directmessage, MUIA_String_Contents, &text);
 
-    printf("Message is %u characters long.\n", strlen(text));
+    //printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
     twitter_direct_message(twitter, screen_name, text);
     twitter_free(twitter);
 
-    fprintf(stdout, "done\n");
+    //fprintf(stdout, "done\n");
 }
 
 /*****************************************************************************/
