@@ -78,8 +78,8 @@
 #include <libraries/gadtools.h>
 #include <libraries/locale.h>
 #ifndef __amigaos4__
-#include <clib/exec_protos.h>
-#include <clib/locale_protos.h>
+# include <clib/exec_protos.h>
+# include <clib/locale_protos.h>
 #else
 #include <proto/locale.h>
 #endif
@@ -183,10 +183,8 @@
 long __stack = 65536;
 
 // Base Structures
-/* For some reason I have to comment the following two lines out 
-for OS 4 when compiling with AmiDevCpp, but needed for OS 3 & MorphOS */
-extern struct ExecBase *SysBase     = NULL; 
-extern struct Library *DOSBase      = NULL; 
+extern struct ExecBase *SysBase; 
+extern struct Library *DOSBase; 
 
 struct GfxBase *GfxBase             = NULL;
 struct IntuitionBase *IntuitionBase = NULL;
