@@ -67,7 +67,7 @@ Tweets les plus récents (20 maxi)
 Pobierz ostatnie Tweety (max 20)
 Ver los Tweets más recientes (max 20)
 Toon nieuwste tweets (max. 20)
-Scarica i Tweets più recenti (max. 20)
+Scarica i Tweet più recenti (max. 20)
 Hämta senaste Tweets (max 20)
 ;
 MSG_RETWEETS (/1/)
@@ -137,7 +137,7 @@ Rec_hercher
 _Szukaj
 _Buscar
 _Zoeken
-Cerca_f
+Cerc_a
 _Sök
 ;
 MSG_SEARCH2 (/1/)
@@ -267,7 +267,7 @@ MSG_ERROR6 (/1/)
 <B>Hmm...Nast±pi³ b³±d!</B><p>Mo¿liwe przyczyny:<ul><li>Brak po³±czenia z internetem</li><li>Awaria strony Twittera</li><li>U¿ytkownik/has³o nieprawid³owe</li>Czy wpisa³e¶ tekst (i/lub w³a¶ciwego odbiorcê dla wiadomo¶æi bezpo¶redniej)</li><li>Czy otrzymujesz (lub przesta³e¶ otrzymywaæ) powiadomienia SMS od tego u¿ytkownika?</li>
 <B>Hmm... ¡Ha ocurrido un error!</B><p>Las posibles razones son:<ul><li>No hay conexión a internet</li><li>Twitter está caído</li><li>Usuario/Contraseña incorrecta</li><li>¿Has introducido el ScreenName correctamente?</li><li>¿Estás ya reciviendo (o has dejado de recibir) notificaciones SMS de ese usuario?</li>
 <B>Hmm... Een fout is opgetreden!</B><p>Mogelijke oorzaken:<ul><li>Geen internetverbinding</li><li>Twitter-Pagnia niet bereikbaar</li><li>Gebruikernaam/kenwoord fout</li><li>Heeft u de screennaam korrekt ingevoerd?</li><li>Ontvangt u al SMS-boodschappen van deze gebruiker (of heeft u de ontvangst gestopt)?</li>
-<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li><li>Stai giá ricevendo messaggi di notifica SMS per questo utente?</li>
+<B>Hmm...Si è verificato un errore!</B><p>Cause possibili:<ul><li>connessione ad internet non attiva</li><li>il sito di Twitter è offline</li><li>Nome utente o password non corretti</li><li>Hai inserito correttamente il nome dello schermo?</li><li>Stai giá ricevendo messaggi di notifica (SMS) da questo utente?</li>
 <B>Hmm... ett fel har inträffat!</B><p>Möjliga anledningar:<ul><li>Ingen internetuppkoppling</li><li>Twitter-webbsidan nere</li><li>Fel Användarnamn/lösenord</li><li>Skrev du in screennamnet korrekt?</li><li>Får du redan (eller har stoppat att få) SMS-tillkännagivanden för den användaren?</li>
 ;
 MSG_ERROR7 (/1/)
@@ -307,7 +307,7 @@ MSG_STATS (/1/)
 <small>Nazwa: %s Lokacja: %s Following: %s Followers: %s Tweets: %s</small>
 <small>Nombre: %s Localizacón: %s Siguiendo: %s Seguidores: %s Tweets: %s</small>
 <small>Name: %s Plaats: %s Volgt: %s Opvolger: %s Tweets: %s</small>
-<small>Nome: %s Luogo: %s Successivo: %s Seguaci: %s Tweets: %s</small>
+<small>Nome: %s Luogo: %s Successivo: %s Seguaci: %s Tweet: %s</small>
 <small>Namn: %s Plats: %s Följer: %s Anhängare: %s Tweets: %s</small>
 ;
 MSG_STATS2 (/1/)
@@ -367,7 +367,7 @@ MSG_VALID (/1/)
 <B>Gratulacje!</B> Twója nazwa u¿ytkownika i has³o s± poprawne!
 <b>¡Enhorabuena!</b> ¡Tu usuario/contraseña son válidos!
 <b>Gefeliciteerd!</b> Uw gebruikernaam/kenwoord is geldig!
-<b>Congratulazioni!</b> il nome e la password sono validi!
+<b>Congratulazioni!</b> il nome utente e la password sono validi!
 <B>Grattis!</B> Ditt användarnamn/lösenord är giltigt!
 ;
 MSG_UPDATED (/1/)
@@ -387,7 +387,7 @@ Vous recevez désormais les notifications SMS de cet utilisateur !
 Pobierasz wiadomo¶æi (SMS) od tego u¿ytkownika!
 ¡A partir de ahora recivirás notificaciones (SMS) de ese usuario!
 U ontvangt nu SMS-boodschappen van deze gebruiker!
-Potrai ora ricevere notifiche SMS da questo utente!
+Potrai ora ricevere notifiche SMS da parte di questo utente!
 Du får nu tillkännagivanden (SMS) från den användaren!
 ;
 MSG_SMSUNFOLLOW (/1/)
@@ -597,7 +597,7 @@ Tapez votre Tweet et cliquez sur Mettre à jour pour l'envoyer (140 caractères ma
 Wpisz swojego Tweeta i kliknij "Aktualizuj" aby go wys³aæ (max 140 znaków)
 Escribe tu Tweet y pulsa sobre Actualizar para enviarlo (max 140 caracteres)
 Geef uw Tweet in en druk op aktualiseren om te versturen (max. 140 karakters)
-Inserisci il tuo Tweet e clicca su update per inviarlo (max. 140 caratteri)
+Inserisci il tuo Tweet e clicca su "aggiorna" per inviarlo (max. 140 caratteri)
 Skriv in ditt Tweet och klicka Uppdatera för att skicka (max 140 tecken)
 ;
 MSG_CLEAR (/1/)
@@ -667,7 +667,7 @@ Tapez votre recherche et cliquez sur Rechercher (140 caratères maxi)
 Wpisz ³añcuch i kliknij Szukaj (max 140 znaków)
 Introduce la cadena a buscar y pulsa sobre Buscar (max 140 caracteres)
 Geef uw zoektekst in en klik op zoeken (max. 140 karakters)
-Inserisci il testo da ricercare e clicca su cerca (max. 140 caratteri)
+Inserisci il testo da ricercare e clicca su "cerca" (max. 140 caratteri)
 Skriv in din söksträng och klicka på Sök (max 140 tecken)
 ;
 MSG_CLEAR2 (//)
@@ -947,7 +947,7 @@ MSG_SHOWUSER4 (/1/)
 \33cWpisz nazwê u¿ytkownika którego chcesz wy¶wietliæ.\nNie musisz za nim pod±¿aæ aby zobaczyæ ich\n ostatnie Tweety!
 \33cIntroduce el nombre de usuario que quieres visualizar..\n¡No es necesario que lo estés siguiendo para ver sus Tweets más recientes!
 \33cGeef de screennaam van een gebruiker in, die u wilt tonen .\nU moet hem niet opvolgen,\n om uw laatste tweets te zien!
-\33cInserisci il nome dell'utente che vuoi visualizzare.\nNon è necessario seguirlo per\n vedere i suoi ultimi Tweets!
+\33cInserisci il nome dell'utente che vuoi visualizzare.\nNon è necessario seguirlo per\n visualizzare i suoi ultimi Tweet!
 \33cSkriv screennamnet på den användare du vill visa.\nDu behöver inte redan följa dem för att se deras senaste Tweet!
 ;
 MSG_CLEAR6 (//)
@@ -1107,7 +1107,7 @@ MSG_PROFNAME2 (/1/)
 \33cTo pole jest obecnie niezbêdne aby robiæ\n aktualizacjê twojego profilu. To jest to\n co jest wy¶wietlone na twojej stronie Twittera\nMo¿e byæ czymkolwiek i nie mieæ efektu\n na twoje konto lub ID u¿ytkownika\n dla wielu u¿ytkowników jest to ich prawdziwa nazwa\n (Max 20 znaków)
 \33cEste campo es obligatorio para poder actualizar\n tu perfil. Es lo que se va\n a mostrar en tu página de Twitter\n Puede ser cualquier cosa y no tiene ningún efecto\n sobre tu cuenta. Para muchos usuarios es el nombre 'real'\n (Max 20 caracteres)
 \33cDit veld is op dit moment nodig om aktualiseringen\n aan uw profiel voor te nemen. \n Dit is zoals ook op de Twitter-webpagina\n getoond wordt. Het kan een gewenste tekst zijn\n en heeft geen invloed op uw aktuele\n screennaam, uw gebruiker-id of wat dan ook...\nVoor vele gebruikers is het de echte naam\n (max. 20 karakters)
-\33cQuesto campo è necessario per poter aggiornare\n il tuo profilo utente. Questo sarà\nil testo visualizzato sul sito. Potrá essere\nun testo qualsiasi che non avrá alcun\neffetto sul tuo attuale \nnome utente, ID o lo screenname...\nPer molti utenti è il nome reale (max. 20 caratteri)
+\33cQuesto campo è necessario per poter aggiornare\n il tuo profilo utente. Esso sarà\nil testo visualizzato sul sito e potrá essere\nun testo qualsiasi il quale non avrá alcun\neffetto sul tuo attuale \nnome utente, ID/nome dello schermo ...\nPer molti utenti è il nome reale (max. 20 caratteri)
 \33cDetta fält är för närvarande obligatoriskt\n för att kunna göra uppdateringar av din profil.\n Detta är vad som visas på Twitter-sajten.\nDet kan vara vad som helst och har ingen\n effekt på ditt screennamn eller användar-ID...\nför många användare är detta deras 'riktiga' namn\n (Max 20 tecken)
 ;
 MSG_WEB (/1/)
@@ -1557,7 +1557,7 @@ Bloquer ?
 Blokuj?
 ¿Bloquear?
 Blokkeren?
-Bloccare?
+Blocca?
 Blockera?
 ;
 MSG_BLOCK3 (/1/)
@@ -1577,7 +1577,7 @@ MSG_BLOCK4 (/1/)
 \33cCzy jeste¶ pewny, ¿e chcesz zablokowaæ tego u¿ytkownika?\n\nJe¶li kogo¶ zablokujesz nie bêdzie on móg³ za Tob± pod±¿aæ\nani wysy³aæ jakichkolwiek wiadomo¶æi. Je¶li twoje konto jest publiczne\n, bêd± oni wci±¿ w stanie je ogl±daæ, ale\nnie pojawi± siê na li¶cie pod±¿aj±cych,\n\nJe¶li to jest spamer, dziêkujê!
 \33c¿Estás seguro de que quieres bloquear a este usuario?\n\nAl bloquear a alguien, no podrá seguirte\nni enviarte mensajes. Si tu cuenta es\npública, podrá verla, pero no aparecerá en tu lista de\nseguidores, y además no aparecerás en su lista de seguidos.\n\nSi el usuario que vas a bloquear es un spammer, ¡gracias!
 \33cBent u zeker dat u deze gebruiker wilt blokkeren?\n\nIndien u iemand blokeert, kunt u \ndeze gebruiker niet meer opvolgen of boodschappen zenden.\n indien uw rekening publiek is,\nkan deze gebruiker u nog steeds zien,\nmaar hij wordt niet meer als uw opvolger getoond en u niet meer als zijn opvolger.\n\nIndien u een spammer blokeert, dank u wel!
-\33cSei sicuro di voler bloccare questo utente?\n\nBloccando un utente, questi non potrà più seguirti\nné inviarti messaggi. Nel caso il tuo account sia pubblico,\npotrá ancora continuare a vederlo, ma esso non apparirá nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
+\33cSei sicuro di voler bloccare questo utente?\n\nBloccando un utente, questi non potrà più seguirti\nné inviarti messaggi. Nel caso il tuo account sia pubblico,\npotrá ancora continuare a vederlo, ma esso non apparirá più nella\n tua lista di followers e tu non sarai nella sua lista\n\nSe stai bloccando uno spammer, allora grazie!
 \33cÄr du säker på att du vill blockera denna användare?\n\nOm du blockerar någon kan de inte följa\ndig eller skicka dig några meddelanden. Om ditt\n konto är publikt kan de fortfarande se den, men de\n kommer inte att synas bland dina anhängare och du\n kommer inte att vara på deras lista över anhängare.\n\nOm det är en spammare du blockerar, tack!
 ;
 MSG_QUIT (//)
@@ -1667,7 +1667,7 @@ MSG_UPDATEPROFILE6 (/1/)
 \33cNotka:\n\n Aktualnie, musisz *ZAWSZE* ustawiæ 'Nazwê',\ninne pola s± opcjonalne, ale je¶li zostan± puste\nto wyczyszcz± aktualny profil na stronie Twittera.\n  (tzn. ¿e powiniene¶ wype³niæ wszystkie\ninformacje je¶li chcesz aby by³y wy¶wietlone na stronie\nTwittera! Je¶li nie chcesz aby siê wy¶wietla³y, zostaw je puste\n(oprócz 'Nazwy' oczywi¶cie)...\n\nMam nadziejê, ¿e w przysz³o¶ci bêdzie to bardziej przyjazne dla u¿ytkownika!\nProszê zagl±daj do b±belków pomocy po wiêcej informacji dla ka¿dego pola!
 \33cAtención:\n\n Debes especificar el campo 'Nombre' *SIEMPRE*,\nlos demás campos son opcionales, pero si los dejas en blanco\nsobrescribirán el perfil que tienes en la página\n de Twitter. (es decir, deberías completar toda\nla información que quieres que se muestre en tu página\n de Twitter. Si quieres que algo no se muestra, déjalo vacío\n(excepto el campo 'Nombre')...\n\n¡Espero mejorarlo en breve! Puedes consultar la ayuda\n de cada uno de los campos en el icono que aparece al lado de los mismos.ç
 \33cOpgepast:\n\nop dit moment moet u *ALTIJD* een 'naam' ingeven,\nde andere velden zijn optioneel, indien u ze \nleeg laat, worden uw aktuele\n profielvelden op de Twitter-pagina overschreven  (d.w.z. vul alle velden in, indien u wenst dat ze \nop uw Twitter-pagina getoond moeten worden!\nIndien u dit niet wenst, laat u die velden leeg\n(uitgezonderd 'Naam' natuurlijk)...\n\nDit wordt in de toekomst hopelijk gebruikersvriendelijker!\nIn de spreekblaasinformatie vindt u meer informatie over elk veld!
-\33cRicorda:\n\n Attualmente è necessario specificare *SEMPRE* un 'nome',\nle altre caselle sono opzionali, però nel caso vengano lasciate vuote\nesse sovrascriveranno l'attuale profilo all'interno della tua\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se se si desidera che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'nome' ovviamente)....\n\nSpero in futuro di rendere questa procedura il più user friendly possibile!\nLeggere gli aiuti (Bubble help) per maggiori informazioni circa ogni casella!
+\33cRicorda:\n\n Attualmente è necessario specificare *SEMPRE* un 'nome', mentre\nle altre caselle sono opzionali, però nel caso vengano lasciate vuote\nesse sovrascriveranno l'attuale profilo all'interno della tua\npagina Twitter. (es., dovresti compilarle con tutte\nle informazioni se si desidera che siano visualizzate su\nTwitter! Altrimenti lascia le caselle vuote\n(eccetto il 'nome' ovviamente)....\n\nSpero in futuro di rendere questa procedura il più user friendly possibile!\nLeggere gli aiuti (Bubble help) per maggiori informazioni circa ogni casella!
 \33cVar god observera:\n\nFör närvarande måste du *ALLTID* ange ett 'Namn',\nandra fält är frivilliga, men om de lämnas blanka\nskriver de över den profil som för närvarande finns\npå din Twitter-sida.  (m.a.o. bör du skriva in\nall information om du vill att den ska visas\npå din Twitter-sida! Om du inte vill visa den, lämna blankt\n(förutom 'Name' då, såklart)....\n\nJag hoppas kunna göra detta mer användarvänligt i framtiden!\nSe bubbelhjälpen för mer information om varje fält!
 ;
 MSG_HTML1 (//)
@@ -2057,7 +2057,7 @@ Retweetés par moi
 Moje Retweety
 Retweets hechos por mí
 Mijn retweets
-Retweet personali
+Personali
 Retweet från mig
 ;
 MSG_0004 (/1/)
@@ -2067,7 +2067,7 @@ Retweetés pour moi
 Retweety do mnie
 Retweets a mí
 Retweets aan mij gestuurd
-Retweet diretti a me
+Diretti a me
 Retweet till mi
 ;
 MSG_0005 (/1/)
@@ -2077,7 +2077,7 @@ Mes Tweets retweetés
 Mój Retweet
 Retweets míos
 Mijn Retweet
-Retweet di me stesso
+Di me stesso
 Retweet av mig
 ;
 MSG_0006 (/1/)
@@ -2137,7 +2137,7 @@ Message Direct (DM)
 Wiadomo¶æ bezpo¶rednia
 Mensaje Directo
 Direktboodschap
-Messaggio diretto
+Diretto
 Direktmeddelande
 ;
 MSG_0012 (/1/)
@@ -2177,7 +2177,7 @@ Mes Tweets
 Moje Tweety
 Mis Tweets
 Mijn tweets
-I miei Tweet
+Personali
 Mina Tweets
 ;
 MSG_0016 (/1/)
@@ -2247,7 +2247,7 @@ Aléatoire
 Losowe
 Aleatorio
 Toevallig
-Casuali
+Amici casuali
 Slump
 ;
 MSG_0023 (/1/)
@@ -2281,14 +2281,14 @@ Aggiorna profilo
 Uppdatera profil
 ;
 MSG_0026 (/1/)
-MUI Settings
-MUI-Einstellungen
-Préférences MUI
-Ustawienia MUI
-Preferencias MUI
-MUI instellingen
-Impostazioni MUI
-MUI-inställningar
+MUI Settings...
+MUI-Einstellungen...
+Préférences MUI...
+Ustawienia MUI...
+Preferencias MUI...
+MUI instellingen...
+Impostazioni MUI...
+MUI-inställningar...
 ;
 MSG_0027 (/1/)
 Help
@@ -2331,11 +2331,11 @@ Informazioni su AmiTwitter
 Om AmiTwitter
 ;
 MSG_0031 (/1/)
-About MUI
+About MUI...
 Über MUI
-À propos de MUI
-O MUI
-Acerca de MUI
-Betreffend MUI
-Informazioni su MUI
-Om MUI
+À propos de MUI...
+O MUI...
+Acerca de MUI...
+Betreffend MUI...
+Informazioni su MUI...
+Om MUI...
