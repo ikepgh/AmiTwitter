@@ -75,6 +75,7 @@
 #include <dos/dos.h>
 #include <dos/dosextens.h>
 #include <workbench/workbench.h>
+#include <workbench/icon.h>
 #include <proto/intuition.h>
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
@@ -202,6 +203,7 @@ struct GfxBase *GfxBase             = NULL;
 struct IntuitionBase *IntuitionBase = NULL;
 struct Library *MUIMasterBase       = NULL;
 struct Library *CodesetsBase        = NULL;
+struct Library *IconBase            = NULL;
 
 struct Library *LocaleBase          = NULL;
 struct LocaleInfo li;
@@ -276,6 +278,8 @@ char *name, *web, *location, *bio;
 #define BUF_SIZE 102400
 
 struct codeset *srcCodeset, *dstCodeset;
+
+struct DiskObject *dobj = 0;
 
 char *buf, *destbuf;
 ULONG destlen;
@@ -506,6 +510,12 @@ BOOL Open_Libs(void ) {
         #endif
 	}
 
+
+    if (!(IconBase = OpenLibrary("icon.library",0)))
+        {
+                printf("Can't Open Icon Library\n");
+        }
+
 	if ((LocaleBase = OpenLibrary("locale.library",38)))
 	{
 		#ifdef __amigaos4__
@@ -580,6 +590,9 @@ void Close_Libs(void ) {
         CloseLibrary(LocaleBase);
     }
 
+    if (IconBase) {
+        CloseLibrary(IconBase);
+    }
     if (CodesetsBase) {
 
         CloseLibrary(CodesetsBase);
@@ -738,7 +751,7 @@ void charconv() {
 
         if (dstCodeset) {
 
-            fprintf(stderr,"Default codeset for your system is %s\n", dstCodeset->name);
+         // fprintf(stderr,"Default codeset for your system is %s\n", dstCodeset->name);
 
             buf = AllocMem(BUF_SIZE, MEMF_CLEAR);
             if (buf) {
@@ -2660,7 +2673,7 @@ void amitwitter_update(const char *text) {
 
     twitter_t *twitter = NULL;
 
-    fprintf(stdout, "updating...");
+ // fprintf(stdout, "updating...");
     fflush(stdout);
 
     get(STR_message, MUIA_String_Contents, &text);
@@ -2672,7 +2685,7 @@ void amitwitter_update(const char *text) {
     twitter_update(twitter, text);
     twitter_free(twitter);
 
-    //fprintf(stdout, "done\n");
+ // fprintf(stdout, "done\n");
 }
 
 /*****************************************************************************/
@@ -3215,7 +3228,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
 
     twitter_t *twitter = NULL;
 
-    fprintf(stdout, "sending...");
+ // fprintf(stdout, "sending...");
     fflush(stdout);
 
     get(STR_user_id, MUIA_String_Contents, &screen_name);
@@ -3228,7 +3241,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     twitter_direct_message(twitter, screen_name, text);
     twitter_free(twitter);
 
-    //fprintf(stdout, "done\n");
+ // fprintf(stdout, "done\n");
 }
 
 /*****************************************************************************/
@@ -3582,7 +3595,7 @@ void amitwitter_updateprofile(const char *name, const char *web, const char *loc
 
     twitter_t *twitter = NULL;
 
-    fprintf(stdout, "updating profile...");
+ // fprintf(stdout, "updating profile...");
     fflush(stdout);
 
     twitter = twitter_new();
@@ -3590,7 +3603,7 @@ void amitwitter_updateprofile(const char *name, const char *web, const char *loc
     twitter_updateprofile(twitter, name, web, location, bio);
     twitter_free(twitter);
 
-    fprintf(stdout, "done\n");
+ // fprintf(stdout, "done\n");
 }
 
 /*****************************************************************************/
@@ -4109,6 +4122,9 @@ int main(int argc, char *argv[]) {
       MUIA_Application_Author  , "IKE",
       MUIA_Application_Description, "A Twitter program",
       MUIA_Application_Base  , "AmiTwitter",
+
+ //   if (IconBase)
+      MUIA_Application_DiskObject, dobj = GetDiskObject("PROGDIR:AmiTwitter"),
 
 /*****************************************************************************/
 
@@ -5142,6 +5158,8 @@ int main(int argc, char *argv[]) {
 
   // Close libraries
   Close_Libs();
+
+  if (dobj) FreeDiskObject(dobj);
 
   return (0);
 }
