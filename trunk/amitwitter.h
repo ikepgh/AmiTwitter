@@ -98,12 +98,16 @@
 
 #define TWITTER_API_PATH_USER_SHOW          "/users/show/"
 
+#define UPLOAD_TWITPIC                      "http://twitpic.com/api/uploadAndPost"
+
 /******************************************************************************/
 
 // HTML Introduction/About Message
 #define HTML_INTRO \
 "<HTML><HEAD><BODY>" \
 "<TITLE>Welcome to AmiTwitter</TITLE></HEAD>" \
+"<CENTER><IMG SRC = PROGDIR:data/program_images/amitwitter.png>&nbsp;</CENTER><BR>" \
+"<p>" \
 "<FONT COLOR=#000000><CENTER><B>"VSTRING"  © IKE 2009-10</B></CENTER><BR><BR>" \
 "<HR>"\
 "<CENTER>Enter your User Name/Password in the Tools -> Settings dialog window to get started... </CENTER><BR>" \
@@ -277,6 +281,7 @@ int twitter_direct_message(twitter_t *twitter, const char *screen_name, const ch
 int twitter_updateprofile(twitter_t *twitter, const char *name, const char *web, const char *location, const char *bio);
 int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, const char *text);
 int twitter_search(twitter_t *twitter, const char *apiuri, MyByteArray *buf);
+int twitter_uploadtwitpic();
 
 struct List* twitter_home_timeline(twitter_t *twitter);
 struct List* twitter_user_timeline(twitter_t *twitter);

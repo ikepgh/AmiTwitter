@@ -80,6 +80,7 @@
 #include <proto/graphics.h>
 #include <proto/muimaster.h>
 #include <libraries/mui.h>
+#include <libraries/asl.h>
 #include <libraries/gadtools.h>
 #include <libraries/locale.h>
 #ifndef __amigaos4__
@@ -89,6 +90,7 @@
 #include <proto/locale.h>
 #endif
 #include <proto/exec.h>
+#include <proto/asl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -204,6 +206,7 @@ struct IntuitionBase *IntuitionBase = NULL;
 struct Library *MUIMasterBase       = NULL;
 struct Library *CodesetsBase        = NULL;
 struct Library *IconBase            = NULL;
+struct Library *AslBase             = NULL;
 
 struct Library *LocaleBase          = NULL;
 struct LocaleInfo li;
@@ -255,7 +258,8 @@ STRPTR GetString(struct LocaleInfo *li, LONG stringNum);
 Object *app, *STR_user, *STR_pass, *STR_message, *aboutwin, *STR_user_id,
 *STR_directmessage, *STR_login, *STR_search, *STR_follow, *STR_block,
 *STR_notify, *STR_profile_name, *STR_profile_web, *STR_profile_location,
-*STR_profile_bio, *STR_show, *STR_twitLength, *STR_dirmsgLength;
+*STR_profile_bio, *STR_show, *STR_twitLength, *STR_dirmsgLength,
+*STR_twitpictweet;
 
 APTR str_user_pref, str_pass_pref, win_preferences, but_save, but_cancel,
 but_test, username, password, urltxtlink, urltxtlink2, urltxtlink3, mailtxtlink,
@@ -266,13 +270,15 @@ clear_search_gad, search_gad, but_search_cancel, clear_follow_gad, follow_gad,
 but_follow_cancel, unfollow_gad, win_follow, clear_block_gad, block_gad,
 unblock_gad, but_block_cancel, clear_notify_gad, notify_gad,
 unnotify_gad, but_notify_cancel, win_userprofile, update_profile_gad,
-but_cancel_profile, clear_show_gad, show_gad, but_show_cancel, cy1;
+but_cancel_profile, clear_show_gad, show_gad, but_show_cancel, cy1, pop1;
 
 // Direct Messages
 char *screen_name, *text;
 
 // Update Profile
 char *name, *web, *location, *bio;
+
+char *media;
 
 // International Character Codesets
 #define BUF_SIZE 102400
@@ -305,7 +311,7 @@ enum {
                         
     MEN_TIMELINE, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
     MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_USERS,
-    MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
+    MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, /*MEN_TWEET,*/ MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
     MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
     MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
     MEN_FAQ, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
@@ -316,7 +322,7 @@ static struct NewMenu Menu[]= {
     { NM_TITLE,  (STRPTR)MSG_0000,       0,   0, 0, (APTR)0               },
     { NM_ITEM,   (STRPTR)MSG_0001,      "T",  0, 0, (APTR)MEN_TIMELINE    },
     { NM_ITEM,   (STRPTR)MSG_0002,       0,   0, 0, (APTR)0               },
-    { NM_SUB,    (STRPTR)MSG_0003,      "V",  0, 0, (APTR)MEN_RETWEETBYME },
+    { NM_SUB,    (STRPTR)MSG_0003,      "Y",  0, 0, (APTR)MEN_RETWEETBYME },
     { NM_SUB,    (STRPTR)MSG_0004,      "W",  0, 0, (APTR)MEN_RETWEETTOME },
     { NM_SUB,    (STRPTR)MSG_0005,      "X",  0, 0, (APTR)MEN_RETWEETOFME },
     { NM_ITEM,   (STRPTR)MSG_0006,      "R",  0, 0, (APTR)MEN_REPLIES     },
@@ -329,9 +335,9 @@ static struct NewMenu Menu[]= {
     { NM_ITEM,   (STRPTR)MSG_0011,       0,   0, 0, (APTR)0               },
     { NM_SUB,    (STRPTR)MSG_0011,      "D",  0, 0, (APTR)MEN_DIRMSG      },
     { NM_SUB,    (STRPTR)MSG_0012,      "G",  0, 0, (APTR)MEN_DIRMSGSENT  },
-    { NM_SUB,    (STRPTR)MSG_0013,      "C",  0, 0, (APTR)MEN_DIRMSGRCVD  },
+    { NM_SUB,    (STRPTR)MSG_0013,      "E",  0, 0, (APTR)MEN_DIRMSGRCVD  },
     { NM_ITEM,   (STRPTR)MSG_0014,       0,   0, 0, (APTR)0               },
-    { NM_SUB,    (STRPTR)MSG_0014,      "E",  0, 0, (APTR)MEN_TWEET       },
+//  { NM_SUB,    (STRPTR)MSG_0014,      "E",  0, 0, (APTR)MEN_TWEET       },
     { NM_SUB,    (STRPTR)MSG_0015,      "M",  0, 0, (APTR)MEN_MYTWEET     },
     { NM_SUB,    (STRPTR)MSG_0016,      "F",  0, 0, (APTR)MEN_FAVS        },
     { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
@@ -383,7 +389,7 @@ static struct MUIS_TheBar_Button buttons[] =
     {4, B_SEARCH,        (STRPTR)MSG_SEARCH  ,   (STRPTR)MSG_SEARCH2    ,0, 0, NULL, NULL },
     {5, B_FOLLOW,        (STRPTR)MSG_USERS   ,   (STRPTR)MSG_USERS2     ,0, 0, NULL, NULL },
     {6, B_DIRECTMESSAGE, (STRPTR)MSG_DIRMSG  ,   (STRPTR)MSG_DIRMSG2    ,0, 0, NULL, NULL },
-    {7, B_TWEET,         (STRPTR)MSG_TWEET   ,   (STRPTR)MSG_TWEET2     ,0, 0, NULL, NULL },
+    {7, B_TWEET,         (STRPTR)MSG_TWEET   ,   (STRPTR)MSG_TWEET2     ,0, 0, NULL, NULL }, // needs changed to "TwitPic"
     {MUIV_TheBar_End,   0,NULL,NULL,0, 0, NULL, NULL                                      },
 };
 
@@ -396,7 +402,7 @@ STRPTR pics[] =
     "search",
     "follow",
     "directmessage",
-    "tweet",
+    "twitpic",
     NULL
 };
 
@@ -516,6 +522,11 @@ BOOL Open_Libs(void ) {
                 printf("Can't Open Icon Library\n");
         }
 
+    if (!(AslBase = OpenLibrary("asl.library",0)))
+        {
+                printf("Can't Open Icon Library\n");
+        }
+
 	if ((LocaleBase = OpenLibrary("locale.library",38)))
 	{
 		#ifdef __amigaos4__
@@ -589,9 +600,11 @@ void Close_Libs(void ) {
         CloseCatalog(li.li_Catalog);
         CloseLibrary(LocaleBase);
     }
-
     if (IconBase) {
         CloseLibrary(IconBase);
+    }
+    if (AslBase) {
+        CloseLibrary(AslBase);
     }
     if (CodesetsBase) {
 
@@ -1988,8 +2001,12 @@ void twitter_status_print(twitter_status_t *status) {
 
     outfile = freopen("PROGDIR:data/temp/twitter.html", "a+", stdout);
 
-    printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
+/*  printf("<IMG SRC=PROGDIR:data/temp/%s><p> <b>%s </b> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
 	printf(GetString(&li, MSG_STATS), status->user->name, status->user->location ? status->user->location : "n/a", status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
+    printf("<p>"); */
+
+    printf("<IMG SRC=PROGDIR:data/temp/%s ALIGN=TOP> <b>%s </b> <p> %s <p><small>%s </small><br>",status->user->id, status->user->screen_name, status->text, status->created_at);
+//	printf(GetString(&li, MSG_STATS), status->user->name, status->user->location ? status->user->location : "n/a", status->user->friends_count, status->user->followers_count,  status->user->statuses_count);
     printf("<p>");
 
     fclose(stdout);
@@ -4088,6 +4105,104 @@ void amitwitter_blocking_loop() {
 
 ///
 
+/// upload TwitPic
+
+// Upload a picture via TwitPic
+int twitter_uploadtwitpic() {
+
+  CURL *curl;
+  CURLcode code;
+  long res;
+  const char *media;
+  const char *message;
+
+  struct curl_httppost *formpost=NULL;
+  struct curl_httppost *lastptr=NULL;
+  struct curl_slist *headerlist=NULL;
+  static const char buf[] = "Expect:";
+
+  get(pop1, MUIA_String_Contents, &media);
+  get(STR_twitpictweet, MUIA_String_Contents, &message);
+
+  curl_global_init(CURL_GLOBAL_ALL);
+
+  curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "media",
+               CURLFORM_FILE, media,
+               CURLFORM_END);
+
+  curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "username",
+               CURLFORM_COPYCONTENTS, username,
+               CURLFORM_END);
+
+
+  curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "password",
+               CURLFORM_COPYCONTENTS, password,
+               CURLFORM_END);
+
+  curl_formadd(&formpost,
+               &lastptr,
+               CURLFORM_COPYNAME, "message",
+               CURLFORM_COPYCONTENTS, message, 
+               CURLFORM_END);
+
+  curl = curl_easy_init();
+
+  if(!curl) {
+        printf("error: curl_easy_init()\n");
+        error2();
+        return -1;
+    }
+
+  headerlist = curl_slist_append(headerlist, buf);
+  if(curl) {
+
+    curl_easy_setopt(curl, CURLOPT_URL, "http://www.twitpic.com/api/uploadAndPost");
+
+//    if ( (argc == 2) && (!strcmp(argv[1], "noexpectheader")) )
+
+    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+
+    code = curl_easy_perform(curl);
+
+    if(code) {
+        printf("error: %s\n", curl_easy_strerror(code));
+        error();
+        return -1;
+    }
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
+    if(res != 200) {
+
+        printf("error respose code: %ld\n", res);
+        error();
+
+            fprintf(stderr, "\n");
+
+        return res;
+    }
+     else {
+
+        set (txt_source, MUIA_HTMLtext_Contents, (int)"Picture Uploaded!"); // (int) GetString(&li, MSG_UPDATED));
+    }
+
+    curl_easy_cleanup(curl);
+    curl_formfree(formpost);
+    curl_slist_free_all (headerlist); 
+  }
+  return 0;
+}
+
+/*****************************************************************************/
+
+///
+
 /// Main Program **************************************************************/
 
 int main(int argc, char *argv[]) {
@@ -4123,7 +4238,6 @@ int main(int argc, char *argv[]) {
       MUIA_Application_Description, "A Twitter program",
       MUIA_Application_Base  , "AmiTwitter",
 
- //   if (IconBase)
       MUIA_Application_DiskObject, dobj = GetDiskObject("PROGDIR:AmiTwitter"),
 
 /*****************************************************************************/
@@ -4227,37 +4341,56 @@ int main(int argc, char *argv[]) {
 
       // The Tweet Window
       SubWindow, win_tweet = WindowObject,
-          MUIA_Window_Title, GetString(&li, MSG_TWEET2),
+          MUIA_Window_Title, "Upload a Picture via TwitPic", //  GetString(&li, MSG_TWEET2),
           MUIA_Window_ID, MAKE_ID('T','W','E','T'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT(GetString(&li, MSG_TWEET2)),
+              Child, HGroup, GroupFrameT("Upload a Picture"),  //   (GetString(&li, MSG_TWEET2)), //
+
+                  Child, ImageObject,
+                      MUIA_Frame, MUIV_Frame_None,
+                      MUIA_Image_Spec, "5:data/program_images/twitpic.gif",
+                      MUIA_Image_FreeVert, TRUE,
+                      MUIA_Image_FreeHoriz, TRUE,
+                      MUIA_FixWidth, 70,
+                      MUIA_FixHeight, 65,
+                      MUIA_ShortHelp, "\33cTwitPic accepts:\n .gif, .jpg and .png images only",
+                  End,
 
                   Child, VGroup,
                       Child, HGroup,
-                           Child, HSpace(2),
-                           Child, STR_twitLength = BetterStringObject, MUIA_String_Contents, "140",
-                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns, 4,
-                           MUIA_String_MaxLen, 4, MUIA_CycleChain, FALSE, End,     
+
+				          Child, pop1 = PopaslObject,
+						  MUIA_Popstring_String, KeyString(0,256,'f'), MUIA_CycleChain, TRUE,
+						  MUIA_Popstring_Button, PopButton(MUII_PopFile),
+                          MUIA_ShortHelp, "Enter the path to image file (no spaces!)",
+						  ASLFR_TitleText,        "Please select a picture...",
+                          ASLFR_DoPatterns,       TRUE,
+                          ASLFR_InitialDrawer,    (ULONG)"RAM:",
+                          ASLFR_InitialPattern,   (ULONG) "#?.(gif|jpg|png)",
+                          ASLFR_InitialHeight,    300,
+                          ASLFR_InitialWidth,     256,
+                          ASLFR_InitialLeftEdge,  400,
+                          ASLFR_InitialTopEdge,   300,
+					      End,
                       End,
+
+                      Child, STR_twitpictweet = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE,
+                      MUIA_ShortHelp, "Enter your text message (optional)", End,
+
                       Child, HGroup,
-                           Child, Label2( GetString(&li, MSG_SEND3)),
-                           Child, HGroup,
-                           Child, STR_message = BetterStringObject, StringFrame,
-                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, GetString(&li, MSG_SEND4),
-                           End,
-                      End,
-                      Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
-                           Child, clear_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR)),
-                           Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPDATE)),
-                           Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL)),
+   
+                          Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
+                              Child, clear_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR)),
+                              Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, "_Upload"), // GetString(&li, MSG_UPDATE)), //
+                              Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL)),
+                              End,
+                          End,
                       End,
                   End,
               End,
           End,
-      End,
 
 /*****************************************************************************/
 
@@ -4482,25 +4615,33 @@ int main(int argc, char *argv[]) {
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrame, MUIA_Group_SameSize, FALSE,
-                  Child, ImageObject,
-                       MUIA_Frame, MUIV_Frame_None,
-                       MUIA_Image_Spec, "5:data/program_images/amitwitter.png",
-                       MUIA_Image_FreeVert, TRUE,
-                       MUIA_Image_FreeHoriz, TRUE,
-                       MUIA_FixWidth, 118,
-                       MUIA_FixHeight, 50,
-                       MUIA_ShortHelp, "AmiTwitter © IKE 2009-10",
-                  End,
+              Child, VGroup, GroupFrame,
+                  Child, HGroup,
 
-                  Child, RectangleObject, MUIA_Weight, 20, End,
-                  Child, Label2(GetString(&li, MSG_WHAT)),
+                      Child, RectangleObject, MUIA_Weight, 35, End,
+                      Child, Label2(GetString(&li, MSG_WHAT)),
 
-                  Child, STR_login = BetterStringObject,
-                       MUIA_BetterString_NoInput,
-                       MUIA_BetterString_Columns,8, TRUE,
+                      Child, STR_login = BetterStringObject, MUIA_BetterString_NoInput, MUIA_BetterString_Columns,8, TRUE,
                   End,
-              End,             
+              End,
+
+              Child, VGroup,
+                  Child, HGroup,
+                           Child, HSpace(2),
+                           Child, STR_twitLength = BetterStringObject, MUIA_String_Contents, "140",
+                           MUIA_BetterString_NoInput, MUIA_BetterString_Columns, 4,
+                           MUIA_String_MaxLen, 4, MUIA_CycleChain, FALSE, End,
+                      End,
+                      Child, HGroup,
+                           Child, Label2( GetString(&li, MSG_SEND3)),
+                           Child, HGroup,
+                           Child, STR_message = BetterStringObject, StringFrame,
+                           MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
+                           MUIA_ShortHelp, "Enter your Tweet and press Return to send (max 140 characters)", // GetString(&li, MSG_SEND4),
+                           End,
+                      End,
+                  End,
+              End,
 
               Child, VGroup, GroupFrame, //GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
 
@@ -4628,15 +4769,15 @@ int main(int argc, char *argv[]) {
   // Send a Tweet subwindow
   DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEAR);
-    set(clear_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEAR8));
+    set(clear_gad, MUIA_ShortHelp, (int)"Clear"); // (ULONG) GetString(&li, MSG_CLEAR8));
 
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
-    set(sendupdate_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_SEND6));
+    set(sendupdate_gad, MUIA_ShortHelp, (int)"Upload"); // (ULONG) GetString(&li, MSG_SEND6));
 
   DoMethod(but_cancel_tweet,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELTWEET);
-    set(but_cancel_tweet, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCEL10));
+    set(but_cancel_tweet, MUIA_ShortHelp, (int)"Cancel"); // (ULONG) GetString(&li, MSG_CANCEL10));
 
   DoMethod(win_tweet,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_tweet,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -5004,16 +5145,16 @@ int main(int argc, char *argv[]) {
 
                 // Tweet
                 case TWEET:
-                case MEN_TWEET:
-                     set(win_tweet, MUIA_Window_Open, TRUE);
+                //case MEN_TWEET:
+                     set(win_tweet, MUIA_Window_Open, TRUE);              
                      break;
 
                 case CLEAR:
-                     set(STR_message, MUIA_String_Contents,0);
+                     set(STR_twitpictweet, MUIA_String_Contents,0);
                      break;
 
                 case SENDUPDATE:
-                     amitwitter_update(optarg);
+                     twitter_uploadtwitpic();
                      break;
 
                 case CANCELTWEET:
