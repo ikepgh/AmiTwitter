@@ -1,3 +1,21 @@
+/** $Revision Header *** Header built automatically - do not edit! ***********
+ **
+ ** © Copyright ???
+ **
+ ** File             : amitwitter_strings.h
+ ** Created on       : Wednesday, 07-Apr-10
+ ** Created by       : - Unknown -
+ ** Current revision : V 1.00
+ **
+ ** Purpose
+ ** -------
+ **   added TwitPic support; Reworked: main interface, tweet formatting and misc style
+ **
+ ** Date        Author                 Comment
+ ** =========   ====================   ====================
+ ** 07-Apr-10   - Unknown -            --- Initial release ---
+ **
+ ** $Revision Header *********************************************************/
 #ifndef AMITWITTER_STRINGS_H
 #define AMITWITTER_STRINGS_H 1
 
@@ -271,8 +289,22 @@
 #define MSG_0029 230
 #define MSG_0030 231
 #define MSG_0031 232
+#define MSG_TWITPIC 233
+#define MSG_TWITPIC2 234
+#define MSG_PICTUREUPLOADED 235
+#define MSG_UPLOADVIATWITPIC 236
+#define MSG_UPLOADAPICTURE 237
+#define MSG_TWITPICACCEPTS 238
+#define MSG_PATHTOIMAGE 239
+#define MSG_SELECTAPICTURE 240
+#define MSG_TEXTMESSAGEOPTIONAL 241
+#define MSG_UPLOAD 242
+#define MSG_ENTERYOURTWEET 243
+#define MSG_CLEARTWITPIC 244
+#define MSG_UPLOADTWITPIC 245
+#define MSG_CANCELTWITPIC 246
 
-#define CATCOMP_LASTID 232
+#define CATCOMP_LASTID 246
 
 #endif /* CATCOMP_NUMBERS */
 
@@ -483,7 +515,7 @@
 #define MSG_HTML33_STR ";"
 #define MSG_HTML34_STR ";"
 #define MSG_HTML35_STR ";"
-#define MSG_0000_STR "File"
+#define MSG_0000_STR "Project"
 #define MSG_0001_STR "Timeline"
 #define MSG_0002_STR "Retweets"
 #define MSG_0003_STR "Retweet By Me"
@@ -509,12 +541,26 @@
 #define MSG_0023_STR "Tools"
 #define MSG_0024_STR "Settings"
 #define MSG_0025_STR "Update Profile"
-#define MSG_0026_STR "MUI Settings"
+#define MSG_0026_STR "MUI Settings..."
 #define MSG_0027_STR "Help"
 #define MSG_0028_STR "FAQs"
 #define MSG_0029_STR "Donate"
 #define MSG_0030_STR "About AmiTwitter"
-#define MSG_0031_STR "About MUI"
+#define MSG_0031_STR "About MUI..."
+#define MSG_TWITPIC_STR "Twit_Pic"
+#define MSG_TWITPIC2_STR "TwitPic"
+#define MSG_PICTUREUPLOADED_STR "Picture Uploaded!"
+#define MSG_UPLOADVIATWITPIC_STR "Upload a Picture via TwitPic"
+#define MSG_UPLOADAPICTURE_STR "Upload a Picture"
+#define MSG_TWITPICACCEPTS_STR "\33cTwitPic accepts:\n .gif, .jpg and .png images only"
+#define MSG_PATHTOIMAGE_STR "Enter the path to image file (no spaces!)"
+#define MSG_SELECTAPICTURE_STR "Please select a picture..."
+#define MSG_TEXTMESSAGEOPTIONAL_STR "Enter your text message (optional)"
+#define MSG_UPLOAD_STR "_Upload"
+#define MSG_ENTERYOURTWEET_STR "Enter your Tweet and press Return to send (max 140 characters)"
+#define MSG_CLEARTWITPIC_STR "Clear TwitPic"
+#define MSG_UPLOADTWITPIC_STR "Upload TwitPic"
+#define MSG_CANCELTWITPIC_STR "Cancel TwitPic"
 
 #endif /* CATCOMP_STRINGS */
 
@@ -765,6 +811,20 @@ static const struct CatCompArrayType CatCompArray[] =
     {MSG_0029,(STRPTR)MSG_0029_STR},
     {MSG_0030,(STRPTR)MSG_0030_STR},
     {MSG_0031,(STRPTR)MSG_0031_STR},
+    {MSG_TWITPIC,(STRPTR)MSG_TWITPIC_STR},
+    {MSG_TWITPIC2,(STRPTR)MSG_TWITPIC2_STR},
+    {MSG_PICTUREUPLOADED,(STRPTR)MSG_PICTUREUPLOADED_STR},
+    {MSG_UPLOADVIATWITPIC,(STRPTR)MSG_UPLOADVIATWITPIC_STR},
+    {MSG_UPLOADAPICTURE,(STRPTR)MSG_UPLOADAPICTURE_STR},
+    {MSG_TWITPICACCEPTS,(STRPTR)MSG_TWITPICACCEPTS_STR},
+    {MSG_PATHTOIMAGE,(STRPTR)MSG_PATHTOIMAGE_STR},
+    {MSG_SELECTAPICTURE,(STRPTR)MSG_SELECTAPICTURE_STR},
+    {MSG_TEXTMESSAGEOPTIONAL,(STRPTR)MSG_TEXTMESSAGEOPTIONAL_STR},
+    {MSG_UPLOAD,(STRPTR)MSG_UPLOAD_STR},
+    {MSG_ENTERYOURTWEET,(STRPTR)MSG_ENTERYOURTWEET_STR},
+    {MSG_CLEARTWITPIC,(STRPTR)MSG_CLEARTWITPIC_STR},
+    {MSG_UPLOADTWITPIC,(STRPTR)MSG_UPLOADTWITPIC_STR},
+    {MSG_CANCELTWITPIC,(STRPTR)MSG_CANCELTWITPIC_STR},
 };
 
 #endif /* CATCOMP_ARRAY */
@@ -1179,8 +1239,8 @@ static const char CatCompBlock[] =
     MSG_HTML34_STR "\x00"
     "\x00\x00\x00\xC8\x00\x02"
     MSG_HTML35_STR "\x00"
-    "\x00\x00\x00\xC9\x00\x06"
-    MSG_0000_STR "\x00\x00"
+    "\x00\x00\x00\xC9\x00\x08"
+    MSG_0000_STR "\x00"
     "\x00\x00\x00\xCA\x00\x0A"
     MSG_0001_STR "\x00\x00"
     "\x00\x00\x00\xCB\x00\x0A"
@@ -1231,8 +1291,8 @@ static const char CatCompBlock[] =
     MSG_0024_STR "\x00\x00"
     "\x00\x00\x00\xE2\x00\x10"
     MSG_0025_STR "\x00\x00"
-    "\x00\x00\x00\xE3\x00\x0E"
-    MSG_0026_STR "\x00\x00"
+    "\x00\x00\x00\xE3\x00\x10"
+    MSG_0026_STR "\x00"
     "\x00\x00\x00\xE4\x00\x06"
     MSG_0027_STR "\x00\x00"
     "\x00\x00\x00\xE5\x00\x06"
@@ -1241,8 +1301,36 @@ static const char CatCompBlock[] =
     MSG_0029_STR "\x00\x00"
     "\x00\x00\x00\xE7\x00\x12"
     MSG_0030_STR "\x00\x00"
-    "\x00\x00\x00\xE8\x00\x0A"
-    MSG_0031_STR "\x00"
+    "\x00\x00\x00\xE8\x00\x0E"
+    MSG_0031_STR "\x00\x00"
+    "\x00\x00\x00\xE9\x00\x0A"
+    MSG_TWITPIC_STR "\x00\x00"
+    "\x00\x00\x00\xEA\x00\x08"
+    MSG_TWITPIC2_STR "\x00"
+    "\x00\x00\x00\xEB\x00\x12"
+    MSG_PICTUREUPLOADED_STR "\x00"
+    "\x00\x00\x00\xEC\x00\x1E"
+    MSG_UPLOADVIATWITPIC_STR "\x00\x00"
+    "\x00\x00\x00\xED\x00\x12"
+    MSG_UPLOADAPICTURE_STR "\x00\x00"
+    "\x00\x00\x00\xEE\x00\x34"
+    MSG_TWITPICACCEPTS_STR "\x00"
+    "\x00\x00\x00\xEF\x00\x2A"
+    MSG_PATHTOIMAGE_STR "\x00"
+    "\x00\x00\x00\xF0\x00\x1C"
+    MSG_SELECTAPICTURE_STR "\x00\x00"
+    "\x00\x00\x00\xF1\x00\x24"
+    MSG_TEXTMESSAGEOPTIONAL_STR "\x00\x00"
+    "\x00\x00\x00\xF2\x00\x08"
+    MSG_UPLOAD_STR "\x00"
+    "\x00\x00\x00\xF3\x00\x40"
+    MSG_ENTERYOURTWEET_STR "\x00\x00"
+    "\x00\x00\x00\xF4\x00\x0E"
+    MSG_CLEARTWITPIC_STR "\x00"
+    "\x00\x00\x00\xF5\x00\x10"
+    MSG_UPLOADTWITPIC_STR "\x00\x00"
+    "\x00\x00\x00\xF6\x00\x10"
+    MSG_CANCELTWITPIC_STR "\x00\x00"
 };
 
 #endif /* CATCOMP_BLOCK */

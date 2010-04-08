@@ -2,7 +2,7 @@ Short:   AmiTwitter
 Uploader:  ikepgh@ezcyberspace.com (IKE) 
 Author:  AmiTwitter Open Source Team
 Type:  comm/misc
-Version: 0.28 Public Beta Release 3
+Version: 0.29 Public Beta Release 4
 Architecture:  m68k-amigaos, MorphOS, ppc-amigaos 
 Requires:  see below
 Distribution: GPL, AmiKit, SourceForge only
@@ -24,6 +24,7 @@ Features:
     * Displays most recently sent and received Direct Message 
     * Fully localized program and FAQs 
     * International Character Support via codesets.library 
+    * Sends pictures via TwitPic
     * MorphOS, AmigaOS 3.x/4.1 compatible
 
 Thanks for your interest!
@@ -35,8 +36,8 @@ INSTALLATION
 -----------
 
 Just place the 'AmiTwitter' directory wherever you'd like on your hard drive. 
-Place the enclosed libiconv.ixlibary in your system 'Libs' directory, 
-if you don't already have this library.
+Place the enclosed libiconv.ixlibary in your system 'Libs' directory and the
+HTMLtext.mcc and HTMLtext.mcp files in your 'MUI/libs' directory, if you don't already have this library.
 
 REQUIREMENTS
 -----------
@@ -57,7 +58,12 @@ verbose output (should you desire...).  Check the read-me-first.html file in the
 VERSION HISTORY
 --------------- 
 
-0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg!; first OS 4.1 version compiled; updated swedish, italian catalogs, FAQs, program icons & numerous bug fixes: image name truncation, Locale functions, safety NULL checks for free() and replaced free() with xmlFree() where appropriate, fixed numerous declarations 
+0.29 - Public Beta Release 4 - added TwitPic support; Reworked: main interface,
+tweet formatting display and a few misc style guide issues by popular demand; Iconify now has the
+logo displayed instead of default MUI tool; code cleanup
+0.28 - Public Beta Release 3 - glib dependency removed for all OS's thanks to Cyborg!; first OS 4.1 version compiled; updated swedish,
+italian catalogs, FAQs, program icons & numerous bug fixes: image name truncation, Locale functions, safety NULL checks for free() and
+replaced free() with xmlFree() where appropriate, fixed numerous declarations
 0.27 - Public Beta Release 2 - codesets.library implemented!  
 0.26 - Added Tweet/Direct Message char countdown; most recent sent/received direct message; updated and reduced logo size; 
 reordered Users tabs; added .png images
@@ -102,13 +108,13 @@ RECOMPILING
 Recompiling has quite a few dependencies, hence the file size...but, hey, it
 works!  Compiled on OS 3.x (WinUAE/Cubic IDE/gcc 2.95.3-4) and MorphOS (AmiDevCpp) with the following dependencies:
 
-curl 7.14.0,  libxml2-2.6.22,  zlib-1.2.3,  libdl,  glib-2.4.4,  iconv-1.12,
+curl 7.14.0,  libxml2-2.6.22,  zlib-1.2.3,  libdl,  iconv-1.12,
 gettext-0.11.2 (libintl.a),  openssl 0.9.7m (libssl.a & libcrypto.a),  pth-bin
 (pthread.a 2.0.7), libm, libc and libcodesets (MorphOS only).
 
 Here's the string used on 3.x:
 
-gcc -lauto -lcurl -lxml2 -lz -ldl -lglib-2.0 -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl 
+gcc -lauto -lcurl -lxml2 -lz -ldl -liconv -lintl -lc -lssl -lcrypto -lpthread -lm -lcurl
 
 Morphos - see above and: -lcodesets
 
@@ -155,7 +161,7 @@ Donators: Roschmyr, (your name could be here...)
 ABOUT/AUTHORS
 -------------
 
-AmiTwitter is © 2009 IKE <ikepgh@ezcyberspace.com>
+AmiTwitter is © 2009-10 IKE <ikepgh@ezcyberspace.com>
 
 Look at some of my other projects and ports @
 http://www.ezcyberspace.com/programming.shtml

@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.28
+ ** Current revision : V 0.29
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 07-Apr-10   - Unknown -            added TwitPic support; Reworked: main interface, tweet formatting and misc style
  ** 28-Feb-10   Cyborg                 Removed all 'const' keywords as none of them was actually a const.
  ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
@@ -325,12 +326,5 @@ int twitter_fetch_image(twitter_t *twitter, const char *url, char* path);
 int twitter_fetch_images(twitter_t *twitter, struct List *statuses);
 int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses);
 int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses);
-
-#if 0
-/* cyborg: Deactivated. See amitwitter.c for more info why. */
-int twitter_image_name(twitter_status_t *status, char *name);
-int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *name);
-int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message, char *name);
-#endif
 
 /******************************************************************************/
