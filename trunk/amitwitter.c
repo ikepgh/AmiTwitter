@@ -5,7 +5,7 @@
  ** File             : amitwitter.c
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.28
+ ** Current revision : V 0.29
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 07-Apr-10   - Unknown -            added TwitPic support; Reworked: main interface, tweet formatting and misc style
  ** 28-Fev-10   Cyborg                 - ILocale was not opened for OS4
 									   - Fixed localization
 									   - Fixed image name truncation
@@ -112,19 +113,11 @@
 #include "amitwitter.h"
 #include "AmiTwitter_rev.h"
 
-/* cyborg: Always set here what you want to get included from the catalog
-		   header. NEVER touch the header file itself, because all your
-		   changes will get lost as soon as it is regenerated because of
-		   updated catalog strings!
-*/
-
 #define CATCOMP_ARRAY
 #define CATCOMP_NUMBERS
 #define CATCOMP_BLOCK
 
 #include "amitwitter_strings.h"
-
-//#include "mcc_common.h" //not used yet...
 
 /*****************************************************************************/
 
@@ -311,7 +304,7 @@ enum {
                         
     MEN_TIMELINE, MEN_RETWEETBYME, MEN_RETWEETTOME, MEN_RETWEETOFME,
     MEN_REPLIES, MEN_RELOAD, MEN_SEARCH, MEN_SEARCHUSER, MEN_USERS,
-    MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, /*MEN_TWEET,*/ MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
+    MEN_DIRMSG, MEN_DIRMSGSENT, MEN_DIRMSGRCVD, MEN_TWEET, MEN_MYTWEET, MEN_FAVS, MEN_QUIT,
     MEN_FRIENDS, MEN_FOLLOWERS, MEN_BLOCKING, MEN_RANDOM,
     MEN_PREFS, MEN_USERPROFILE, MEN_MUIPREFS,
     MEN_FAQ, MEN_DONATE, MEN_ABOUT, MEN_ABOUTMUI
@@ -337,9 +330,9 @@ static struct NewMenu Menu[]= {
     { NM_SUB,    (STRPTR)MSG_0012,      "G",  0, 0, (APTR)MEN_DIRMSGSENT  },
     { NM_SUB,    (STRPTR)MSG_0013,      "E",  0, 0, (APTR)MEN_DIRMSGRCVD  },
     { NM_ITEM,   (STRPTR)MSG_0014,       0,   0, 0, (APTR)0               },
-//  { NM_SUB,    (STRPTR)MSG_0014,      "E",  0, 0, (APTR)MEN_TWEET       },
     { NM_SUB,    (STRPTR)MSG_0015,      "M",  0, 0, (APTR)MEN_MYTWEET     },
     { NM_SUB,    (STRPTR)MSG_0016,      "F",  0, 0, (APTR)MEN_FAVS        },
+    { NM_ITEM,   (STRPTR)MSG_TWITPIC2,  "P",  0, 0, (APTR)MEN_TWEET       },
     { NM_ITEM,   (STRPTR)NM_BARLABEL,        0,   0, 0, (APTR)0               },
     { NM_ITEM,   (STRPTR)MSG_0017,      "Q",  0, 0, (APTR)MEN_QUIT        },
 
@@ -389,7 +382,7 @@ static struct MUIS_TheBar_Button buttons[] =
     {4, B_SEARCH,        (STRPTR)MSG_SEARCH  ,   (STRPTR)MSG_SEARCH2    ,0, 0, NULL, NULL },
     {5, B_FOLLOW,        (STRPTR)MSG_USERS   ,   (STRPTR)MSG_USERS2     ,0, 0, NULL, NULL },
     {6, B_DIRECTMESSAGE, (STRPTR)MSG_DIRMSG  ,   (STRPTR)MSG_DIRMSG2    ,0, 0, NULL, NULL },
-    {7, B_TWEET,         (STRPTR)MSG_TWEET   ,   (STRPTR)MSG_TWEET2     ,0, 0, NULL, NULL }, // needs changed to "TwitPic"
+    {7, B_TWEET,         (STRPTR)MSG_TWITPIC ,   (STRPTR)MSG_TWITPIC2   ,0, 0, NULL, NULL },
     {MUIV_TheBar_End,   0,NULL,NULL,0, 0, NULL, NULL                                      },
 };
 
@@ -551,25 +544,8 @@ BOOL Open_Libs(void ) {
 
         li.li_LocaleBase = LocaleBase;
 
-		/* cyborg: NEVER try to do a cast on an LVALUE!! In this case the cast
-				   target (to STRPTR) didn't make any sense as well. If you need
-				   a cast, then do it on the RVALUE. In this case, it can only
-				   be the need for APTR as li_Catalog is an APTR, but OpenCatalogA()
-				   returns a struct Catalog *.
-		*/
 		if((li.li_Catalog = (APTR)OpenCatalogA(NULL,"amitwitter.catalog",NULL)) != NULL)
 		{
-			/* cyborg: I really fail to see any sense in this. It's also utterly
-					   wrong to try to write something to a const array. On OS4
-					   this will simply crash. On the other OS, this may not crash
-					   immediately but lead to unpredictable behaviour.
-
-					   If you had this in for your getString() function below, please
-					   read what I wrote below about it.
-
-			if ((s = GetCatalogStr(li.li_Catalog,cca->cca_ID,cca->cca_Str)))
-				cca->cca_Str = s;
-			*/
         }
     }
     return(1);
@@ -683,33 +659,6 @@ Object *urlTextObject(struct Library *MUIMasterBase,STRPTR url,STRPTR text,ULONG
 }
 
 // localization functions
-/*
-
-cyborg: This function makes no sense at all as a working GetString() is alread
-		defined in amitwitter_strings.h by SimpleCat. So why not just use that
-		one? Additionally this function requires tinkering with the const
-		CatCompArray in Open_Libs() which is just doomed to cause problems.
-
-		Best remove this and don't try to be more clever than a developer tool :-)
-
-STRPTR getString(ULONG id) {
-
-    struct CatCompArrayType *cca;
-    int                     cnt;
-
-    for (cnt = (sizeof(CatCompArray)/sizeof(struct CatCompArrayType))-1, cca = (struct CatCompArrayType *)CatCompArray+cnt;
-         cnt>=0;
-         cnt--, cca--) if (cca->cca_ID==id) return cca->cca_Str;  
-
-    return "";  
-}
-*/
-
-/* cyborg: This is basically the same function as generated by SimpleCat, but
-		   we don't use the generated one, because we have to cast a bit to
-		   get rid of warnings. And the generated one would always get
-		   overwritten as soon as we regenerate because of updated catalogs.
-*/
 
 STRPTR GetString(struct LocaleInfo *li, LONG stringNum)
 {
@@ -760,7 +709,6 @@ void charconv() {
         ch = charset[charsetV];
 
         dstCodeset = CodesetsFind(ch, CSA_FallbackToDefault, FALSE, TAG_DONE);
-      //dstCodeset = CodesetsFindA(NULL, NULL);
 
         if (dstCodeset) {
 
@@ -799,7 +747,7 @@ void charconv() {
         }
         else
 
-      //fprintf(stderr, "Unable to query default codeset\n");
+    //  fprintf(stderr, "Unable to query default codeset\n");
         fprintf(stderr, "Unknown destination codeset %s\n", ch);
     }
     else
@@ -820,9 +768,6 @@ ULONG my_list_length(struct List *list)
 
 	return num;
 }
-
-
-/* Lame replacement for glib array functions follows */
 
 MyByteArray *my_byte_array_new(void)
 {
@@ -883,7 +828,6 @@ twitter_t* twitter_new() {
     twitter->base_search_uri = TWITTER_BASE_SEARCH_URI;
     twitter->user = username;
     twitter->pass = password;  
-//    twitter->source = "AmiTwitter";
     twitter->last_home_timeline = 1;
     twitter->last_user_timeline = 1;   
     twitter->mentions = 1;             
@@ -1307,18 +1251,6 @@ int twitter_fetch_images(twitter_t *twitter, struct List *statuses) {
 	{
 		status = (twitter_status_t *)node;
 
-		/* cyborg: This functions is meant to return the complete name of the image
-				   file in name[]. But the name is very likely longer than 31 chars
-				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
-				   image name with the user ID (if not, please correct me). As these
-				   functions are therefore not needed, I removed them and replaced
-				   them with a direct call to strncpy().
-
-				   AFAICT this has absolutely zero negative sideeffects but prevents
-				   crashes as the original thing was done wrong.
-
-        twitter_image_name(status, name);
-		*/
 		strncpy(name, status->user->id, PATH_MAX);
         url = status->user->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1353,18 +1285,6 @@ int twitter_fetch_images_dirmsg(twitter_t *twitter, struct List *statuses) {
 	{
 		direct_message = (twitter_direct_message_t *)node;
 
-		/* cyborg: This functions is meant to return the complete name of the image
-				   file in name[]. But the name is very likely longer than 31 chars
-				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
-				   image name with the user ID (if not, please correct me). As these
-				   functions are therefore not needed, I removed them and replaced
-				   them with a direct call to strncpy().
-
-				   AFAICT this has absolutely zero negative sideeffects but prevents
-				   crashes as the original thing was done wrong.
-
-        twitter_image_name_dirmsg(direct_message, name);
-		*/
         strncpy(name, direct_message->recipient->id, PATH_MAX);
         url = direct_message->recipient->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1399,18 +1319,6 @@ int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
 	{
 		direct_message = (twitter_direct_message_rcvd_t *)node;
 
-		/* cyborg: This functions is meant to return the complete name of the image
-				   file in name[]. But the name is very likely longer than 31 chars
-				   and so too much for OS3 FFS. Thats probably why IKE overwrote the
-				   image name with the user ID (if not, please correct me). As these
-				   functions are therefore not needed, I removed them and replaced
-				   them with a direct call to strncpy().
-
-				   AFAICT this has absolutely zero negative sideeffects but prevents
-				   crashes as the original thing was done wrong.
-
-        twitter_image_name_dirmsgrcvd(direct_message, name);
-		*/
 		strncpy(name, direct_message->sender->id, PATH_MAX);
         url = direct_message->sender->profile_image_url;
         snprintf(path, PATH_MAX, "%s/%s", twitter->images_dir, name);
@@ -1424,117 +1332,6 @@ int twitter_fetch_images_dirmsgrcvd(twitter_t *twitter, struct List *statuses) {
 }
 
 /*****************************************************************************/
-
-///
-
-/// twitter_image_name#? functions ********************************************/
-
-#if 0
-
-/* cyborg: As long as we just overwrite name[] with the user->id these functions
-		   are not needed anymore.
-		   I didn't fix the wrong strncpy(), but remember to fix it if these
-		   functions ever get reactivated!!
-*/
-
-// Image Name
-int twitter_image_name(twitter_status_t *status, char *name) {
-    size_t i;
-    i = strlen(status->user->profile_image_url);
-    while(i--)
-        if(status->user->profile_image_url[i] == '/')
-            break;
-    while(i--)
-        if(status->user->profile_image_url[i] == '/')
-            break;
-    i++;
-    strncpy(name, status->user->profile_image_url + i, PATH_MAX - 1);
-    i = strlen(name);
-    while(i--)
-        if(name[i] == '/')
-         name[i] = '_';
-
-	/* cyborg: Errr... whoever this did: You should really check this again
-			   as
-				   a) you are overwriting below what you did with name[] above!
-				   b) strncpy() returns a STRPTR, putting this into a char will
-					  very likely not have the effect you hoped for, but most
-					  likely just crash at some point!  */
-
-	// added to truncate image name for displaying in HTMLtext .mcc
-	name[i] = strncpy(name, status->user->id, PATH_MAX);
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Image Name - Recipient
-int twitter_image_name_dirmsg(twitter_direct_message_t *direct_message, char *name) {
-    size_t i;
-    i = strlen(direct_message->recipient->profile_image_url);
-    while(i--)
-        if(direct_message->recipient->profile_image_url[i] == '/')
-            break;
-    while(i--)
-        if(direct_message->recipient->profile_image_url[i] == '/')
-            break;
-    i++;
-    strncpy(name, direct_message->recipient->profile_image_url + i, PATH_MAX - 1);
-    i = strlen(name);
-    while(i--)
-        if(name[i] == '/')
-         name[i] = '_';
-
-	/* cyborg: Errr... whoever this did: You should really check this again
-			   as
-				   a) you are overwriting below what you did with name[] above!
-				   b) strncpy() returns a STRPTR, putting this into a char will
-					  very likely not have the effect you hoped for, but most
-					  likely just crash at some point!  */
-
-	// added to truncate image name for displaying in HTMLtext .mcc
-	name[i] = strncpy(name, direct_message->recipient->id, PATH_MAX);
-
-
-    return 0;
-}
-
-/*****************************************************************************/
-
-// Image Name - Sender
-int twitter_image_name_dirmsgrcvd(twitter_direct_message_rcvd_t *direct_message, char *name) {
-    size_t i;
-    i = strlen(direct_message->sender->profile_image_url);
-    while(i--)
-        if(direct_message->sender->profile_image_url[i] == '/')
-            break;
-    while(i--)
-        if(direct_message->sender->profile_image_url[i] == '/')
-            break;
-    i++;
-    strncpy(name, direct_message->sender->profile_image_url + i, PATH_MAX - 1);
-    i = strlen(name);
-    while(i--)
-        if(name[i] == '/')
-         name[i] = '_';
-
-	/* cyborg: Errr... whoever this did: You should really check this again
-			   as
-				   a) you are overwriting below what you did with name[] above!
-				   b) strncpy() returns a STRPTR, putting this into a char will
-					  very likely not have the effect you hoped for, but most
-					  likely just crash at some point! */
-
-
-	// added to truncate image name for displaying in HTMLtext .mcc
-	name[i] = strncpy(name, direct_message->sender->id, PATH_MAX);
-
-    return 0;
-}
-
-/*****************************************************************************/
-#endif
 
 ///
 
@@ -2641,11 +2438,6 @@ int twitter_update(twitter_t *twitter, const char *status) {
                  CURLFORM_COPYCONTENTS, status,
                  CURLFORM_END);
 
-/*    curl_formadd(&formpost, &lastptr,
-                 CURLFORM_COPYNAME, "source",
-                 CURLFORM_COPYCONTENTS, twitter->source,
-                 CURLFORM_END);  */
-
     curl_easy_setopt(curl, CURLOPT_URL, api_uri);
     curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
     curl_easy_setopt(curl, CURLOPT_USERPWD, userpass);
@@ -2695,7 +2487,7 @@ void amitwitter_update(const char *text) {
 
     get(STR_message, MUIA_String_Contents, &text);
 
-    //printf("Message is %u characters long.\n", strlen(text));
+ // printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -2752,8 +2544,7 @@ struct List* twitter_usershow_timeline(twitter_t *twitter) {
     get(STR_show, MUIA_String_Contents, &text);
 
 	snprintf(api_uri, PATH_MAX, "%s%s%s%s",
-			 twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml"); /*,
-			 twitter->last_usershow_timeline);*/
+			 twitter->base_uri, TWITTER_API_PATH_USER_SHOW, text, ".xml"); 
 
         printf("api_uri: %s\n", api_uri);
 
@@ -3251,7 +3042,7 @@ void amitwitter_direct_message(const char *screen_name, const char *text) {
     get(STR_user_id, MUIA_String_Contents, &screen_name);
     get(STR_directmessage, MUIA_String_Contents, &text);
 
-    //printf("Message is %u characters long.\n", strlen(text));
+ // printf("Message is %u characters long.\n", strlen(text));
 
     twitter = twitter_new();
     twitter_config(twitter);
@@ -3466,9 +3257,6 @@ int twitter_verify_credentials(twitter_t *twitter, const char *screen_name, cons
         return -1;
     }
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
-
-     // Pulls xml data
-    // curl_easy_getinfo(curl, CURLINFO_CONTENT_TYPE, &res);
 
     if(res != 200) {
         printf("error respose code: %ld\n", res);
@@ -4164,7 +3952,7 @@ int twitter_uploadtwitpic() {
 
     curl_easy_setopt(curl, CURLOPT_URL, "http://www.twitpic.com/api/uploadAndPost");
 
-//    if ( (argc == 2) && (!strcmp(argv[1], "noexpectheader")) )
+ // if ( (argc == 2) && (!strcmp(argv[1], "noexpectheader")) )
 
     curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist);
@@ -4189,7 +3977,7 @@ int twitter_uploadtwitpic() {
     }
      else {
 
-        set (txt_source, MUIA_HTMLtext_Contents, (int)"Picture Uploaded!"); // (int) GetString(&li, MSG_UPDATED));
+        set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_PICTUREUPLOADED));
     }
 
     curl_easy_cleanup(curl);
@@ -4339,14 +4127,14 @@ int main(int argc, char *argv[]) {
 
 /*****************************************************************************/
 
-      // The Tweet Window
+      // The TwitPic Window
       SubWindow, win_tweet = WindowObject,
-          MUIA_Window_Title, "Upload a Picture via TwitPic", //  GetString(&li, MSG_TWEET2),
+          MUIA_Window_Title, GetString(&li, MSG_UPLOADVIATWITPIC), 
           MUIA_Window_ID, MAKE_ID('T','W','E','T'),
 
           WindowContents, VGroup,
 
-              Child, HGroup, GroupFrameT("Upload a Picture"),  //   (GetString(&li, MSG_TWEET2)), //
+              Child, HGroup, GroupFrameT(GetString(&li, MSG_UPLOADAPICTURE)), 
 
                   Child, ImageObject,
                       MUIA_Frame, MUIV_Frame_None,
@@ -4355,7 +4143,7 @@ int main(int argc, char *argv[]) {
                       MUIA_Image_FreeHoriz, TRUE,
                       MUIA_FixWidth, 70,
                       MUIA_FixHeight, 65,
-                      MUIA_ShortHelp, "\33cTwitPic accepts:\n .gif, .jpg and .png images only",
+                      MUIA_ShortHelp, (GetString(&li, MSG_TWITPICACCEPTS)), 
                   End,
 
                   Child, VGroup,
@@ -4364,8 +4152,8 @@ int main(int argc, char *argv[]) {
 				          Child, pop1 = PopaslObject,
 						  MUIA_Popstring_String, KeyString(0,256,'f'), MUIA_CycleChain, TRUE,
 						  MUIA_Popstring_Button, PopButton(MUII_PopFile),
-                          MUIA_ShortHelp, "Enter the path to image file (no spaces!)",
-						  ASLFR_TitleText,        "Please select a picture...",
+                          MUIA_ShortHelp, (GetString(&li, MSG_PATHTOIMAGE)), 
+						  ASLFR_TitleText,       (GetString(&li, MSG_SELECTAPICTURE)), 
                           ASLFR_DoPatterns,       TRUE,
                           ASLFR_InitialDrawer,    (ULONG)"RAM:",
                           ASLFR_InitialPattern,   (ULONG) "#?.(gif|jpg|png)",
@@ -4377,13 +4165,13 @@ int main(int argc, char *argv[]) {
                       End,
 
                       Child, STR_twitpictweet = BetterStringObject, StringFrame, MUIA_CycleChain, TRUE,
-                      MUIA_ShortHelp, "Enter your text message (optional)", End,
+                      MUIA_ShortHelp, (GetString(&li, MSG_TEXTMESSAGEOPTIONAL)), End, 
 
                       Child, HGroup,
    
                           Child, HGroup, MUIA_Group_SameSize, FALSE, MUIA_CycleChain, TRUE,
                               Child, clear_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CLEAR)),
-                              Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, "_Upload"), // GetString(&li, MSG_UPDATE)), //
+                              Child, sendupdate_gad = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_UPLOAD)), 
                               Child, but_cancel_tweet = MUI_MakeObject(MUIO_Button, GetString(&li, MSG_CANCEL)),
                               End,
                           End,
@@ -4633,17 +4421,17 @@ int main(int argc, char *argv[]) {
                            MUIA_String_MaxLen, 4, MUIA_CycleChain, FALSE, End,
                       End,
                       Child, HGroup,
-                           Child, Label2( GetString(&li, MSG_SEND3)),
+                           Child, Label2(GetString(&li, MSG_SEND3)),
                            Child, HGroup,
                            Child, STR_message = BetterStringObject, StringFrame,
                            MUIA_String_MaxLen, 141, MUIA_CycleChain, TRUE, End,
-                           MUIA_ShortHelp, "Enter your Tweet and press Return to send (max 140 characters)", // GetString(&li, MSG_SEND4),
+                           MUIA_ShortHelp, GetString(&li, MSG_ENTERYOURTWEET), 
                            End,
                       End,
                   End,
               End,
 
-              Child, VGroup, GroupFrame, //GroupFrameT(GetString(&li, MSG_FAST) /*"Fast Links"*/),
+              Child, VGroup, GroupFrame, 
 
                  Child, toolbar = TheBarObject,
                        GroupFrame, MUIA_Group_SameSize, FALSE,
@@ -4766,18 +4554,18 @@ int main(int argc, char *argv[]) {
     win_donate,3,MUIM_Set,MUIA_Window_Open,FALSE);
 
 
-  // Send a Tweet subwindow
+  // Send a TwitPic subwindow
   DoMethod(clear_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CLEAR);
-    set(clear_gad, MUIA_ShortHelp, (int)"Clear"); // (ULONG) GetString(&li, MSG_CLEAR8));
+    set(clear_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CLEARTWITPIC));
 
   DoMethod(sendupdate_gad,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,SENDUPDATE);
-    set(sendupdate_gad, MUIA_ShortHelp, (int)"Upload"); // (ULONG) GetString(&li, MSG_SEND6));
+    set(sendupdate_gad, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_UPLOADTWITPIC));
 
   DoMethod(but_cancel_tweet,MUIM_Notify,MUIA_Pressed,FALSE,
     app,2,MUIM_Application_ReturnID,CANCELTWEET);
-    set(but_cancel_tweet, MUIA_ShortHelp, (int)"Cancel"); // (ULONG) GetString(&li, MSG_CANCEL10));
+    set(but_cancel_tweet, MUIA_ShortHelp, (ULONG) GetString(&li, MSG_CANCELTWITPIC));
 
   DoMethod(win_tweet,MUIM_Notify,MUIA_Window_CloseRequest,TRUE,
     win_tweet,3,MUIM_Set,MUIA_Window_Open,FALSE);
@@ -5145,7 +4933,7 @@ int main(int argc, char *argv[]) {
 
                 // Tweet
                 case TWEET:
-                //case MEN_TWEET:
+                case MEN_TWEET:
                      set(win_tweet, MUIA_Window_Open, TRUE);              
                      break;
 

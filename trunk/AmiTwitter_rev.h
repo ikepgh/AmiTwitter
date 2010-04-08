@@ -5,7 +5,7 @@
  ** File             : amitwitter.h
  ** Created on       : Friday, 06-Nov-09
  ** Created by       : IKE
- ** Current revision : V 0.28
+ ** Current revision : V 0.29
  **
  ** Purpose
  ** -------
@@ -13,6 +13,7 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 07-Apr-10   - Unknown -            added TwitPic support; Reworked: main interface, tweet formatting and misc style
  ** 27-Feb-10   IKE                    glib dependency removed for all OS's; first OS4 compile
  ** 22-Feb-10   IKE                    codesets.library implemented
  ** 04-Feb-10   IKE                    most recent sent/recieved direct message
@@ -31,10 +32,10 @@
  **
  ** $Revision Header *********************************************************/
 #define VERSION		0
-#define REVISION	28
-#define DATE		"27.02.10"
-#define VERS		"AmiTwitter 0.28"
-#define VSTRING		"AmiTwitter 0.28 (27.02.10)\r\n"
-#define VERSTAG		"\0$VER: AmiTwitter 0.28 (27.02.10)\r\n"
-#define AUTHOR		"IKE"
+#define REVISION	29
+#define DATE		"07.04.10"
+#define VERS		"AmiTwitter 0.29"
+#define VSTRING		"AmiTwitter 0.29 (07.04.10)\r\n"
+#define VERSTAG		"\0$VER: AmiTwitter 0.29 (07.04.10)\r\n"
+#define AUTHOR		"- Unknown -"
 #define PROJECT		"AmiTwitter"
