@@ -13,6 +13,8 @@
  **
  ** Date        Author                 Comment
  ** =========   ====================   ====================
+ ** 09-Apr-10   Cyborg                 Revised Open_Libs() to a bit more sane style. Close_Libs() is now always called
+									   if something went wrong, so make sure you have proper NULL checks in there.
  ** 07-Apr-10   - Unknown -            added TwitPic support; Reworked: main interface, tweet formatting and misc style
  ** 28-Fev-10   Cyborg                 - ILocale was not opened for OS4
 									   - Fixed localization
@@ -92,6 +94,7 @@
 #endif
 #include <proto/exec.h>
 #include <proto/asl.h>
+#include <proto/icon.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -213,6 +216,8 @@ struct IntuitionIFace   *IIntuition     = NULL;
 struct MUIMasterIFace   *IMUIMaster     = NULL;
 struct CodesetsIFace	*ICodesets		= NULL;
 struct LocaleIFace      *ILocale        = NULL;
+struct AslIFace			*IAsl			= NULL;
+struct IconIFace		*IIcon			= NULL;
 #endif   
 
 #ifdef __MORPHOS__
@@ -420,175 +425,145 @@ BOOL Open_Libs(void ) {
     }
     #endif
 
-    if ((IntuitionBase=(struct IntuitionBase *) OpenLibrary((CONST_STRPTR)"intuition.library",37)) ) {
+	if(!(IntuitionBase=(struct IntuitionBase *) OpenLibrary((CONST_STRPTR)"intuition.library",37))
+	#ifdef __amigaos4__
+		|| !(IIntuition = (struct IntuitionIFace *) GetInterface((struct Library *)IntuitionBase, "main", 1, NULL))
+	#endif
+		)
+	{
+		fprintf(stderr, "Can't open intuition.library!\n");
+		return 0;
+	}
 
-        #ifdef __amigaos4__
-        if (!(IIntuition = (struct IntuitionIFace *) GetInterface((struct Library *)IntuitionBase,
-                                                               "main", 1, NULL)))
-        {
-            CloseLibrary((struct Library *)IntuitionBase);
-            return 0;
-        }
-        #endif
-    }
-    else
-        return(0);
-
-    if ((GfxBase=(struct GfxBase *) OpenLibrary((CONST_STRPTR)"graphics.library",0)) ) {
-
-        #ifdef __amigaos4__
-        if (!(IGraphics = (struct GraphicsIFace *) GetInterface((struct Library *)GfxBase,
-                                                               "main", 1, NULL)))
-        {
-            CloseLibrary((struct Library *)GfxBase);
-
-            DropInterface((struct Interface *)IIntuition);
-            CloseLibrary((struct Library *)IntuitionBase);
-            return 0;
-        }
-        #endif    
+	if(!(GfxBase=(struct GfxBase *) OpenLibrary((CONST_STRPTR)"graphics.library",0))
+	#ifdef __amigaos4__
+		 || !(IGraphics = (struct GraphicsIFace *) GetInterface((struct Library *)GfxBase, "main", 1, NULL))
+	#endif
+		)
+	{
+		fprintf(stderr, "Can't open graphics.library!\n");
+		return 0;
     }
 
-    else
-    {
-        #ifdef __amigaos4__
-        DropInterface((struct Interface *)IIntuition);
-        #endif
-        CloseLibrary((struct Library *)IntuitionBase);
-        return(0);
+	if(!(MUIMasterBase=OpenLibrary(MUIMASTER_NAME,MUIMASTER_VMIN))
+	#ifdef __amigaos4__
+		|| !(IMUIMaster = (struct MUIMasterIFace *) GetInterface((struct Library *)MUIMasterBase, "main", 1, NULL))
+	#endif
+		)
+	{
+		fprintf(stderr, "Can't open muimaster.library!\n");
+		return 0;
     }
 
-    if ((MUIMasterBase=OpenLibrary(MUIMASTER_NAME,MUIMASTER_VMIN)) ) {
-
-        #ifdef __amigaos4__
-        if (!(IMUIMaster = (struct MUIMasterIFace *) GetInterface((struct Library *)MUIMasterBase,
-                                                               "main", 1, NULL)))
-        {
-            CloseLibrary((struct Library *)MUIMasterBase);
-
-            DropInterface((struct Interface *)IGraphics);
-            CloseLibrary((struct Library *)GfxBase);
-
-            DropInterface((struct Interface *)IIntuition);
-            CloseLibrary((struct Library *)IntuitionBase);
-            return 0;
-        }
-        #endif
-     
-    }
-    else
-    {
-        #ifdef __amigaos4__
-        DropInterface((struct Interface *)IIntuition);
-        DropInterface((struct Interface *)IGraphics);
-        #endif
-
-        CloseLibrary((struct Library *)GfxBase);
-        CloseLibrary((struct Library *)IntuitionBase);
-
-        return(0);
-    }
-
-	if((CodesetsBase = OpenLibrary(CODESETSNAME, CODESETSVER))) {
-        #ifdef __amigaos4__
-		if (!(ICodesets = (struct CodesetsIFace *) GetInterface((struct Library *)CodesetsBase,
-                                                               "main", 1, NULL)))
-        {
-			CloseLibrary((struct Library *)CodesetsBase);
-
-			DropInterface((struct Interface *)IMUIMaster);
-            CloseLibrary((struct Library *)MUIMasterBase);
-
-            DropInterface((struct Interface *)IGraphics);
-            CloseLibrary((struct Library *)GfxBase);
-
-            DropInterface((struct Interface *)IIntuition);
-            CloseLibrary((struct Library *)IntuitionBase);
-            return 0;
-        }
-        #endif
+	if(!(CodesetsBase = OpenLibrary(CODESETSNAME, CODESETSVER))
+	#ifdef __amigaos4__
+		|| !(ICodesets = (struct CodesetsIFace *) GetInterface((struct Library *)CodesetsBase, "main", 1, NULL))
+	#endif
+		)
+	{
+		fprintf(stderr, "Can't open codesets.library!\n");
+		return 0;
 	}
 
 
-    if (!(IconBase = OpenLibrary("icon.library",0)))
-        {
-                printf("Can't Open Icon Library\n");
-        }
-
-    if (!(AslBase = OpenLibrary("asl.library",0)))
-        {
-                printf("Can't Open Icon Library\n");
-        }
-
-	if ((LocaleBase = OpenLibrary("locale.library",38)))
+	if(!(IconBase = OpenLibrary("icon.library",0))
+	#ifdef __amigaos4__
+		|| !(IIcon = (struct IconIFace *) GetInterface((struct Library *)IconBase, "main", 1, NULL))
+	#endif
+		)
 	{
-		#ifdef __amigaos4__
-		if(!(ILocale = (struct LocaleIFace *) GetInterface((struct Library *)LocaleBase, "main", 1, NULL)))
-		{
-			CloseLibrary((struct Library *)LocaleBase);
+		fprintf(stderr, "Can't open icon.library!\n");
+		return 0;
+	}
 
-			DropInterface((struct Interface *)ICodesets);
-			CloseLibrary((struct Library *)CodesetsBase);
+	if(!(AslBase = OpenLibrary("asl.library",0))
+	#ifdef __amigaos4__
+		|| !(IAsl = (struct AslIFace *) GetInterface((struct Library *)AslBase, "main", 1, NULL))
+	#endif
+		)
+	{
+		fprintf(stderr, "Can't open asl.library!\n");
+		return 0;
+	}
 
-			DropInterface((struct Interface *)IMUIMaster);
-            CloseLibrary((struct Library *)MUIMasterBase);
 
-            DropInterface((struct Interface *)IGraphics);
-            CloseLibrary((struct Library *)GfxBase);
-
-            DropInterface((struct Interface *)IIntuition);
-            CloseLibrary((struct Library *)IntuitionBase);
-            return 0;
-        }
-        #endif
-
+	if((LocaleBase = OpenLibrary("locale.library",38))
+	#ifdef __amigaos4__
+		&& (ILocale = (struct LocaleIFace *) GetInterface((struct Library *)LocaleBase, "main", 1, NULL))
+	#endif
+		)
+	{
         li.li_LocaleBase = LocaleBase;
 
 		if((li.li_Catalog = (APTR)OpenCatalogA(NULL,"amitwitter.catalog",NULL)) != NULL)
 		{
+
         }
     }
-    return(1);
+	else
+	{
+		fprintf(stderr, "Can't open locale.library!\n");
+		return 0;
+	}
+
+	/* If we came this far, everything is OK */
+	return 1;
 }
 
 // Close libraries function
 void Close_Libs(void ) {
 
     #ifdef __amigaos4__
-	DropInterface((struct Interface *)ICodesets);
-    DropInterface((struct Interface *)IMUIMaster);
-    DropInterface((struct Interface *)IIntuition);
-    DropInterface((struct Interface *)IGraphics);
-	DropInterface((struct Interface *)ILocale);
+	if(IAsl)
+		DropInterface((struct Interface *)IAsl);
+
+	if(IIcon)
+		DropInterface((struct Interface *)IIcon);
+
+	if(ICodesets)
+		DropInterface((struct Interface *)ICodesets);
+
+	if(IMUIMaster)
+		DropInterface((struct Interface *)IMUIMaster);
+
+	if(IIntuition)
+		DropInterface((struct Interface *)IIntuition);
+
+	if(IGraphics)
+		DropInterface((struct Interface *)IGraphics);
+
+	if(ILocale)
+		DropInterface((struct Interface *)ILocale);
     #endif
 
-    if ( IntuitionBase )
+	if(IntuitionBase)
         CloseLibrary((struct Library *)IntuitionBase);
 
-    if ( GfxBase )
+	if(GfxBase)
         CloseLibrary((struct Library *)GfxBase);
 
-    if ( MUIMasterBase )
+	if(MUIMasterBase)
         CloseLibrary(MUIMasterBase);
 
-    if (LocaleBase) {
-        
-        CloseCatalog(li.li_Catalog);
+	if(LocaleBase)
+	{
+		if(li.li_Catalog)
+			CloseCatalog(li.li_Catalog);
+
         CloseLibrary(LocaleBase);
     }
-    if (IconBase) {
+	if(IconBase)
         CloseLibrary(IconBase);
-    }
-    if (AslBase) {
-        CloseLibrary(AslBase);
-    }
-    if (CodesetsBase) {
 
+	if(AslBase)
+        CloseLibrary(AslBase);
+
+	if(CodesetsBase)
         CloseLibrary(CodesetsBase);
-    }
+
 
     #ifdef __MORPHOS__
-    if ( SocketBase )
+	if(SocketBase)
         CloseLibrary(SocketBase);        
     #endif
 }
@@ -4005,7 +3980,7 @@ int main(int argc, char *argv[]) {
 
   if ( ! Open_Libs() ) {
 
-    printf("Cannot open libs\n");
+	Close_Libs();
     return(0);
   }
 
