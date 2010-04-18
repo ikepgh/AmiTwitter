@@ -3935,11 +3935,11 @@ int twitter_uploadtwitpic() {
 
     code = curl_easy_perform(curl);
 
-    if(code) {
+ /* if(code) {
         printf("error: %s\n", curl_easy_strerror(code));
         error();
         return -1;
-    }
+    } */
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
 
@@ -3950,11 +3950,10 @@ int twitter_uploadtwitpic() {
 
         return res;
     }
-     else {
+    else {
 
         set (txt_source, MUIA_HTMLtext_Contents, (int) GetString(&li, MSG_PICTUREUPLOADED));
     }
-
     curl_easy_cleanup(curl);
     curl_formfree(formpost);
     curl_slist_free_all (headerlist); 
