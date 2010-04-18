@@ -1,4 +1,4 @@
-## Version $VER: amitwitter.catalog 0.28 (28.02.2010)
+## Version $VER: amitwitter.catalog 0.29 (18.04.2010)
 ## Codeset 0
 ## LANGUAGES english deutsch français polski español nederlands italiano svenska 8
 ## SimpleCatConfig CharsPerLine 200
@@ -2027,7 +2027,7 @@ Fichier
 Plik
 Fichero
 Bestand
-File
+Progetto
 Fil
 ;
 MSG_0001 (/1/)
@@ -2127,7 +2127,7 @@ Utilisateurs
 U¿ytkownicy
 Usuarios
 Gebruiker
-Utenti
+Utenti...
 Användare
 ;
 MSG_0011 (/1/)
@@ -2137,7 +2137,7 @@ Message Direct (DM)
 Wiadomo¶æ bezpo¶rednia
 Mensaje Directo
 Direktboodschap
-Diretto
+Messaggio
 Direktmeddelande
 ;
 MSG_0012 (/1/)
@@ -2227,7 +2227,7 @@ Mes suiveurs
 Moi Followers
 Mis Seguidores
 Mijn opvolgers
-Followers
+Seguaci
 Mina anhängare
 ;
 MSG_0021 (/1/)
@@ -2237,7 +2237,7 @@ Blocage
 Blokowani
 Bloqueando
 Blokkeren
-Bloccare
+Blocca
 Blockerar
 ;
 MSG_0022 (/1/)
@@ -2267,7 +2267,7 @@ Préférences
 Ustawienia
 Configuración
 Instellingen
-Impostazioni
+Impostazioni...
 Inställningar
 ;
 MSG_0025 (/1/)
@@ -2277,7 +2277,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar Perfil
 Profiel aktualiseren
-Aggiorna profilo
+Aggiorna profilo...
 Uppdatera profil
 ;
 MSG_0026 (/1/)
@@ -2317,7 +2317,7 @@ Faire un don
 Dotacje
 Donar
 Donaties
-Dona
+Dona...
 Donera
 ;
 MSG_0030 (/1/)
@@ -2362,120 +2362,120 @@ TwitPic
 ;
 MSG_PICTUREUPLOADED (/1/)
 Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
+Bild hochgeladen!
+Image envoyÃ©e !
+Obrazek wys³any!
+Foto archivo!
+Foto opgeladen!
+Immagine inviata!
+Bild uppladdad!
 ;
 MSG_UPLOADVIATWITPIC (/1/)
 Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
+Ein Bild mittels TwitPic hochladen
+Envoyer une image via TwitPic
+Wy¶lij obrazek przez TwitPic
+Subir una imagen a través de TwitPic
+Upload een foto via TwitPic
+Invia un'immagine attraverso TwitPic
+Ladda upp en bild via TwitPic
 ;
 MSG_UPLOADAPICTURE (/1/)
 Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
+ein Bild hochladen
+Envoyer une image
+Wy¶lij obrazek
+Subir una Foto
+Upload een foto
+Invia un'immagine
+Ladda upp en bild
 ;
 MSG_TWITPICACCEPTS (/1/)
 \33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
+\33cTwitPic akzeptiert nur Bilder der Typen:\n .gif, .jpg und .png
+\33cTwitPic supporte : \n seulement les images .gif, .jpg et .png
+\33cTwitPic akceptuje:\n .gif, .jpg i .png
+\33cTwitPic acepta: \n .gif, .jpg y .png sólo
+\33cTwitPic accepteert: \n .gif, .jpg en .png beelden allee
+\33cTwitPic accetta solo i formati dell'immagine:\n .gif, .jpg e .png
+\33cTeitPic accepterar enbart:\n .gif-, .jpg- och .png-bilder.
 ;
 MSG_PATHTOIMAGE (/1/)
 Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
+Geben Sie den Pfad zur Bilddatei an (keine Leerzeichen!)
+Entrez le chemin du fichier (sans espace !)
+Wpisz ¶cie¿kê do pliku obrazka (bez spacji!)
+Introduzca la ruta de archivo de imagen (sin espacios!)
+Voer het pad naar image-bestand (zonder spaties!)
+Inserisci il percorso del file immagine (senza spazi!)
+Skriv in sökvägen till bildfilen (inga mellanslag!)
 ;
 MSG_SELECTAPICTURE (/1/)
 Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
+Bitte wählen Sie ein Bild aus...
+Veuillez sÃ©lectionner une image...
+Proszê wybierz obrazek...
+Por favor, seleccione una imagen...
+Selecteer een foto...
+Seleziona un'immagine...
+Var god välj en bild...
 ;
 MSG_TEXTMESSAGEOPTIONAL (/1/)
 Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
+Geben Sie Ihre Textnachricht ein (optional)
+Entrez le texte du message (optionnel)
+Wpisz swoj± wiadomo¶æ (opcjonalne)
+Ingrese su mensaje de texto (opcional)
+Voer uw tekstbericht (optioneel)
+Inserisci il testo del tuo messaggio (opzionale)
+Skriv in ditt textmeddelande (valfritt)
 ;
 MSG_UPLOAD (/1/)
 _Upload
+_Hochladen
+E_nvoyer
+_Wy¶lij
+_Subir
+_Uploaden
 _Upload
-_Upload
-_Upload
-_Upload
-_Upload
-_Upload
-_Upload
+Ladda _upp
 ;
 MSG_ENTERYOURTWEET (/1/)
 Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
+Geben Sie Ihren Tweet ein und drücken Return zum Senden (max. 140 Zeichen)
+Tapez votre Tweet et pressez EntrÃ©e pour envoyer (140 caractÃ¨res maxi)
+Wpisz Tweeta i wci¶nij Return aby wys³aæ (max 140 znaków)
+Ingrese su Tweet y pulse Intro para enviar (max 140 caracteres)
+Voer je Tweet en druk op Return te sturen (max. 140 tekens)
+Inserisci il tuo Tweet e premi "Invio" per spedirlo (max 140 caratteri)
+Skriv in ditt Tweet och tryck på Return för att skicka (max 140 tecken)
 ;
 MSG_CLEARTWITPIC (/1/)
 Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
+TwitPic löschen
+Effacer TwitPic
+Wyczy¶æ TwitPic
+Borrar TwitPic
+Duidelijke TwitPic
+Cancella TwitPic
+Rensa TwitPic
 ;
 MSG_UPLOADTWITPIC (/1/)
 Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
+TwitPic hochladen
+Envoyer TwitPic
+Wy¶lij TwitPic
+Subir TwitPic
+Uploaden TwitPic
+Invia TwitPic
+Ladda upp TwitPic
 ;
 MSG_CANCELTWITPIC (/1/)
 Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
+TwitPic abbrechen
+Annuler TwitPic
+Anuluj TwitPic
+Cancelar TwitPic
+Annuleren TwitPic
+Annulla TwitPic
+Avbryt TwitPic
