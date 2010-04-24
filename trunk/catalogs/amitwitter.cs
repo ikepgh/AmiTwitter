@@ -1,4 +1,4 @@
-## Version $VER: amitwitter.catalog 0.29 (18.04.2010)
+## Version $VER: amitwitter.catalog 0.29 (24.04.2010)
 ## Codeset 0
 ## LANGUAGES english deutsch français polski español nederlands italiano svenska 8
 ## SimpleCatConfig CharsPerLine 200
@@ -127,7 +127,7 @@ Recharger le fichier local courant
 Prze³aduj obecny plik lokalny
 Recargar el fichero local actual
 Aktueel lokaal bestand opnieuw laden
-Aggiorna file locale
+Ricarica il corrente file locale
 Ladda om nuvarande lokal fil
 ;
 MSG_SEARCH (/1/)
@@ -547,7 +547,7 @@ MSG_DONATE2 (/1/)
 \33c\nJe¶li uwa¿asz, ¿e AmiTwitter jest przydatny to zastanów siê nad dotacj±.\n  Musisz mieæ aktywne po³±cznie z internetem:\n
 \33c\nSi crees que AmiTwitter te es útil, por favor piensa en hacer una donacion.\n  Para ello tienes que tener conexión a internet:\n
 \33c\nIndien u AmiTwitter nuttig vindt, denk over een donatie na.\n  U benodigt een aktieve internetverbinding:\n
-\33c\nSe pensi che AmiTwitter sia utile, fai una donazione!\n  Necessiterai di un collegamento internet:\n
+\33c\nSe pensi che AmiTwitter sia utile, fai una donazione!\n  Sarà necessario un collegamento ad internet:\n
 \33c\nOm du tucker att AmiTwitter är användbart, gör gärna en donation.\n  Du måste ha en aktiv internetuppkoppling:\n
 ;
 MSG_DONATE3 (//)
@@ -717,7 +717,7 @@ Changer le statut de suivi d'un utilisateur
 Zmieñ status pod±¿ania dla U¿ytkownika
 Cambiar el tipo de seguimiento para un usuario
 Verander de status van een gebruiker
-Cambia il tipo di seguimento per un utente
+Cambia lo stato di seguimento per l'utente
 Ändra följar-statusen för en användare
 ;
 MSG_FOLLOW3 (/1/)
@@ -757,7 +757,7 @@ _Suivre
 _Pod±¿aj
 _Seguir
 _Opvolgen
-_Seguire
+_Segui
 _Följ
 ;
 MSG_UNFOLLOOW (/1/)
@@ -907,7 +907,7 @@ _Stopper
 _Stop
 _Parar
 _Stop
-_Stop
+_Interrompi
 _Stopp
 ;
 MSG_CANCEL6 (//)
@@ -1077,7 +1077,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar perfil
 Uw profiel aktualiseren
-Aggiorna il tuo profilo
+Aggiornamento del profilo
 Uppdatera din profil
 ;
 MSG_UPDATEPROFILE2 (/1/)
@@ -1647,7 +1647,7 @@ Mise à jour du profil
 Aktualizuj profil
 Actualizar perfil
 Profiel aktualizeren
-Aggiornamento profilo
+Aggiornamento del profilo
 Uppdatera profil
 ;
 MSG_OK3 (//)
@@ -2137,7 +2137,7 @@ Message Direct (DM)
 Wiadomo¶æ bezpo¶rednia
 Mensaje Directo
 Direktboodschap
-Messaggio
+Diretto
 Direktmeddelande
 ;
 MSG_0012 (/1/)
@@ -2365,8 +2365,8 @@ Picture Uploaded!
 Bild hochgeladen!
 Image envoyÃ©e !
 Obrazek wys³any!
-Foto archivo!
-Foto opgeladen!
+¡Imagen subida!
+Foto hooggeladen!
 Immagine inviata!
 Bild uppladdad!
 ;
@@ -2376,8 +2376,8 @@ Ein Bild mittels TwitPic hochladen
 Envoyer une image via TwitPic
 Wy¶lij obrazek przez TwitPic
 Subir una imagen a través de TwitPic
-Upload een foto via TwitPic
-Invia un'immagine attraverso TwitPic
+Laad een foto via TwitPic hoog
+Invia un'immagine via TwitPic
 Ladda upp en bild via TwitPic
 ;
 MSG_UPLOADAPICTURE (/1/)
@@ -2385,8 +2385,8 @@ Upload a Picture
 ein Bild hochladen
 Envoyer une image
 Wy¶lij obrazek
-Subir una Foto
-Upload een foto
+Subir una imagen
+Laad een foto hoog
 Invia un'immagine
 Ladda upp en bild
 ;
@@ -2395,8 +2395,8 @@ MSG_TWITPICACCEPTS (/1/)
 \33cTwitPic akzeptiert nur Bilder der Typen:\n .gif, .jpg und .png
 \33cTwitPic supporte : \n seulement les images .gif, .jpg et .png
 \33cTwitPic akceptuje:\n .gif, .jpg i .png
-\33cTwitPic acepta: \n .gif, .jpg y .png sólo
-\33cTwitPic accepteert: \n .gif, .jpg en .png beelden allee
+\33cTwitPic solo acepta formatos: \n .gif, .jpg y .png
+\33cTwitPic accepteert alleen: \n .gif, .jpg en .png beelden
 \33cTwitPic accetta solo i formati dell'immagine:\n .gif, .jpg e .png
 \33cTeitPic accepterar enbart:\n .gif-, .jpg- och .png-bilder.
 ;
@@ -2405,8 +2405,8 @@ Enter the path to image file (no spaces!)
 Geben Sie den Pfad zur Bilddatei an (keine Leerzeichen!)
 Entrez le chemin du fichier (sans espace !)
 Wpisz ¶cie¿kê do pliku obrazka (bez spacji!)
-Introduzca la ruta de archivo de imagen (sin espacios!)
-Voer het pad naar image-bestand (zonder spaties!)
+Introduzca la ruta de la imagen (sin espacios!)
+Voer het pad in naar beeld-bestand (zonder spaties!)
 Inserisci il percorso del file immagine (senza spazi!)
 Skriv in sökvägen till bildfilen (inga mellanslag!)
 ;
@@ -2416,7 +2416,7 @@ Bitte wählen Sie ein Bild aus...
 Veuillez sÃ©lectionner une image...
 Proszê wybierz obrazek...
 Por favor, seleccione una imagen...
-Selecteer een foto...
+Kies een foto...
 Seleziona un'immagine...
 Var god välj en bild...
 ;
@@ -2425,8 +2425,8 @@ Enter your text message (optional)
 Geben Sie Ihre Textnachricht ein (optional)
 Entrez le texte du message (optionnel)
 Wpisz swoj± wiadomo¶æ (opcjonalne)
-Ingrese su mensaje de texto (opcional)
-Voer uw tekstbericht (optioneel)
+Introduzca su mensaje de texto (opcional)
+Voer uw tekstbericht in (optioneel)
 Inserisci il testo del tuo messaggio (opzionale)
 Skriv in ditt textmeddelande (valfritt)
 ;
@@ -2445,8 +2445,8 @@ Enter your Tweet and press Return to send (max 140 characters)
 Geben Sie Ihren Tweet ein und drücken Return zum Senden (max. 140 Zeichen)
 Tapez votre Tweet et pressez EntrÃ©e pour envoyer (140 caractÃ¨res maxi)
 Wpisz Tweeta i wci¶nij Return aby wys³aæ (max 140 znaków)
-Ingrese su Tweet y pulse Intro para enviar (max 140 caracteres)
-Voer je Tweet en druk op Return te sturen (max. 140 tekens)
+Introduzca su Tweet y pulse Intro para enviarlo (max 140 caracteres)
+Voer je Tweet in en druk op return om op te sturen (max. 140 tekens)
 Inserisci il tuo Tweet e premi "Invio" per spedirlo (max 140 caratteri)
 Skriv in ditt Tweet och tryck på Return för att skicka (max 140 tecken)
 ;
@@ -2456,7 +2456,7 @@ TwitPic löschen
 Effacer TwitPic
 Wyczy¶æ TwitPic
 Borrar TwitPic
-Duidelijke TwitPic
+Wis TwitPic
 Cancella TwitPic
 Rensa TwitPic
 ;
@@ -2466,7 +2466,7 @@ TwitPic hochladen
 Envoyer TwitPic
 Wy¶lij TwitPic
 Subir TwitPic
-Uploaden TwitPic
+Hoogladen TwitPic
 Invia TwitPic
 Ladda upp TwitPic
 ;
