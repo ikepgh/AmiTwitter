@@ -179,6 +179,7 @@
 #define TWEET         86
 #define CLEAR         87
 #define SENDUPDATE    88
+#define SENDUPDATE2   95
 #define CANCELTWEET   89
 
 // Settings
@@ -4489,7 +4490,7 @@ int main(int argc, char *argv[]) {
 
   // Return keys
   DoMethod(STR_message,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
-    app,2,MUIM_Application_ReturnID,SENDUPDATE);
+    app,2,MUIM_Application_ReturnID,SENDUPDATE2);
 
   DoMethod(STR_directmessage,MUIM_Notify,MUIA_String_Acknowledge,MUIV_EveryTime,
     app,2,MUIM_Application_ReturnID,DIRECTMESSAGE);
@@ -4912,6 +4913,10 @@ int main(int argc, char *argv[]) {
 
                 case SENDUPDATE:
                      twitter_uploadtwitpic();
+                     break;
+
+                case SENDUPDATE2:
+                     amitwitter_update(optarg);
                      break;
 
                 case CANCELTWEET:
