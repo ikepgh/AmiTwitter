@@ -3935,11 +3935,6 @@ int twitter_uploadtwitpic() {
 
     code = curl_easy_perform(curl);
 
- /* if(code) {
-        printf("error: %s\n", curl_easy_strerror(code));
-        error();
-        return -1;
-    } */
     curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res);
     if(res != 200) {
 
