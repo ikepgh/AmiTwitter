@@ -1,4 +1,4 @@
-## version $VER: amitwitter.ct 0.26 (13.02.10)
+## version $VER: amitwitter.ct 0.29 (24.04.10)
 ## language greek
 ## codeset 10
 ;
@@ -721,140 +721,42 @@ MSG_0031
 ;
 MSG_TWITPIC (/1/)
 Twit_Pic
-Twit_Pic
-Twit_Pic
-Twit_Pic
-Twit_Pic
-Twit_Pic
-Twit_Pic
-Twit_Pic
 ;
 MSG_TWITPIC2 (/1/)
-TwitPic
-TwitPic
-TwitPic
-TwitPic
-TwitPic
-TwitPic
-TwitPic
 TwitPic
 ;
 MSG_PICTUREUPLOADED (/1/)
 Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
-Picture Uploaded!
 ;
 MSG_UPLOADVIATWITPIC (/1/)
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
-Upload a Picture via TwitPic
 Upload a Picture via TwitPic
 ;
 MSG_UPLOADAPICTURE (/1/)
 Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
-Upload a Picture
 ;
 MSG_TWITPICACCEPTS (/1/)
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
-\33cTwitPic accepts:\n .gif, .jpg and .png images only
 \33cTwitPic accepts:\n .gif, .jpg and .png images only
 ;
 MSG_PATHTOIMAGE (/1/)
 Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
-Enter the path to image file (no spaces!)
 ;
 MSG_SELECTAPICTURE (/1/)
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
-Please select a picture...
 Please select a picture...
 ;
 MSG_TEXTMESSAGEOPTIONAL (/1/)
 Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
-Enter your text message (optional)
 ;
 MSG_UPLOAD (/1/)
-_Upload
-_Upload
-_Upload
-_Upload
-_Upload
-_Upload
-_Upload
 _Upload
 ;
 MSG_ENTERYOURTWEET (/1/)
 Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
-Enter your Tweet and press Return to send (max 140 characters)
 ;
 MSG_CLEARTWITPIC (/1/)
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
-Clear TwitPic
 Clear TwitPic
 ;
 MSG_UPLOADTWITPIC (/1/)
 Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
-Upload TwitPic
 ;
 MSG_CANCELTWITPIC (/1/)
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
-Cancel TwitPic
 Cancel TwitPic
